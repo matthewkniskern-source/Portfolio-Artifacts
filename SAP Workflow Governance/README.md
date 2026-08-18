@@ -213,4 +213,4 @@ The central principle is:
 
 Where automation has sufficient, complete, and unambiguous information, deterministic processing should continue.
 
-Where relevant exception or conflicting states exist, the system should route the case into a controlled workflow such as `REQUIRES_REVIEW`, rather than automatically issuing a final adverse determination.
+Where relevant exception or conflicting states exist, the system should route the case into a controlled workflow such as REQUIRES_REVIEW, rather than automatically issuing a final adverse determination.
