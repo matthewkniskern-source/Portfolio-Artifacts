@@ -33,3 +33,15 @@ The project distinguishes between:
 * **Proposed controls and future-state design** — conceptual improvements intended to support more complete and defensible eligibility decisions
 
 All institutional and student-identifying information is excluded or anonymized.
+
+[Executive Case Summary](core/01%20executive%20case%20summary.md)
+
+[Current-State and Future-State Workflow](core/02%20current%20future%20workflow.md)
+
+[State and Decision Model](core/03%20state%20and%20decision%20model.md)
+
+[Decision and Edge-Case Matrix](core/04%20decision%20and%20edge%20case%20matrix.md)
+
+[Risk-Control Matrix](core/05%20risk%20control%20matrix.md)
+
+[Requirements and Testing](core/06%20requirments%20and%20testing.md)
