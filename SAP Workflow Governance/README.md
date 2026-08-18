@@ -1,6 +1,5 @@
 # SAP Workflow Governance and Automation Case Study
 
-# SAP Workflow Governance and Automation Case Study
 
 > An anonymized systems-analysis and GRC case study developing a generalized Satisfactory Academic Progress eligibility and exception-handling framework using a Maximum Timeframe appeal scenario as the primary case.
 
