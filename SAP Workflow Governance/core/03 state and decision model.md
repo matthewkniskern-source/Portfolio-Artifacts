@@ -14,7 +14,8 @@ This separation allows the system to preserve an accurate SAP calculation while 
 
 The model is designed to support deterministic automation where the required data and business rules are complete, while providing controlled states for cases that require additional validation or human judgment.
 
-[GRAPHIC PLACEHOLDER — Three-Layer SAP State Model]
+<img width="1448" height="1086" alt="03 Three layer SAP State Model" src="https://github.com/user-attachments/assets/2f6fd134-0103-477e-86e3-138863eee61c" />
+
 
 ## State Model Overview
 
@@ -165,7 +166,7 @@ The system has identified a condition that prevents a reliable final automated d
 
 This is a controlled workflow state, not an eligibility outcome.
 
-[GRAPHIC PLACEHOLDER — Exception and Compliance State Map]
+<img width="1448" height="1086" alt="03 Exception and Compliance State Map" src="https://github.com/user-attachments/assets/338b8294-8de5-47b6-95b9-a9f84e508fba" />
 
 ## Workflow Disposition States
 
@@ -240,7 +241,7 @@ The system therefore preserves both truths:
 * the student exceeds the quantitative Maximum Timeframe threshold
 * the student may remain eligible under a valid approved exception pathway
 
-[GRAPHIC PLACEHOLDER — MTF State Separation]
+<img width="1536" height="1024" alt="03 MTF State Seperation" src="https://github.com/user-attachments/assets/8f5e544c-7ddc-455b-9662-8c4ea3e831c1" />
 
 ## Decision Precedence
 
@@ -272,7 +273,7 @@ Unknown or conflicting compliance requires review.
 
 Only after the calculation, exception, compliance, and data-readiness states are resolved should the system assign a conclusive workflow disposition.
 
-[GRAPHIC PLACEHOLDER — Decision Precedence Model]
+<img width="1536" height="1024" alt="03 Decision Precedence Model" src="https://github.com/user-attachments/assets/74eb93d8-0b95-4ddf-8c93-511804a3c253" />
 
 ## Decision-State Relationships
 
@@ -459,4 +460,4 @@ from
 
 That separation allows the system to preserve quantitative accuracy while applying policy, exceptions, compliance requirements, and human review in a controlled and auditable manner.
 
-[GRAPHIC PLACEHOLDER — Calculation → Context → Disposition Closing Model]
+<img width="1692" height="930" alt="03 CalcContextDispo" src="https://github.com/user-attachments/assets/f427b68a-6fa7-4767-b32a-553276d5e941" />
