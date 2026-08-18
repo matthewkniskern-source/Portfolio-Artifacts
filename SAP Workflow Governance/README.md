@@ -99,69 +99,24 @@ The central design principle of this case study is that **SAP calculation result
 
 A simplified SAP implementation might effectively behave as:
 
-```text
-SAP criterion failed
-        ↓
-Disqualified
-```
+<img width="1448" height="1086" alt="Simplified Processing Model" src="https://github.com/user-attachments/assets/a7788a87-a714-4a1a-add0-0af964cf8bd8" />
+
 
 That logic may be sufficient for some routine cases, but it becomes inadequate when additional policy or exception conditions exist.
 
 A generalized decision process should instead evaluate:
 
-```text
-Quantitative SAP Results
-        │
-        ├── GPA
-        ├── Pace
-        └── Maximum Timeframe
-        │
-        ▼
-Exception / Compliance Evaluation
-        │
-        ├── Warning eligibility
-        ├── Approved appeal
-        ├── SAP probation
-        ├── Academic-plan status
-        ├── Prior-term compliance
-        ├── Enrollment / degree applicability
-        ├── Effective dates
-        └── Data completeness / consistency
-        │
-        ▼
-Workflow Disposition
-        │
-        ├── ELIGIBLE
-        ├── WARNING
-        ├── SAP_PROBATION
-        ├── ACADEMIC_PLAN_CONTINUATION
-        ├── REQUIRES_REVIEW
-        ├── APPEAL_ELIGIBLE
-        ├── PLAN_NONCOMPLIANCE
-        └── DISQUALIFIED
-```
+<img width="1448" height="1086" alt="Proposed Decision Process" src="https://github.com/user-attachments/assets/a29e9b36-d806-44da-8542-ce40902ff2b6" />
+
 
 This separation allows a quantitative failure to remain unchanged while the business workflow appropriately reflects an approved exception or another relevant state.
 
 For example:
 
-```text
-Quantitative Result:
-FAIL_MTF
+<img width="1448" height="1086" alt="MTF Scenario" src="https://github.com/user-attachments/assets/27971882-fb79-473b-a1ac-4131f66685ad" />
 
-Exception / Compliance State:
-Approved MTF Appeal = ACTIVE
-Academic Plan = ACTIVE
-Prior-Term Compliance = TRUE
 
-Workflow Status:
-REQUIRES_REVIEW
-
-Potential Final Disposition:
-ACADEMIC_PLAN_CONTINUATION
-```
-
-The system does not need to convert `FAIL_MTF` into a passing calculation. Instead, it needs to recognize that the calculation alone may not provide sufficient authority for automatic disqualification.
+The system does not need to convert "Fail MTF" into a passing calculation. Instead, it needs to recognize that the calculation alone may not provide sufficient authority for automatic disqualification.
 
 ## Core Problem
 
@@ -181,31 +136,7 @@ For example:
 
 A robust workflow therefore needs to evaluate more than:
 
-```text
-PASS / FAIL
-```
-
-It must evaluate:
-
-```text
-SAP calculation
-    +
-policy state
-    +
-exception state
-    +
-academic-plan state
-    +
-prior compliance
-    +
-effective dates
-    +
-enrollment context
-    +
-data completeness
-        ↓
-appropriate workflow disposition
-```
+<img width="1448" height="1086" alt="Workflow Evaluation" src="https://github.com/user-attachments/assets/ad2fb5cd-2446-46bb-89e1-2f8f7ffa5638" />
 
 The central principle is:
 
@@ -213,4 +144,4 @@ The central principle is:
 
 Where automation has sufficient, complete, and unambiguous information, deterministic processing should continue.
 
-Where relevant exception or conflicting states exist, the system should route the case into a controlled workflow such as REQUIRES_REVIEW, rather than automatically issuing a final adverse determination.
+Where relevant exception or conflicting states exist, the system should route the case into a controlled workflow such as "Requires Review", rather than automatically issuing a final adverse determination.
