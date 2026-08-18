@@ -71,13 +71,8 @@ Major entities include:
 * **Project assignments** — relationships between projects and assigned personnel
 * **Project vendors** — many-to-many relationships between projects and vendors
 
-* | Business Requirement                                                     | Design Response                                                                               | Operational Purpose                                                                                |
-| ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| Track responsibility for each project                                    | `Projects` are associated with employees through project-assignment relationships             | Allows management to identify responsible personnel and include assignments in operational reports |
-| Allow vendors to support multiple projects                               | A project-vendor junction structure supports many-to-many relationships                       | Prevents duplicate vendor records while allowing vendors to support multiple projects              |
-| Track QC activity without hiding projects that lack an inspection record | Quality-control records are related to projects, while reporting can use `LEFT JOIN` logic    | Preserves project visibility and helps identify missing QC activity                                |
-| Identify completed work that remains unpaid                              | Project and payment-status data are joined with customer and assigned-personnel records       | Produces actionable accounts-receivable reporting with account and follow-up information           |
-| Restrict functionality by organizational responsibility                  | Role records and application permissions separate administrative and operational capabilities | Supports least privilege and reduces inappropriate access to management or financial functions     |
+<img width="1448" height="1086" alt="Business requirements" src="https://github.com/user-attachments/assets/5adb47c4-cd8d-42cb-be5b-525139c64104" />
+
 
 
 This mapping illustrates how business requirements informed specific relational structures and reporting decisions. Rather than designing tables independently, the project used operational questions and user responsibilities to determine which entities, relationships, and queries were necessary.
@@ -96,26 +91,9 @@ The documented permission model includes:
 * **Superuser** — CRUD access to projects and vendors with more limited administrative and financial access
 * **Project Manager** — project editing, vendor read access, quality-control visibility, and limited assignment privileges
 
-* | Capability                        | Admin | Superuser  | Project Manager               |
-| --------------------------------- | ----- | ---------- | ----------------------------- |
-| View projects                     | Full  | Full       | Assigned / permitted projects |
-| Create projects                   | Yes   | Yes        | Limited / if permitted        |
-| Edit projects                     | Yes   | Yes        | Yes                           |
-| Delete projects                   | Yes   | Yes        | No / restricted               |
-| View vendors                      | Yes   | Yes        | Yes                           |
-| Create/edit vendors               | Yes   | Yes        | No / restricted               |
-| Manage users                      | Yes   | No         | No                            |
-| View quality-control records      | Yes   | Yes        | Yes                           |
-| Create/edit QC records            | Yes   | Limited    | No / restricted               |
-| View payment status               | Yes   | Limited    | Limited                       |
-| Modify payment status             | Yes   | Restricted | No                            |
-| Assign personnel/project managers | Yes   | Limited    | Limited                       |
-| Administrative configuration      | Yes   | No         | No                            |
-
+![DBMS Permission Breakdown](doc/permission-breakdown.png)
 
 The permission model was designed around role separation and least-privilege concepts. Administrative functions were reserved for the Admin role, while Superuser and Project Manager permissions were constrained to operational responsibilities. The model represents application-level authorization concepts and should not be interpreted as evidence that each permission was independently enforced through native MySQL privilege controls.
-
-![DBMS Permission Breakdown](doc/permission-breakdown.png)
 
 ## Featured SQL Queries
 
