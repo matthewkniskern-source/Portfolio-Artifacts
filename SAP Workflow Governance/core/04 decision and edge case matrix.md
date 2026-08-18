@@ -15,7 +15,7 @@ The objective is to determine whether the state model consistently separates:
 
 The matrix is intended to demonstrate that the redesigned process can handle both standard SAP cases and edge conditions without allowing incomplete or conflicting information to default automatically to either eligibility or disqualification.
 
-[GRAPHIC PLACEHOLDER — Decision Matrix Overview]
+<img width="1448" height="1086" alt="04 Decision MAtrix Overview" src="https://github.com/user-attachments/assets/c82010d5-f0ad-475a-8195-ab5ef679ea46" />
 
 ## Decision Logic
 
@@ -118,7 +118,7 @@ An exception applicable to one SAP criterion should not automatically resolve an
 
 The workflow must retain criterion-level results and evaluate the applicable policy pathway for each failed condition before assigning the final disposition.
 
-[GRAPHIC PLACEHOLDER — Edge-Case Categories]
+<img width="1448" height="1086" alt="04 Edge Case Categories" src="https://github.com/user-attachments/assets/8eb0a0d5-0d07-4033-bafe-b5e558aa6e2d" />
 
 ## Edge Case 1 — Approved Maximum Timeframe Appeal with Continued Compliance
 
@@ -145,7 +145,8 @@ The case enters controlled review and may proceed to Academic Plan Continuation 
 * separation of quantitative result and workflow disposition
 * adverse-action suppression
 
-[GRAPHIC PLACEHOLDER — Approved MTF Continuation Path]
+<img width="1536" height="1024" alt="04 Approved MTF Continuation Plan" src="https://github.com/user-attachments/assets/56056910-bf30-4629-a176-f31889b8adba" />
+
 
 ## Edge Case 2 — Approved Appeal but Academic-Plan Data Is Not Synchronized
 
@@ -386,7 +387,8 @@ The final workflow disposition should be assigned only after all unresolved fail
 * composite decision logic
 * prevention of overbroad exception application
 
-[GRAPHIC PLACEHOLDER — Multi-Criterion Decision Logic]
+<img width="1536" height="1024" alt="04 MultiCriterion Decision Logic" src="https://github.com/user-attachments/assets/57d6b28b-6033-4912-a122-892c80989fb6" />
+
 
 ## Edge Case 13 — Appeal Workflow Unavailable After Disqualification
 
@@ -532,4 +534,4 @@ The edge-case matrix tests whether the redesigned framework behaves consistently
 
 **The goal is not to route every unusual case to a human. The goal is to ensure that automation acts conclusively only when the available decision context supports a conclusive result.**
 
-[GRAPHIC PLACEHOLDER — Decision Matrix Closing Summary]
+<img width="1448" height="1086" alt="04 Decision Matrix Closing Summary" src="https://github.com/user-attachments/assets/53d1673a-5b5c-4ab3-9108-16f8d0dc68a6" />
