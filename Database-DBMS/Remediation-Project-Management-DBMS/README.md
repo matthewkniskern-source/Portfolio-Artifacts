@@ -19,6 +19,24 @@ The system includes data structures for projects, customers, employees, vendors,
 * Improve financial and accounts-receivable oversight
 * Support future reporting and automation opportunities
 
+* ## Business Requirements
+
+The database design was driven by operational requirements associated with project tracking, customer and vendor coordination, personnel assignments, quality control, payment status, and management reporting.
+
+Representative business requirements included:
+
+* **BR-01 — Project tracking:** The system must maintain a centralized record for active and completed projects, including project dates, customer relationships, division, status, and responsible personnel.
+* **BR-02 — Customer management:** Each project must be associated with a customer record containing organizational and point-of-contact information required for project administration and follow-up.
+* **BR-03 — Personnel assignments:** The system must support assignment of employees and project managers to projects while allowing personnel to participate in multiple projects.
+* **BR-04 — Vendor relationships:** The system must support relationships between projects and third-party vendors or subcontractors, including cases where a vendor supports multiple projects.
+* **BR-05 — Quality-control tracking:** The system must support documentation of quality-control inspections, identified issues, corrective actions, resolution status, and final approval.
+* **BR-06 — Payment-status visibility:** Project completion and payment-status data must be available for operational and accounts-receivable reporting.
+* **BR-07 — Management reporting:** The database must support multi-table reporting that combines project, customer, personnel, payment, and quality-control data to answer operational business questions.
+* **BR-08 — Role-based access:** Access to administrative, operational, project-management, quality-control, and financial functions must vary according to the responsibilities of the authenticated user.
+
+These requirements were translated into relational entities, foreign-key relationships, junction tables, role definitions, and SQL reporting queries. The design therefore treats the database as an operational information system rather than an isolated collection of tables.
+
+
 ## Technologies and Concepts
 
 * MySQL
@@ -53,6 +71,16 @@ Major entities include:
 * **Project assignments** — relationships between projects and assigned personnel
 * **Project vendors** — many-to-many relationships between projects and vendors
 
+* | Business Requirement                                                     | Design Response                                                                                          | Operational Purpose                                                                                |
+| ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Track responsibility for each project                                    | `Projects` are associated with employees through project-assignment relationships                        | Allows management to identify responsible personnel and include assignments in operational reports |
+| Allow vendors to support multiple projects                               | Project-vendor junction structure supports many-to-many relationships                                    | Prevents duplicate vendor records while allowing reusable vendor relationships across projects     |
+| Track QC activity without hiding projects that lack an inspection record | Quality-control records are related to projects while reporting can use `LEFT JOIN` logic                | Preserves project visibility and enables identification of missing QC activity                     |
+| Identify completed work that remains unpaid                              | Project and payment-status data are joined with customer and assigned-personnel records                  | Produces actionable accounts-receivable reporting with both account and follow-up information      |
+| Restrict functionality by organizational responsibility                  | Role records and documented application permissions separate administrative and operational capabilities | Supports least privilege and reduces inappropriate access to management or financial functions     |
+
+This mapping illustrates how business requirements informed specific relational structures and reporting decisions. Rather than designing tables independently, the project used operational questions and user responsibilities to determine which entities, relationships, and queries were necessary.
+
 ### Entity-Relationship Diagram
 
 ![Remediation Project Management DBMS ERD](doc/erd.png)
@@ -67,7 +95,24 @@ The documented permission model includes:
 * **Superuser** — CRUD access to projects and vendors with more limited administrative and financial access
 * **Project Manager** — project editing, vendor read access, quality-control visibility, and limited assignment privileges
 
-This model was intended to support role segregation, data security, and accountability within the system.
+* | Capability                        | Admin | Superuser  | Project Manager               |
+| --------------------------------- | ----- | ---------- | ----------------------------- |
+| View projects                     | Full  | Full       | Assigned / permitted projects |
+| Create projects                   | Yes   | Yes        | Limited / if permitted        |
+| Edit projects                     | Yes   | Yes        | Yes                           |
+| Delete projects                   | Yes   | Yes        | No / restricted               |
+| View vendors                      | Yes   | Yes        | Yes                           |
+| Create/edit vendors               | Yes   | Yes        | No / restricted               |
+| Manage users                      | Yes   | No         | No                            |
+| View quality-control records      | Yes   | Yes        | Yes                           |
+| Create/edit QC records            | Yes   | Limited    | No / restricted               |
+| View payment status               | Yes   | Limited    | Limited                       |
+| Modify payment status             | Yes   | Restricted | No                            |
+| Assign personnel/project managers | Yes   | Limited    | Limited                       |
+| Administrative configuration      | Yes   | No         | No                            |
+
+
+The permission model was designed around role separation and least-privilege concepts. Administrative functions were reserved for the Admin role, while Superuser and Project Manager permissions were constrained to operational responsibilities. The model represents application-level authorization concepts and should not be interpreted as evidence that each permission was independently enforced through native MySQL privilege controls.
 
 ![DBMS Permission Breakdown](doc/permission-breakdown.png)
 
