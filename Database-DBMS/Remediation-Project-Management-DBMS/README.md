@@ -19,7 +19,7 @@ The system includes data structures for projects, customers, employees, vendors,
 * Improve financial and accounts-receivable oversight
 * Support future reporting and automation opportunities
 
-* ## Business Requirements
+## Business Requirements
 
 The database design was driven by operational requirements associated with project tracking, customer and vendor coordination, personnel assignments, quality control, payment status, and management reporting.
 
