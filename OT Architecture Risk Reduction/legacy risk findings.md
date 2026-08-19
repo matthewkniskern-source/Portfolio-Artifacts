@@ -2,13 +2,17 @@
 
 ## Purpose
 
-This document identifies the principal cybersecurity risk conditions present in the reference plant's legacy OT architecture.
+This document identifies the main cybersecurity risks in the reference plant's legacy OT architecture.
 
-The findings are derived from the documented operating environment, communication requirements, asset and access inventory, and effective legacy architecture.
+The findings come directly from the operating environment, communication requirements, asset inventory, and effective legacy topology.
 
-The objective is not to characterize the legacy environment as operationally defective. The plant remains functional and includes important resilience capabilities. The findings instead identify conditions where accumulated trust, access, legacy technology, or governance practices create cybersecurity exposure beyond what is required for plant operation.
+The plant is not presented as broken.
 
-Supporting context is available in:
+It runs.
+
+The problem is that years of legitimate operating, maintenance, vendor, and management decisions have left behind more trust and reachability than the plant actually needs.
+
+Supporting detail is available in:
 
 * [Environment Overview](environment%20overview.md)
 * [Communication Requirements](communication%20requirements.md)
@@ -19,18 +23,18 @@ Supporting context is available in:
 
 # Risk Summary
 
-| ID    | Finding                                         | Primary Risk Theme              | Relative Priority |
-| ----- | ----------------------------------------------- | ------------------------------- | ----------------- |
-| LR-01 | Broadly Trusted OT Network                      | Segmentation / Lateral Movement | High              |
-| LR-02 | Excess Management Supervisory Privilege         | Access Control / Governance     | High              |
-| LR-03 | Persistent Legacy Vendor VPN                    | Third-Party / Remote Access     | High              |
-| LR-04 | Broad Engineering Workstation Reachability      | Privileged Access               | High              |
-| LR-05 | Mobile and Third-Party Maintenance Endpoints    | Endpoint / Maintenance Access   | Moderate-High     |
-| LR-06 | Historian Located Within Broad OT Trust Zone    | Architecture / Data Access      | Moderate          |
-| LR-07 | Dependency on Legacy MS/TP Process Inputs       | Legacy Technology / Resilience  | Moderate-High     |
-| LR-08 | Ambiguous IT/OT/Vendor Administrative Ownership | Governance                      | Moderate-High     |
+| ID        | Finding                                         | Primary Risk Theme              | Relative Priority |
+| --------- | ----------------------------------------------- | ------------------------------- | ----------------- |
+| **LR-01** | Broadly Trusted OT Network                      | Segmentation / Lateral Movement | High              |
+| **LR-02** | Excess Management Supervisory Privilege         | Access Control / Governance     | High              |
+| **LR-03** | Persistent Legacy Vendor VPN                    | Third-Party / Remote Access     | High              |
+| **LR-04** | Broad Engineering Workstation Reachability      | Privileged Access               | High              |
+| **LR-05** | Mobile and Third-Party Maintenance Endpoints    | Endpoint / Maintenance Access   | Moderate-High     |
+| **LR-06** | Historian Located Within Broad OT Trust Zone    | Architecture / Data Access      | Moderate          |
+| **LR-07** | Dependency on Legacy MS/TP Process Inputs       | Legacy Technology / Resilience  | Moderate-High     |
+| **LR-08** | Ambiguous IT/OT/Vendor Administrative Ownership | Governance                      | Moderate-High     |
 
-Priority ratings are qualitative and represent relative cybersecurity significance within this reference environment. They are not intended to represent a formal quantitative risk score.
+These ratings are qualitative. They are meant to show relative priority inside this case study, not pretend that a simple table can replace a formal site-specific risk assessment.
 
 ---
 
@@ -38,27 +42,33 @@ Priority ratings are qualitative and represent relative cybersecurity significan
 
 ## Condition
 
-The primary OT environment operates as a largely flat BACnet/IP network with limited internal segmentation between supervisory systems, engineering resources, historian services, controllers, and supporting infrastructure.
+The main OT environment is a largely flat BACnet/IP network.
 
-Systems connected to the OT network therefore inherit a relatively broad level of network reachability.
+Supervisory systems, engineering resources, historian services, controllers, and field-network gateways have broad internal reachability with limited segmentation between them.
+
+Once a system is inside OT, it can generally see and reach more than its actual job requires.
 
 ## Why It Matters
 
-The architecture places substantial reliance on perimeter protection.
+This architecture puts too much faith in the perimeter.
 
-If an authorized OT endpoint is compromised, misused, or unintentionally exposes malicious traffic, limited internal segmentation may allow the event to affect systems beyond the endpoint's legitimate operational function.
+If an endpoint inside OT is compromised, the attacker does not necessarily have to fight through another meaningful security boundary before reaching higher-value systems.
 
-This increases potential:
+That increases the potential for:
 
 * Lateral movement
 * Unauthorized discovery
-* Controller reachability
+* Controller access
 * Exposure of privileged systems
-* Blast radius following endpoint compromise
+* A larger blast radius from a single compromised endpoint
+
+The issue is not that every OT system talks to every other system constantly.
+
+The issue is that the architecture allows more of that communication than the plant actually needs.
 
 ## Evidence
 
-The legacy topology places the following systems within the same broadly trusted OT environment:
+The legacy environment places the following systems inside the same broadly trusted OT domain:
 
 * SCADA/BAS server
 * Two operator HMI stations
@@ -67,16 +77,18 @@ The legacy topology places the following systems within the same broadly trusted
 * BACnet/IP plant controllers
 * Field-network gateways
 
-See [Legacy Architecture](legacy%20architecture.md#primary-ot-network) , 
-[Legacy Topology](legacy%20topo.mmd)
+See:
+
+* [Legacy Architecture](legacy%20architecture.md#primary-ot-network)
+* [Legacy Topology](legacy%20topo.mmd)
 
 ## Risk Statement
 
-A compromise of a system already admitted to the OT network may provide access pathways to higher-criticality control assets because internal trust boundaries do not sufficiently reflect differing system functions or privilege levels.
+Compromise of a system already inside the OT network can create a path toward higher-consequence control assets because the network does not strongly separate systems by function, privilege, or operational need.
 
 ## Target-State Direction
 
-Introduce security zones and explicitly controlled conduits between systems with materially different functions, privileges, and risk profiles.
+Break the broad trust domain into security zones and allow only the communications the plant actually requires.
 
 ---
 
@@ -84,41 +96,47 @@ Introduce security zones and explicitly controlled conduits between systems with
 
 ## Condition
 
-An enterprise-connected management workstation is used for legitimate operational visibility but retains supervisory command capability beyond the manager's actual business requirement.
+An enterprise-connected management workstation is used for legitimate plant visibility but also retains some supervisory command capability.
 
-The access represents accumulated privilege rather than an intentional requirement for process control.
+That control authority is not part of the actual management requirement.
+
+It is access that accumulated over time.
 
 ## Why It Matters
 
-Management personnel may have legitimate reasons to view:
+A manager may need to know:
 
-* Plant status
-* Alarms
-* Equipment conditions
-* Performance information
+* What equipment is running
+* What is in alarm
+* What the plant is producing
+* Whether performance is within expectations
 
-Those requirements do not inherently justify command capability.
+That does not mean the same account needs to start equipment, stop equipment, or change process settings.
 
-Providing unnecessary control authority from an enterprise-connected workstation creates both an access-control weakness and an IT/OT exposure path.
+Giving a business-facing endpoint unnecessary command authority creates avoidable exposure and increases the chance that an enterprise-side problem becomes an OT problem.
+
+It also creates a very ordinary human-factors risk: somebody with incomplete operating context can still affect the plant.
 
 ## Evidence
 
-The documented communication requirement identifies management visibility as legitimate while explicitly identifying command capability as unnecessary.
+The communication requirements identify management visibility as legitimate and command capability as unnecessary.
 
 See:
 
-* [Management Supervisory Access](communication%20requirements.md#11-management-supervisory-access)
+* [Management Supervisory Access](communication%20requirements.md#management-supervisory-access)
 * [Management Workstation](asset%20access%20inventory.md#management-workstation)
 
 ## Risk Statement
 
-Excess privilege allows a business-facing endpoint or user to perform actions capable of affecting physical plant operation without a corresponding operational need.
-
-The risk includes intentional misuse, operator conflict, user error, credential compromise, and propagation of an enterprise-originating security event into the control environment.
+The management workstation can affect plant operation beyond what the role requires, creating unnecessary exposure to user error, credential compromise, conflicting operator actions, and enterprise-originating security events.
 
 ## Target-State Direction
 
-Preserve legitimate management visibility through an appropriately separated read-oriented service while removing unnecessary supervisory command authority.
+Keep the visibility.
+
+Remove the control authority.
+
+Management should consume approved plant information without becoming another control station.
 
 ---
 
@@ -128,38 +146,43 @@ Preserve legitimate management visibility through an appropriately separated rea
 
 A historical vendor VPN remains technically functional for selected chiller-related support.
 
-The pathway was originally created for legitimate troubleshooting but is no longer fully represented within the current recognized remote-access model.
+It was originally installed for legitimate troubleshooting.
 
-Access remains known to a limited number of long-tenured vendor personnel.
+The problem is that the connection outlived the governance around it.
+
+A small number of long-tenured vendor personnel still know about the path, while its current ownership, monitoring, and necessity are less clear.
 
 ## Why It Matters
 
-A remote-access path may remain technically valid even when it is no longer effectively governed.
+A remote-access path does not become safe just because everyone forgot about it.
 
-This creates uncertainty concerning:
+An old VPN can still carry:
 
-* Active credentials
-* Authentication requirements
-* Reachable assets
-* Current ownership
-* Logging and monitoring
-* Continued business necessity
-* Access review
-* Retirement responsibility
+* Valid credentials
+* Persistent reachability
+* Privileged access
+* Old assumptions about who is authorized
+* Little or no current monitoring
+
+The biggest concern is the gap between the network on paper and the network that actually exists.
 
 ## Evidence
 
-The legacy VPN is documented as part of the effective architecture despite being incompletely represented in the formally recognized access model.
+The legacy VPN appears in the effective architecture but is no longer fully represented in the recognized remote-access model.
 
 See [Legacy Vendor VPN Access](asset%20access%20inventory.md#legacy-vendor-vpn-access).
 
 ## Risk Statement
 
-An inherited third-party pathway may provide persistent privileged access to OT resources without the same authorization, monitoring, review, and lifecycle controls applied to currently recognized remote-access mechanisms.
+The plant retains a third-party access path that may bypass current authorization, monitoring, account review, and ownership controls.
+
+That gives an inherited technical connection more trust than its present business justification supports.
 
 ## Target-State Direction
 
-Inventory and retire the legacy pathway unless a current business requirement is established. Any required vendor remote access should transition to a single governed and monitored access model.
+Retire the legacy VPN unless somebody can establish a current, documented requirement for it.
+
+If vendor remote access is still needed, move it into the same governed path used for all other approved external support.
 
 ---
 
@@ -167,27 +190,25 @@ Inventory and retire the legacy pathway unless a current business requirement is
 
 ## Condition
 
-The permanent engineering workstation is a trusted OT asset with high-privilege access to multiple controller systems.
+The engineering workstation has legitimate high-privilege access to multiple controller systems.
 
-Its functions include programming, configuration, diagnostics, commissioning, and recovery.
+It can program, configure, diagnose, commission, and recover control assets.
+
+In the legacy network, that power comes with broad reachability.
 
 ## Why It Matters
 
-The engineering workstation is legitimately powerful.
+The engineering workstation is supposed to be powerful.
 
-That legitimate capability also makes it one of the most consequential systems in the OT environment if:
+That is the job.
 
-* Compromised
-* Misconfigured
-* Used with inappropriate credentials
-* Exposed to malicious removable media
-* Used outside an approved maintenance activity
+The risk comes from treating “needs high privilege” as if it also means “needs access to everything.”
 
-In the flat architecture, its network reachability is broader than its routine use necessarily requires.
+If this system is compromised, misused, or exposed through removable media or an unsafe maintenance action, the attacker inherits a workstation that already knows how to talk to critical control assets.
 
 ## Evidence
 
-The engineering workstation is located within the broadly trusted OT network and can communicate with multiple control assets.
+The engineering workstation sits inside the broadly trusted OT environment and can reach multiple controller systems.
 
 See:
 
@@ -196,11 +217,15 @@ See:
 
 ## Risk Statement
 
-Compromise or misuse of the engineering workstation may provide a high-privilege pathway for modification of multiple controller systems because architectural controls do not strongly constrain its reachability.
+A compromised engineering workstation can become a high-impact path into multiple control systems because the architecture does not sufficiently limit its reach to the systems and functions actually required.
 
 ## Target-State Direction
 
-Retain necessary engineering functionality while restricting the workstation to explicitly authorized controller and administrative pathways.
+Keep the engineering capability.
+
+Constrain the path.
+
+The workstation should reach approved controller and administrative destinations, not the entire OT environment by default.
 
 ---
 
@@ -208,30 +233,36 @@ Retain necessary engineering functionality while restricting the workstation to 
 
 ## Condition
 
-Plant maintenance personnel use a company-issued laptop for direct equipment service access.
+Plant maintenance personnel use a company-issued laptop for direct equipment troubleshooting.
 
-Vendor technicians may also connect vendor-owned laptops directly to manufacturer-supported service interfaces.
+Vendors may use their own laptops for the same kind of service work.
 
-These endpoints have materially different security characteristics.
+Those two devices may perform similar maintenance tasks, but they do not carry the same level of organizational trust.
 
 ## Why It Matters
 
-The company maintenance laptop can be managed under organizational policy.
+The company laptop can be managed.
 
-Vendor-owned endpoints cannot automatically be assumed to share the same:
+The vendor laptop may not be.
+
+The plant may have no direct control over the vendor device's:
 
 * Patch level
 * Endpoint protection
 * Software inventory
-* Removable-media controls
-* Credential practices
-* Prior exposure history
+* Prior network exposure
+* Removable-media history
+* Credential hygiene
 
-Direct equipment access may nevertheless be operationally necessary.
+That does not make the vendor laptop illegitimate.
+
+Sometimes the manufacturer's software on that laptop is exactly what is needed to get a machine back online.
+
+The real problem is allowing a temporary maintenance device to become more trusted than the maintenance task requires.
 
 ## Evidence
 
-The maintenance model explicitly includes both company-controlled and vendor-controlled mobile endpoints.
+The asset inventory identifies both company-managed and vendor-managed mobile maintenance endpoints.
 
 See:
 
@@ -240,13 +271,13 @@ See:
 
 ## Risk Statement
 
-Maintenance activity may introduce a mobile endpoint with uncertain security posture into direct proximity with critical industrial equipment.
-
-The risk cannot be resolved solely by prohibiting vendor access because specialized vendor maintenance may be operationally required.
+A temporary maintenance endpoint with an uncertain security posture can be connected directly to critical equipment and may introduce malware, unsafe configuration changes, or an unintended path into the wider OT environment.
 
 ## Target-State Direction
 
-Differentiate trust and access requirements for company and vendor devices, limit connections to approved service interfaces, and apply procedural and technical controls appropriate to temporary high-privilege maintenance activity.
+Allow the maintenance function, but constrain the connection to the equipment and service interface required for the task.
+
+Company and vendor devices should not receive the same trust simply because both can plug into the same machine.
 
 ---
 
@@ -254,31 +285,39 @@ Differentiate trust and access requirements for company and vendor devices, limi
 
 ## Condition
 
-The historian resides inside the primary OT network and shares the broadly trusted environment with supervisory and control systems.
+The historian sits inside the same broad OT trust environment as supervisory and control systems.
 
-It is used for trend analysis, historical reporting, troubleshooting, and operational review.
+That works well for plant operations, but the historian also contains exactly the kind of information enterprise users want.
 
 ## Why It Matters
 
-The historian serves a fundamentally different function from process controllers.
+The historian becomes a natural point of pressure between OT and the business.
 
-Its purpose includes data consumption and reporting, which may attract access requirements from users or systems outside the control environment.
+Operations need fast, reliable access to plant history.
 
-Keeping the historian in the same broad trust zone can create pressure to extend enterprise or business access deeper into OT than is operationally necessary.
+Management, facilities, analysts, and other business users may also want:
+
+* Energy data
+* Performance trends
+* Runtime information
+* Alarm history
+* Maintenance data
+
+If everyone reaches the same historian directly, a legitimate reporting requirement starts pulling enterprise access deeper into the control environment.
 
 ## Evidence
 
-The legacy architecture places the historian within the same broad BACnet/IP OT environment as SCADA/BAS, engineering, and control systems.
+The historian is located within the broad BACnet/IP OT environment alongside SCADA/BAS, engineering resources, and control systems.
 
 See [Historian Placement](legacy%20architecture.md#historian-placement).
 
 ## Risk Statement
 
-A system intended partly for information consumption may become an unnecessary bridge between business information requirements and higher-criticality control assets when it resides within the same broad trust environment.
+The historian's dual role as an OT operational resource and a source of business information can create unnecessary enterprise-to-OT exposure when both audiences depend on the same broadly trusted service.
 
 ## Target-State Direction
 
-Reconsider historian placement and the method by which operational data is exposed to enterprise consumers. Preserve plant data availability without requiring enterprise users to reach directly into the primary control environment.
+Keep operational history available to the plant, but give enterprise users a separate approved path to the data they actually need.
 
 ---
 
@@ -286,45 +325,55 @@ Reconsider historian placement and the method by which operational data is expos
 
 ## Condition
 
-Multiple BACnet MS/TP field networks provide process values used by the main plant control logic during automatic operation.
+The plant still depends on BACnet MS/TP field networks for process values used during automatic control.
 
-Representative inputs include:
+Those values include:
 
 * Differential pressure
 * Supply and return temperatures
 * Condenser-water temperature
 * Flow information
 * Equipment status
-* Permissive indications
+* Permissive signals
+
+The technology is old.
+
+The information is still important.
 
 ## Why It Matters
 
-These devices are legacy from a communications perspective but remain operationally relevant.
+These devices cannot be treated like obsolete office hardware.
 
-Their age or protocol alone does not make immediate replacement an acceptable cybersecurity strategy.
+If an MS/TP segment disappears, the plant may lose process inputs required for:
 
-Loss or degradation of an MS/TP segment may:
+* Pump control
+* Chiller staging
+* Cooling-tower operation
+* Sequence decisions
+* Alarm generation
+* Equipment permissives
 
-* Remove required automatic-control inputs
-* Generate alarms
-* Impair sequencing
-* Force fallback behavior
-* Increase manual operator workload
-* Move the plant into a degraded operating state
+The result may be degraded automatic control rather than an immediate hard shutdown, but that still matters operationally.
+
+This creates a modernization constraint.
+
+The security design has to protect devices that may have little or no native cybersecurity capability without breaking the logic that depends on them.
 
 ## Evidence
 
-The legacy architecture explicitly identifies MS/TP field networks as supporting process inputs consumed during automatic plant operation.
+The legacy architecture identifies the MS/TP field networks as active process-input sources for automatic plant operation.
 
 See [Legacy BACnet MS/TP Networks](legacy%20architecture.md#legacy-bacnet-mstp-networks).
 
 ## Risk Statement
 
-Operational dependence on legacy field networks constrains modernization because security improvements must account for devices that cannot necessarily support contemporary cybersecurity capabilities.
+The plant depends on legacy field communications that cannot easily support modern endpoint security controls, which limits direct remediation options and increases reliance on architecture-level protections.
 
 ## Target-State Direction
 
-Preserve required field functionality while reducing exposure through segmentation, gateway placement, restricted reachability, monitoring where practical, and other compensating controls.
+Do not force a replacement project into a segmentation project.
+
+Contain the gateways, restrict reachability, block unrelated access, monitor where practical, and use compensating controls until replacement makes operational and financial sense.
 
 ---
 
@@ -332,80 +381,96 @@ Preserve required field functionality while reducing exposure through segmentati
 
 ## Condition
 
-Responsibility for OT-connected infrastructure is distributed across plant operations, controls and maintenance personnel, corporate IT, and third-party vendors.
+Responsibility for the environment is spread across plant operations, controls personnel, corporate IT, and vendors.
 
-Corporate IT possesses limited OT-specific expertise, while plant and vendor personnel may retain specialized system knowledge unavailable elsewhere in the organization.
+Some systems are clearly plant-owned.
+
+Some are clearly IT-owned.
+
+Others sit directly in the middle.
+
+OT knowledge inside the IT organization may also depend heavily on one or two people who happen to understand the plant.
 
 ## Why It Matters
 
-Shared responsibility is not inherently a weakness.
+Shared responsibility is normal.
 
-Risk emerges when ownership is unclear.
+Unclear responsibility is where things get ugly.
 
-Ambiguity may affect:
+If nobody has clear ownership, questions such as these become harder than they should be:
 
-* Account management
-* Patch responsibility
-* Network changes
-* Remote-access approval
-* Logging
-* Asset inventory
-* Vendor access reviews
-* Incident response
-* System retirement
-* Configuration ownership
+* Who disables an old vendor account?
+* Who owns the firewall rule?
+* Who approves remote access?
+* Who patches the server?
+* Who verifies the backup?
+* Who inventories the gateway?
+* Who removes equipment from the network when it is retired?
+* Who responds when OT and IT both think the other group owns the problem?
 
-This may also create dependence on individual personnel rather than documented organizational processes.
+That is how temporary access becomes permanent and undocumented systems become institutional knowledge.
 
 ## Evidence
 
-The asset and access inventory identifies overlapping administrative roles and limited concentration of OT-specific knowledge within the enterprise IT function.
+The asset inventory identifies overlapping responsibility across operations, controls, IT, and third parties.
 
 See [Enterprise IT Support](asset%20access%20inventory.md#enterprise-it-support).
 
 ## Risk Statement
 
-Unclear responsibility for cyber-relevant OT infrastructure may allow important security tasks or access paths to fall between organizational boundaries.
+Unclear ownership can leave important security tasks, accounts, access paths, and lifecycle decisions sitting between organizational boundaries with nobody clearly responsible for closing the loop.
 
 ## Target-State Direction
 
-Define administrative ownership, authorization authority, technical responsibility, and vendor accountability for each major OT security domain.
+Assign ownership.
+
+Not every task has to belong to one department, but every important decision should have somebody accountable for it.
 
 ---
 
 # Cross-Cutting Observation
 
-The legacy environment's principal cybersecurity weakness is not any single obsolete device or misconfigured system.
+The biggest weakness in the legacy environment is not any one device.
 
-The larger issue is accumulated trust.
+It is the amount of trust that accumulated around a plant that still had to run while technology, vendors, personnel, and business requirements changed around it.
 
-Over time, legitimate operational, maintenance, management, and vendor requirements have produced:
+The result is:
 
-* Broad internal reachability
+* Broad reachability
 * Excess privilege
-* Persistent access paths
-* Mixed-trust endpoints
-* Legacy protocol dependencies
-* Ambiguous ownership
+* Persistent remote access
+* Mixed-trust maintenance devices
+* Legacy technology dependencies
+* Unclear ownership
 
-Each condition is individually understandable in an operating plant.
+Most of those conditions probably made sense at some point.
 
-Together, they create an architecture in which compromise of a relatively limited asset or account may produce consequences outside its intended operational role.
+That does not mean they still make sense now.
 
-The target-state design will therefore focus primarily on reducing unnecessary trust while preserving required plant functionality.
+The target architecture focuses on taking away the trust the plant no longer needs while preserving the functions it still does.
 
 ---
 
-# Next Assessment Stage
+# Next Step
 
-The findings in this document establish the basis for the target-state architecture.
+The findings on this page drive the target-state design.
 
-The next stage will determine which architectural and governance controls can reduce these risks without:
+The next question is not:
 
-* Disrupting required plant communications
-* Eliminating necessary maintenance capability
-* Creating unacceptable availability risk
-* Assuming immediate replacement of legacy devices
-* Removing legitimate business visibility
+> **How do we make the network look more secure?**
 
-The resulting design decisions will be mapped back to these findings to demonstrate explicit risk reduction.
+It is:
+
+> **Which architecture and governance changes reduce these risks without breaking the plant?**
+
+That means the target state still has to preserve:
+
+* Required control communications
+* Operator access
+* Engineering capability
+* Vendor maintenance where necessary
+* Historical data
+* Legacy field-device inputs
+* Local and degraded plant operation
+
+The redesign only counts as an improvement if both sides of that equation work.
