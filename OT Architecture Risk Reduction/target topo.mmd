@@ -1,0 +1,243 @@
+flowchart TB
+
+%% =========================================================
+%% TARGET OT ARCHITECTURE
+%% =========================================================
+
+%% ---------- ENTERPRISE ----------
+subgraph ENT["Enterprise Network"]
+    direction LR
+    EU["Enterprise Users"]
+    MW["Management Workstation<br/>Read-Oriented Plant Visibility"]
+end
+
+%% ---------- REMOTE ACCESS ----------
+subgraph REM["External Remote Access"]
+    direction LR
+    RVA["Approved Vendor<br/>Remote Access"]
+end
+
+%% ---------- OT DMZ ----------
+subgraph DMZ["OT DMZ"]
+    direction LR
+    RAG["Remote Access Gateway"]
+    JH["Privileged Jump Host"]
+    REP["Replicated Historian /<br/>Reporting Service"]
+    MON["Security Monitoring /<br/>Log Collection"]
+end
+
+FW1["Enterprise / DMZ<br/>Security Boundary"]
+FW2["DMZ / OT<br/>Security Boundary"]
+
+%% ---------- OT SUPERVISORY ----------
+subgraph SUPZONE["OT Supervisory Zone"]
+    direction TB
+
+    BAS["SCADA / BAS Server"]
+
+    subgraph OPS["Operator Workstations"]
+        direction LR
+        HMI1["Operator HMI 1"]
+        HMI2["Operator HMI 2"]
+    end
+
+    OTH["OT Historian /<br/>Operational Data Collector"]
+end
+
+%% ---------- ENGINEERING ----------
+subgraph ENGZONE["Engineering / Administrative Zone"]
+    direction TB
+    ENG["Engineering Workstation<br/>High Privilege"]
+    ADMIN["Authorized OT<br/>Administrative Services"]
+end
+
+%% ---------- CONTROL ----------
+subgraph CTRLZONE["OT Control Zone"]
+    direction TB
+
+    CORE["OT Control Network<br/>BACnet/IP"]
+
+    subgraph PLC["Plant Controllers"]
+        direction LR
+        C1["Controller 1<br/>Chiller Control"]
+        C2["Controller 2<br/>Pump / Distribution"]
+        C3["Controller 3<br/>Condenser / Tower"]
+    end
+
+    subgraph GATE["Legacy Field-Network Gateways"]
+        direction LR
+        R1["BACnet/IP ↔ MS/TP<br/>Gateway A"]
+        R2["BACnet/IP ↔ MS/TP<br/>Gateway B"]
+    end
+
+    SENSOR["Passive OT Network<br/>Monitoring Sensor"]
+end
+
+%% ---------- LEGACY FIELD NETWORKS ----------
+subgraph MSTPA["BACnet MS/TP Trunk A — Chilled-Water Inputs"]
+    direction LR
+    A1["D/P Input"]
+    A2["Supply RTD"]
+    A3["Return RTD"]
+    A4["Flow / Status"]
+    A5["Legacy Field I/O"]
+end
+
+subgraph MSTPB["BACnet MS/TP Trunk B — Condenser / Tower Inputs"]
+    direction LR
+    B1["D/P Input"]
+    B2["Condenser RTD"]
+    B3["Process RTD"]
+    B4["Legacy Field I/O"]
+end
+
+%% ---------- PLANT PROCESS ----------
+subgraph PROC["Plant Process"]
+    direction LR
+    CH["Chillers"]
+    PUMP["Pumps"]
+    TOWER["Cooling Towers"]
+    VFD["VFDs"]
+    VALVE["Control Valves"]
+end
+
+%% ---------- LOCAL MAINTENANCE ----------
+subgraph MAINT["Local Maintenance / Service Access"]
+    direction LR
+    CLAP["Company Maintenance Laptop"]
+    VLAP["Vendor Service Laptop"]
+end
+
+%% ---------- DEGRADED / MANUAL ----------
+subgraph MAN["Local / Degraded Operation"]
+    direction LR
+    BOARD["Central Physical<br/>Control Board"]
+    LOCAL["Local Equipment<br/>Controls"]
+end
+
+%% =========================================================
+%% ENTERPRISE / DMZ FLOW
+%% =========================================================
+
+EU --> FW1
+MW --> FW1
+RVA --> RAG
+
+FW1 --> DMZ
+
+RAG --> JH
+
+REP --> FW1
+
+%% =========================================================
+%% DMZ / OT FLOW
+%% =========================================================
+
+DMZ --> FW2
+FW2 --> SUPZONE
+FW2 --> ENGZONE
+
+JH -. Explicitly Authorized Path .-> ENG
+JH -. Explicitly Authorized Path .-> CORE
+
+OTH --> REP
+SUPZONE --> MON
+ENGZONE --> MON
+CTRLZONE --> MON
+
+%% =========================================================
+%% SUPERVISORY FLOW
+%% =========================================================
+
+HMI1 --> BAS
+HMI2 --> BAS
+BAS --> CORE
+OTH --> BAS
+
+%% =========================================================
+%% ENGINEERING FLOW
+%% =========================================================
+
+ENG -. Approved Engineering Path .-> C1
+ENG -. Approved Engineering Path .-> C2
+ENG -. Approved Engineering Path .-> C3
+
+ADMIN --> ENG
+
+%% =========================================================
+%% CONTROL FLOW
+%% =========================================================
+
+CORE --> C1
+CORE --> C2
+CORE --> C3
+
+C1 --> R1
+C2 --> R1
+C3 --> R2
+
+R1 --> MSTPA
+R2 --> MSTPB
+
+MSTPA --> PROC
+MSTPB --> PROC
+
+C1 --> CH
+C2 --> PUMP
+C2 --> VFD
+C2 --> VALVE
+C3 --> TOWER
+
+%% =========================================================
+%% LOCAL MAINTENANCE
+%% =========================================================
+
+CLAP -. Approved Direct Service .-> CH
+CLAP -. Approved Direct Service .-> VFD
+
+VLAP -. Temporary Vendor Service .-> CH
+VLAP -. Temporary Vendor Service .-> VFD
+
+%% =========================================================
+%% DEGRADED / MANUAL OPERATION
+%% =========================================================
+
+BOARD --> LOCAL
+LOCAL --> PROC
+
+%% =========================================================
+%% STYLING
+%% =========================================================
+
+classDef enterprise fill:#eef4ff,stroke:#526d8c,stroke-width:1px;
+classDef remote fill:#f6efff,stroke:#78579c,stroke-width:1px;
+classDef dmz fill:#f2f2f2,stroke:#666,stroke-width:1.5px;
+classDef supervisory fill:#eef8ee,stroke:#5d805d,stroke-width:1px;
+classDef engineering fill:#fff4e8,stroke:#a46b35,stroke-width:1px;
+classDef control fill:#f4f7e9,stroke:#77854e,stroke-width:1px;
+classDef legacy fill:#edf5ff,stroke:#5277a5,stroke-width:1px;
+classDef process fill:#fff7e8,stroke:#a6762e,stroke-width:1px;
+classDef maintenance fill:#fff2e8,stroke:#a2693f,stroke-width:1px;
+classDef manual fill:#f8f4e8,stroke:#887343,stroke-width:1px;
+classDef monitor fill:#eef7f7,stroke:#4f7d7d,stroke-width:1px;
+classDef boundary fill:#f3f3f3,stroke:#555,stroke-width:2px;
+
+class EU,MW enterprise;
+class RVA remote;
+
+class RAG,JH,REP dmz;
+class MON monitor;
+
+class FW1,FW2 boundary;
+
+class BAS,HMI1,HMI2,OTH supervisory;
+class ENG,ADMIN engineering;
+
+class CORE,C1,C2,C3,R1,R2 control;
+class SENSOR monitor;
+
+class A1,A2,A3,A4,A5,B1,B2,B3,B4 legacy;
+
+class CH,PUMP,TOWER,VFD,VALVE process;
+class CLAP,VLAP maintenance;
+class BOARD,LOCAL manual;
