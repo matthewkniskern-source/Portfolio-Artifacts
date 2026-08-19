@@ -1,27 +1,27 @@
 flowchart TB
 
 %% =========================================================
-%% LEGACY OT ARCHITECTURE
+%% LEGACY OT ARCHITECTURE - GENERALIZED TOPOLOGY
 %% =========================================================
 
 %% ---------- ENTERPRISE ----------
 subgraph ENT["Enterprise Network"]
     direction LR
     EU["Enterprise Users"]
-    MW["Management Workstation<br/>Legacy Supervisory Access"]
+    MW["Management Workstation<br/>Excess Supervisory Privilege"]
 end
 
 %% ---------- REMOTE ACCESS ----------
 subgraph REM["Remote Access"]
     direction LR
     RVA["Recognized Vendor<br/>Remote Access"]
-    LVA["Legacy Vendor VPN<br/>Persistent Access Path"]
+    LVA["Legacy Vendor VPN<br/>Persistent Access"]
 end
 
 FW["Enterprise / OT<br/>Perimeter Firewall"]
 
-%% ---------- SUPERVISORY OT ----------
-subgraph OT["Legacy OT Environment<br/>Broadly Trusted BACnet/IP Network"]
+%% ---------- LEGACY OT ----------
+subgraph OT["Legacy OT Environment — Broadly Trusted BACnet/IP"]
     direction TB
 
     CORE["OT Network Backbone<br/>Switching / BACnet/IP"]
@@ -39,7 +39,7 @@ subgraph OT["Legacy OT Environment<br/>Broadly Trusted BACnet/IP Network"]
         direction LR
         C1["Plant Controller 1<br/>Chiller Control"]
         C2["Plant Controller 2<br/>Pump / Distribution"]
-        C3["Plant Controller 3<br/>Condenser / Tower Control"]
+        C3["Plant Controller 3<br/>Condenser / Tower"]
     end
 
     subgraph GATE["Legacy Field-Network Gateways"]
@@ -49,8 +49,8 @@ subgraph OT["Legacy OT Environment<br/>Broadly Trusted BACnet/IP Network"]
     end
 end
 
-%% ---------- LEGACY MS/TP ----------
-subgraph MSTP_A["BACnet MS/TP Trunk A<br/>Chilled-Water Automatic Control Inputs"]
+%% ---------- LEGACY FIELD NETWORK A ----------
+subgraph MSTPA["BACnet MS/TP Trunk A — Chilled-Water Inputs"]
     direction LR
     A1["D/P Input"]
     A2["Supply RTD"]
@@ -59,7 +59,8 @@ subgraph MSTP_A["BACnet MS/TP Trunk A<br/>Chilled-Water Automatic Control Inputs
     A5["Legacy Field I/O"]
 end
 
-subgraph MSTP_B["BACnet MS/TP Trunk B<br/>Condenser / Cooling-Tower Automatic Control Inputs"]
+%% ---------- LEGACY FIELD NETWORK B ----------
+subgraph MSTPB["BACnet MS/TP Trunk B — Condenser / Tower Inputs"]
     direction LR
     B1["D/P Input"]
     B2["Condenser RTD"]
@@ -67,7 +68,7 @@ subgraph MSTP_B["BACnet MS/TP Trunk B<br/>Condenser / Cooling-Tower Automatic Co
     B4["Legacy Field I/O"]
 end
 
-%% ---------- PHYSICAL PROCESS ----------
+%% ---------- PLANT PROCESS ----------
 subgraph PROC["Plant Process"]
     direction LR
     CH["Chillers"]
@@ -78,13 +79,13 @@ subgraph PROC["Plant Process"]
 end
 
 %% ---------- MAINTENANCE ----------
-subgraph MAINT["Local Maintenance Access"]
+subgraph MAINT["Maintenance / Service Access"]
     direction LR
     CLAP["Company Maintenance Laptop"]
     VLAP["Vendor Service Laptop"]
 end
 
-%% ---------- DEGRADED / MANUAL OPERATION ----------
+%% ---------- MANUAL / DEGRADED ----------
 subgraph MAN["Local / Degraded Operation"]
     direction LR
     BOARD["Central Physical<br/>Control Board"]
@@ -92,22 +93,23 @@ subgraph MAN["Local / Degraded Operation"]
 end
 
 %% =========================================================
-%% PRIMARY ARCHITECTURE FLOW
+%% PRIMARY VERTICAL FLOW
 %% =========================================================
 
 ENT --> FW
-REM -. Remote connectivity .-> FW
+REM -.-> FW
 FW --> CORE
 
 CORE --> SUP
 CORE --> CTRL
 
 CTRL --> GATE
-R1 --> MSTP_A
-R2 --> MSTP_B
 
-MSTP_A -. Process values .-> CTRL
-MSTP_B -. Process values .-> CTRL
+R1 --> MSTPA
+R2 --> MSTPB
+
+MSTPA --> PROC
+MSTPB --> PROC
 
 CTRL --> PROC
 
@@ -117,28 +119,29 @@ CTRL --> PROC
 
 HMI1 --> BAS
 HMI2 --> BAS
+
 ENG --> CORE
 HIST --> CORE
 
 %% =========================================================
-%% REMOTE / LEGACY ACCESS
+%% REMOTE ACCESS PATHS
 %% =========================================================
 
-RVA -. Approved support path .-> CORE
-LVA -. Legacy VPN path .-> CORE
+RVA -.-> CORE
+LVA -.-> CORE
 
 %% =========================================================
-%% MAINTENANCE PATHS
+%% LOCAL MAINTENANCE
 %% =========================================================
 
-CLAP -. Direct service connection .-> CH
-CLAP -. Direct service connection .-> VFD
+CLAP -.-> CH
+CLAP -.-> VFD
 
-VLAP -. Vendor service connection .-> CH
-VLAP -. Vendor service connection .-> VFD
+VLAP -.-> CH
+VLAP -.-> VFD
 
 %% =========================================================
-%% MANUAL / DEGRADED CONTROL
+%% MANUAL / DEGRADED OPERATION
 %% =========================================================
 
 BOARD --> LOCAL
@@ -163,9 +166,12 @@ class EU,MW enterprise;
 class RVA remote;
 class LVA warning;
 class FW perimeter;
+
 class CORE,BAS,HMI1,HMI2,ENG,HIST supervisory;
 class C1,C2,C3,R1,R2 controller;
+
 class A1,A2,A3,A4,A5,B1,B2,B3,B4 legacy;
+
 class CH,PUMP,TOWER,VFD,VALVE process;
 class CLAP,VLAP maintenance;
 class BOARD,LOCAL manual;
