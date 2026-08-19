@@ -14,9 +14,9 @@ The standards are used for three things:
 
 The primary references are:
 
-* **NIST SP 800-82 Rev. 3 — Guide to Operational Technology (OT) Security**
-* **NIST Cybersecurity Framework (CSF) 2.0**
-* **NIST SP 800-53 Rev. 5 — Security and Privacy Controls for Information Systems and Organizations**
+- [**NIST SP 800-82 Rev. 3 — Guide to Operational Technology (OT) Security**](references.md#nist-sp-800-82-rev-3)
+- [**NIST Cybersecurity Framework (CSF) 2.0**](references.md#nist-cybersecurity-framework-csf-20)
+- [**NIST SP 800-53 Rev. 5 — Security and Privacy Controls for Information Systems and Organizations**](references.md#nist-sp-800-53-rev-5)
 
 NIST SP 800-82 Rev. 3 is the primary technical reference because it addresses cybersecurity in operational environments while accounting for availability, reliability, safety, legacy technology, and process constraints.
 
