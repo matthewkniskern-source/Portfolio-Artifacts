@@ -10,10 +10,10 @@ The objective is not to characterize the legacy environment as operationally def
 
 Supporting context is available in:
 
-* [Environment Overview](environment_overview.md)
-* [Communication Requirements](communication_requirements.md)
-* [Asset and Access Inventory](asset_access_inventory.md)
-* [Legacy Architecture](legacy_architecture.md)
+* [Environment Overview](environment%20overview.md)
+* [Communication Requirements](communication%20requirements.md)
+* [Asset and Access Inventory](asset%20access%20inventory.md)
+* [Legacy Architecture](legacy%20architecture.md)
 
 ---
 
@@ -67,7 +67,7 @@ The legacy topology places the following systems within the same broadly trusted
 * BACnet/IP plant controllers
 * Field-network gateways
 
-See [Legacy Architecture](legacy_architecture.md#primary-ot-network).
+See [Legacy Architecture](legacy%20architecture.md#primary-ot-network).
 
 ## Risk Statement
 
@@ -106,8 +106,8 @@ The documented communication requirement identifies management visibility as leg
 
 See:
 
-* [Management Supervisory Access](communication_requirements.md#11-management-supervisory-access)
-* [Management Workstation](asset_access_inventory.md#management-workstation)
+* [Management Supervisory Access](communication%20requirements.md#11-management-supervisory-access)
+* [Management Workstation](asset%20access%20inventory.md#management-workstation)
 
 ## Risk Statement
 
@@ -150,7 +150,7 @@ This creates uncertainty concerning:
 
 The legacy VPN is documented as part of the effective architecture despite being incompletely represented in the formally recognized access model.
 
-See [Legacy Vendor VPN Access](asset_access_inventory.md#legacy-vendor-vpn-access).
+See [Legacy Vendor VPN Access](asset%20access%20inventory.md#legacy-vendor-vpn-access).
 
 ## Risk Statement
 
@@ -190,8 +190,8 @@ The engineering workstation is located within the broadly trusted OT network and
 
 See:
 
-* [Permanent Engineering Workstation](asset_access_inventory.md#permanent-engineering-workstation)
-* [Engineering Access](legacy_architecture.md#engineering-access)
+* [Permanent Engineering Workstation](asset%20access%20inventory.md#permanent-engineering-workstation)
+* [Engineering Access](legacy%20architecture.md#engineering-access)
 
 ## Risk Statement
 
@@ -234,8 +234,8 @@ The maintenance model explicitly includes both company-controlled and vendor-con
 
 See:
 
-* [Company Maintenance Laptop](asset_access_inventory.md#company-maintenance-laptop)
-* [Vendor Service Laptop](asset_access_inventory.md#vendor-service-laptop)
+* [Company Maintenance Laptop](asset%20access%20inventory.md#company-maintenance-laptop)
+* [Vendor Service Laptop](asset%20access%20inventory.md#vendor-service-laptop)
 
 ## Risk Statement
 
@@ -269,7 +269,7 @@ Keeping the historian in the same broad trust zone can create pressure to extend
 
 The legacy architecture places the historian within the same broad BACnet/IP OT environment as SCADA/BAS, engineering, and control systems.
 
-See [Historian Placement](legacy_architecture.md#historian-placement).
+See [Historian Placement](legacy%20architecture.md#historian-placement).
 
 ## Risk Statement
 
@@ -315,7 +315,7 @@ Loss or degradation of an MS/TP segment may:
 
 The legacy architecture explicitly identifies MS/TP field networks as supporting process inputs consumed during automatic plant operation.
 
-See [Legacy BACnet MS/TP Networks](legacy_architecture.md#legacy-bacnet-mstp-networks).
+See [Legacy BACnet MS/TP Networks](legacy%20architecture.md#legacy-bacnet-mstp-networks).
 
 ## Risk Statement
 
@@ -360,7 +360,7 @@ This may also create dependence on individual personnel rather than documented o
 
 The asset and access inventory identifies overlapping administrative roles and limited concentration of OT-specific knowledge within the enterprise IT function.
 
-See [Enterprise IT Support](asset_access_inventory.md#enterprise-it-support).
+See [Enterprise IT Support](asset%20access%20inventory.md#enterprise-it-support).
 
 ## Risk Statement
 
