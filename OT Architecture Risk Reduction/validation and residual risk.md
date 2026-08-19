@@ -2,11 +2,18 @@
 
 ## Purpose
 
-This document describes how the target-state architecture should be validated after implementation and identifies the principal risks that remain even after the proposed controls are in place.
+The target architecture only matters if it works the way it is supposed to.
 
-The objective is not to prove that the environment is risk-free.
+That means proving two things:
 
-The objective is to verify that the architecture behaves as intended, that required plant functions remain available, and that the controls introduced to reduce cyber risk do not create unacceptable operational consequences.
+1. **The security controls actually reduce the intended exposure**
+2. **The plant still operates correctly after those controls are introduced**
+
+A firewall rule that blocks traffic is not automatically a good control.
+
+If it also breaks operator visibility, stops a required BACnet path, interferes with maintenance, or removes a known fallback operating mode, then the design has created a different problem.
+
+Validation in this case study therefore treats cybersecurity behavior and plant behavior as equally important.
 
 Supporting analysis is available in:
 
@@ -17,403 +24,494 @@ Supporting analysis is available in:
 
 ---
 
-# Validation Principles
+# Validation Approach
 
-Validation should confirm both cybersecurity behavior and operational behavior.
+The target state should be tested against the requirements that drove the redesign in the first place.
 
-A control should not be considered successful solely because it blocks traffic or limits access.
+For each major control, the basic question is:
 
-It must also preserve the communications and maintenance functions required for safe and reliable plant operation.
+> **Did we remove access that was not required without breaking access that was?**
 
-The validation process therefore asks two questions:
+That sounds simple, but it is the line that matters.
 
-1. **Did the control reduce the intended cybersecurity exposure?**
-2. **Did the plant continue to function as required after the control was introduced?**
+The validation effort should confirm:
+
+* Intended communication still works
+* Unnecessary communication does not
+* Privilege matches the role
+* Remote access follows the approved path
+* Legacy devices remain operational
+* Monitoring sees what it is supposed to see
+* Operators still have a way to run the plant when higher-level systems are unavailable
 
 ---
 
-# 1. Network Segmentation Validation
+# 1. Network Segmentation
 
-## Objective
+## What We Are Testing
 
-Confirm that the target architecture enforces the intended separation between:
+The target architecture separates:
 
-* Enterprise network
+* Enterprise
 * OT DMZ
-* Supervisory zone
-* Engineering / administrative zone
-* Control zone
-* Legacy MS/TP gateways
+* Supervisory systems
+* Engineering / administrative systems
+* Control systems
+* Legacy field-network gateways
 
-## Validation Activities
+The point is not to build more zones for the sake of having more zones.
 
-Verify that:
+The point is to make sure systems with different jobs and privilege levels do not automatically inherit access to one another.
 
-* Enterprise endpoints cannot directly reach PLCs or field-network gateways
-* Management workstations cannot initiate process-control commands
-* Supervisory systems can communicate only with required control services
-* Engineering workstations can reach only explicitly authorized controller destinations
-* DMZ systems cannot communicate arbitrarily with OT assets
-* Legacy field-network gateways are not reachable from enterprise or general remote-access networks
+## Validation
+
+Confirm that:
+
+* Enterprise endpoints cannot directly reach PLCs
+* Enterprise endpoints cannot directly reach MS/TP gateways
+* Management workstations cannot reach process-control functions
+* Operator systems can communicate with the supervisory services they need
+* Supervisory systems can reach required control functions
+* Engineering systems can reach only approved controller and infrastructure destinations
+* DMZ systems cannot communicate arbitrarily into OT
 * Unapproved inter-zone traffic is denied
 
 ## Expected Result
 
-Required plant communications remain functional while unauthorized or unnecessary communication paths are blocked.
+The plant keeps the communications required for normal operation, while the broad internal reachability present in the legacy environment is gone.
 
 ---
 
-# 2. Management Access Validation
+# 2. Management Access
 
-## Objective
+## What We Are Testing
 
-Confirm that plant management retains required visibility without inherited process-control authority.
+Management still needs plant visibility.
 
-## Validation Activities
+Management does not need to become another operator station.
 
-Verify that the management role can:
+## Validation
 
-* View approved plant status
+Confirm that the management role can:
+
+* View plant status
 * Review selected alarms
-* Access approved reporting information
-* Review historical or trend data where required
+* See equipment condition
+* Review performance information
+* Access approved historical data
 
-Verify that the management role cannot:
+Confirm that the management role cannot:
 
-* Issue start or stop commands
-* Modify supervisory setpoints
-* Change plant sequencing
+* Start or stop equipment
+* Change process setpoints
+* Modify sequencing
 * Perform engineering functions
 * Reach controllers directly
 
 ## Expected Result
 
-The business requirement for plant visibility remains available while unnecessary command capability is removed.
+The manager still gets the information needed to manage.
+
+The ability to interfere with plant operation is removed unless a separate operational requirement can actually justify it.
 
 ---
 
-# 3. Vendor Remote-Access Validation
+# 3. Vendor Remote Access
 
-## Objective
+## What We Are Testing
 
-Confirm that all approved third-party remote access follows the governed target-state pathway.
+All remote vendor access should use the target-state path.
 
-## Validation Activities
+The old VPN should be gone.
 
-Verify that:
+## Validation
 
-* The historical vendor VPN is disabled or removed
-* Vendor remote sessions terminate through the approved remote-access gateway
-* Remote users must traverse the privileged jump host before reaching authorized OT systems
-* Sessions are limited to approved destinations
-* Authentication events are logged
-* Session activity is visible to monitoring systems
-* Vendor access can be disabled when no longer required
+Confirm that:
+
+* The historical vendor VPN has been disabled or removed
+* Vendors authenticate through the approved remote-access service
+* Remote sessions terminate in the OT DMZ
+* Vendors pass through the jump host before reaching OT assets
+* Access is limited to approved destinations
+* Sessions are logged
+* Authentication events are visible
+* Access can be disabled when the work is complete
+* Old credentials no longer provide an alternate path
 
 ## Expected Result
 
-No recognized vendor support pathway bypasses the controlled remote-access architecture.
+There is one recognized remote-support model.
+
+A vendor should not have a second route into the plant simply because somebody forgot it existed.
 
 ---
 
-# 4. Engineering Access Validation
+# 4. Engineering Access
 
-## Objective
+## What We Are Testing
 
-Confirm that the engineering workstation retains necessary high-privilege capability without unrestricted OT reachability.
+The engineering workstation still needs to be powerful.
 
-## Validation Activities
+What it no longer needs is unlimited reach.
 
-Test access to:
+## Validation
 
-* Authorized PLCs
+Confirm that the workstation can reach:
+
+* Approved PLCs
 * Required BACnet controllers
-* Approved infrastructure systems
+* Approved network or infrastructure systems
 * Recovery and configuration resources
 
-Verify that the workstation cannot reach unrelated systems for which no engineering requirement exists.
+Confirm that it cannot reach unrelated systems with no engineering requirement.
 
-Where practical, confirm that administrative activity is logged and attributable to an authorized user or maintenance event.
+Where practical, engineering activity should also be attributable to an authorized user or maintenance event.
 
 ## Expected Result
 
-Engineering capability remains available but is constrained to documented operational requirements.
+The engineering function remains intact, but a compromised engineering workstation has fewer places to go.
+
+That is the control objective.
 
 ---
 
-# 5. Historian and Data-Flow Validation
+# 5. Historian and Data Flow
 
-## Objective
+## What We Are Testing
 
-Confirm that operational data can be consumed by enterprise users without requiring direct access to the primary OT environment.
+Operations should keep a useful local historian.
 
-## Validation Activities
+Enterprise users should get the data they need without reaching into the plant network.
 
-Verify that:
+## Validation
 
-* The OT historian or data collector receives required process information
-* Approved datasets replicate to the DMZ reporting or historian service
+Confirm that:
+
+* The OT historian or collector receives required process data
+* Operators and engineering personnel retain access to operational history
+* Approved datasets replicate to the DMZ reporting service
 * Enterprise users query the DMZ service rather than the OT historian
-* Replication direction and allowed services match the intended architecture
-* Failure of the enterprise-facing reporting service does not interrupt plant control
-* Failure of the replication path does not interrupt local historian collection
+* Replication follows the intended direction and approved services
+* Failure of the enterprise reporting service does not affect plant control
+* Failure of the replication path does not stop local historical collection
 
 ## Expected Result
 
-Operational reporting remains available while enterprise data consumption is separated from control-system access.
+Operations keeps its historian.
+
+The business gets its data.
+
+Neither requirement has to borrow the other one's trust.
 
 ---
 
-# 6. Legacy MS/TP Containment Validation
+# 6. Legacy MS/TP Containment
 
-## Objective
+## What We Are Testing
 
-Confirm that operationally necessary legacy MS/TP devices remain functional while exposure around their gateways is reduced.
+The MS/TP devices still have to feed the plant logic.
 
-## Validation Activities
+The target state is supposed to reduce exposure around them, not break them.
 
-Verify that:
+## Validation
 
-* BACnet/IP-to-MS/TP gateways communicate only with required control systems
-* Enterprise endpoints cannot access the gateways directly
-* Remote vendor sessions cannot access MS/TP networks unless specifically authorized
-* Required differential-pressure, temperature, flow, status, and permissive values continue reaching plant logic
-* Loss of an MS/TP trunk produces the expected alarms or degraded behavior
-* Restoration of the trunk returns the system to expected operation
+Confirm that:
+
+* BACnet/IP-to-MS/TP gateways communicate with the controllers that actually need them
+* Enterprise systems cannot directly reach the gateways
+* General remote vendor access cannot directly reach the field networks
+* Required differential-pressure values still reach the control logic
+* Required RTD values still reach the control logic
+* Flow, status, and permissive information remains available
+* A trunk failure generates the expected alarms or degraded behavior
+* Restoration returns the system to normal operation
 
 ## Expected Result
 
-Legacy field networks continue supporting automatic plant control without remaining broadly exposed to unrelated network zones.
+The legacy field networks keep doing their job.
+
+They simply stop being easier to reach than they need to be.
 
 ---
 
-# 7. Passive Monitoring and Anomaly Detection Validation
+# 7. Passive Monitoring and Anomaly Detection
 
-## Objective
+## What We Are Testing
 
-Confirm that monitoring improves visibility without introducing unacceptable traffic or process interference.
+The monitoring layer should improve visibility without becoming another source of traffic or instability.
 
-## Validation Activities
+In OT, that distinction matters.
 
-Verify monitoring visibility into:
+## Validation
 
-* New or unexpected BACnet devices
-* New communication relationships
-* Unexpected protocol use
+Confirm visibility into:
+
+* New BACnet devices
+* Unexpected communication pairs
+* Unusual protocol activity
 * Abnormal traffic volume
-* Unexpected controller-to-gateway behavior
+* Unexpected gateway behavior
 * Remote-access events
 * Administrative activity
 * Significant deviations in process values
 
-Create controlled test conditions where appropriate, such as:
+Controlled test conditions can be used where safe and appropriate, such as:
 
 * An unauthorized test endpoint attempting communication
-* A simulated unexpected connection attempt
-* A known maintenance event
-* A deliberately changed process value within safe testing limits
+* A known rejected connection attempt
+* A planned maintenance event
+* A controlled process change within safe operating limits
 
-Confirm that cybersecurity observations can be correlated with normal plant operating context.
+The monitoring should also be compared against actual plant conditions.
+
+A strange data point is not automatically a cyber event.
+
+It may be:
+
+* A failed sensor
+* Instrument drift
+* Calibration error
+* Maintenance activity
+* A process upset
+* A perfectly legitimate operating transition
 
 ## Expected Result
 
-Abnormal activity can be identified without disrupting sensitive OT communications.
+The monitoring layer improves situational awareness without interfering with normal control traffic.
+
+Security personnel gain better visibility, but operator and controls knowledge remains part of the interpretation.
 
 ---
 
-# 8. Maintenance Access Validation
+# 8. Maintenance Access
 
-## Objective
+## What We Are Testing
 
-Confirm that required equipment-level troubleshooting remains possible without granting mobile devices broad OT access.
+Maintenance still has to work.
 
-## Validation Activities
+That includes direct service-port access where the equipment requires it.
 
-Verify that:
+## Validation
 
-* Company maintenance laptops can connect to approved equipment service ports
-* Vendor laptops can connect only during approved maintenance activity
-* Direct service connections do not automatically provide general OT network access
-* Temporary vendor access is removed at completion of the task
+Confirm that:
+
+* Company maintenance laptops can reach approved service interfaces
+* Vendor laptops can connect during approved service activity
+* Those connections do not automatically expose the broader OT network
+* Access is limited to the equipment being serviced
+* Temporary vendor access is removed when the task is complete
 * Maintenance activity is documented where appropriate
 
 ## Expected Result
 
-Specialized troubleshooting capability is preserved while temporary endpoints remain constrained to their intended maintenance function.
+Technicians can still troubleshoot and recover equipment.
+
+The maintenance path stays a maintenance path instead of becoming a general-purpose OT connection.
 
 ---
 
-# 9. Local and Degraded Operation Validation
+# 9. Local and Degraded Operation
 
-## Objective
+## What We Are Testing
 
-Confirm that cybersecurity controls do not eliminate the plant's ability to operate during supervisory-system impairment.
+The target architecture must not remove the plant's ability to operate when SCADA/BAS is unavailable.
 
-## Validation Activities
+This is one of the most important operational checks in the entire redesign.
 
-Where operationally safe and authorized, confirm that:
+## Validation
 
-* PLCs maintain appropriate local logic if SCADA/BAS communications are unavailable
-* Local equipment controls remain functional
-* The central physical control board remains available
-* Operators can maintain a reduced but coordinated plant configuration
-* Supervisory-system restoration does not create unexpected process behavior
+Where safe and authorized, confirm that:
+
+* PLCs continue executing appropriate local logic
+* Local equipment controls remain available
+* The central physical control board remains usable
+* Operators can run a reduced but coordinated plant configuration
+* Manual/local operation does not depend on enterprise systems
+* Restoring supervisory control does not introduce unexpected process behavior
 
 ## Expected Result
 
-Loss of centralized supervisory capability does not automatically result in complete loss of physical plant control.
+Loss of supervisory capability is still a serious event.
+
+It is not automatically a total loss of the plant.
+
+That distinction should survive the cybersecurity redesign.
 
 ---
 
-# 10. Governance Validation
+# 10. Governance and Ownership
 
-## Objective
+## What We Are Testing
 
-Confirm that administrative responsibility is explicit rather than dependent on informal institutional knowledge.
+The target state is supposed to eliminate the kind of ownership ambiguity that allows old accounts, VPNs, firewall rules, and access paths to survive indefinitely.
 
-## Validation Activities
+## Validation
 
-Verify that ownership is assigned for:
+Confirm that somebody is clearly accountable for:
 
-* Network boundaries
+* OT network boundaries
 * Firewall policy
 * Controller administration
 * Engineering workstation administration
 * Vendor access approval
-* Account lifecycle management
+* Account lifecycle
 * Asset inventory
 * Monitoring
-* Backups
+* Backup and recovery
 * Configuration management
 * Incident coordination
 * System retirement
 
-Verify that legacy access paths discovered during assessment have an assigned disposition:
+Legacy access paths discovered during assessment should also have a documented disposition:
 
-* Retain and govern
+* Keep and govern
 * Replace
 * Disable
 * Remove
 
 ## Expected Result
 
-Critical cybersecurity responsibilities have identifiable owners and do not depend solely on individual memory or tenure.
+The environment no longer depends on institutional memory to explain who owns a critical connection or security decision.
+
+Shared responsibility is fine.
+
+Undefined responsibility is not.
 
 ---
 
 # Validation Evidence
 
-A real implementation should retain evidence sufficient to demonstrate that controls were tested and behaved as intended.
+A real implementation should retain enough evidence to show that the controls were actually tested.
 
-Representative evidence may include:
+That may include:
 
-* Approved network diagrams
-* Firewall-rule review records
+* Updated network diagrams
+* Firewall-rule reviews
 * Access-control test results
+* Authentication logs
 * Remote-access logs
-* Authentication records
 * Monitoring alerts
-* Historian replication test results
+* Historian replication tests
 * Backup and recovery records
-* Maintenance-access documentation
+* Maintenance records
 * Configuration baselines
 * Asset inventories
 * Change records
 * Operator acceptance testing
 
-This case study does not generate production evidence but identifies the evidence that would be expected during implementation.
+This case study does not claim to produce live production evidence.
+
+It defines the evidence that should exist if the target architecture were implemented.
 
 ---
 
 # Residual Risk
 
-The target architecture reduces several significant legacy risks but does not eliminate risk.
+The target architecture reduces a lot of unnecessary exposure.
 
-Important residual risks include:
+It does not remove risk from the plant.
 
-## Privileged Engineering Systems
+That would not be a credible claim.
 
-The engineering workstation remains capable of making consequential changes to authorized control systems.
+## Engineering Systems
 
-Segmentation reduces reachability but does not remove the risk of compromise or misuse of a legitimately privileged asset.
+The engineering workstation remains one of the most powerful systems in the environment.
+
+Segmentation limits what it can reach.
+
+It does not change the fact that an authorized engineering session can make consequential changes to the systems it is allowed to manage.
 
 ---
 
-## Authorized Vendor Access
+## Vendor Access
 
-Remote vendor access remains a potentially high-impact pathway.
+Approved vendor access remains a third-party risk.
 
-Even when governed through a jump host and monitored gateway, compromise of authorized credentials or misuse during a legitimate session remains possible.
+A jump host, better authentication, and logging make that access easier to control and observe.
+
+They do not make a compromised vendor credential harmless.
 
 ---
 
 ## Legacy Field Devices
 
-BACnet MS/TP devices continue operating with limited native security capabilities.
+The MS/TP devices still have limited native security capability.
 
-Their risk is reduced primarily through containment, gateway control, monitoring, and operational procedures rather than through security functionality on the devices themselves.
+Their protection depends heavily on:
+
+* Gateway containment
+* Segmentation
+* Monitoring
+* Process awareness
+* Physical access controls
+* Operational procedures
+
+That is a compensating-control model, not a claim that the legacy devices themselves became secure.
 
 ---
 
 ## Boundary Configuration
 
-Firewalls, access rules, routing policies, and segmentation controls can be misconfigured.
+Firewalls and segmentation only work as well as their configuration.
 
-The target architecture therefore depends on accurate configuration, change control, and periodic review.
+Bad rules, temporary exceptions, poor change control, or stale access can gradually rebuild the same broad trust the target architecture was meant to remove.
+
+That means the rulebase itself becomes something that needs to be reviewed over time.
 
 ---
 
-## Monitoring Limitations
+## Monitoring Limits
 
-Anomaly detection may identify unusual behavior without immediately establishing whether the cause is:
+Anomaly detection is useful.
 
-* Cyber compromise
-* Equipment failure
-* Instrument drift
-* Calibration error
-* Maintenance activity
-* Legitimate process transition
+It is not magic.
 
-Cybersecurity monitoring therefore requires operational context and qualified interpretation.
+OT behavior changes for plenty of legitimate reasons, and a tool may not know the difference between a cyber event and a plant behaving strangely because a valve stuck or an RTD went bad.
+
+Monitoring has to be paired with operational context.
 
 ---
 
 ## Maintenance Activity
 
-Temporary direct service access creates an unavoidable period of elevated exposure.
+Direct service work creates temporary exposure by design.
 
-The risk can be managed but not completely removed when specialized maintenance requires direct connection to equipment.
+That risk can be reduced through scope, supervision, endpoint requirements, and access control.
+
+It cannot be completely eliminated while still allowing technicians and vendors to service equipment.
 
 ---
 
 ## Governance Drift
 
-Access models, vendor relationships, personnel, equipment, and business requirements will change over time.
+This may be the easiest residual risk to underestimate.
 
-A secure architecture can gradually return to a legacy condition if:
+Architectures age.
 
-* Old accounts are not removed
-* Temporary paths become permanent
-* Firewall exceptions accumulate
-* Documentation becomes outdated
-* Ownership becomes unclear
+People change jobs. Vendors change. Equipment gets replaced. Temporary exceptions become permanent. Documentation falls behind. Somebody opens a firewall rule to get through a maintenance window and nobody closes it.
 
-Periodic review is therefore necessary to preserve the intended security posture.
+That is how the target state eventually becomes the next legacy state.
+
+Periodic review is therefore part of maintaining the architecture, not an optional administrative exercise.
 
 ---
 
 # Validation Conclusion
 
-The target-state architecture should be considered successful only if it demonstrates both:
+The target architecture should only be considered successful if it delivers both:
 
-**Reduced Cybersecurity Exposure**
+> **Less cybersecurity exposure**
+
 and
-**Preserved Operational Capability**
 
-The validation strategy therefore emphasizes segmentation, access control, monitoring, governed remote access, legacy-system containment, and continued local plant operation.
+> **A plant that still works**
 
-Residual risk remains, particularly around privileged users, vendors, legacy devices, and configuration management.
+The validation approach checks segmentation, privilege, remote access, engineering reachability, data flow, legacy-device containment, monitoring, maintenance, manual operation, and ownership.
 
-The objective is not zero risk.
+The remaining risk is not ignored or hidden behind the architecture.
 
-The objective is a plant architecture in which remaining risks are **visible, constrained, governed, and operationally understood**.
+It is identified and managed.
+
+The end state is not zero risk.
+
+It is a plant where the remaining risks are more visible, more constrained, and much harder to turn into uncontrolled access across the environment.
