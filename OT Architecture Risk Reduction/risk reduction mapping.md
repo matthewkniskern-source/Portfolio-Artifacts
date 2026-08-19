@@ -2,195 +2,202 @@
 
 ## Purpose
 
-This document maps the principal legacy cybersecurity findings to the target-state architecture and identifies the expected reduction in risk.
+This page maps each major legacy risk to the target-state control intended to reduce it.
 
-The purpose is not to claim that the redesigned environment eliminates cyber risk.
+The goal is not to claim that the redesign eliminates cyber risk.
 
-Instead, the analysis demonstrates how specific architecture and governance decisions reduce unnecessary trust, privilege, exposure, and attack-path reachability while preserving required plant functionality.
+The goal is to show that each architecture change has a reason, addresses a specific problem, and produces a measurable reduction in exposure while keeping the plant operable.
 
-Supporting analysis is available in:
+Supporting detail is available in:
 
 * [Legacy Risk Findings](legacy%20risk%20findings.md)
 * [NIST Alignment](nist%20alignment.md)
 * [Target Architecture](target%20architecture.md)
+* [Validation and Residual Risk](validation%20and%20residual%20risk.md)
 
 ---
 
 # Risk Reduction Summary
 
-| Finding                                                     | Legacy Condition                                                                                                         | Target-State Change                                                                                                                          | Expected Risk Reduction                                                                                                     | Residual Risk                                                                                                            |
-| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| **LR-01 — Broadly Trusted OT Network**                      | Supervisory, engineering, historian, controller, and gateway systems share broad internal reachability                   | Separate enterprise, DMZ, supervisory, engineering, and control security zones with explicitly permitted communication paths                 | Reduces lateral movement opportunities and limits the blast radius of endpoint compromise                                   | Required cross-zone communications remain potential attack paths and depend on correct rule configuration and monitoring |
-| **LR-02 — Excess Management Supervisory Privilege**         | Enterprise-connected management workstation can issue supervisory commands beyond its legitimate business need           | Replace direct control-capable access with read-oriented reporting and plant visibility                                                      | Removes unnecessary command authority and reduces enterprise-originating control exposure                                   | Compromised management or reporting accounts may still expose operational information                                    |
-| **LR-03 — Persistent Legacy Vendor VPN**                    | Historical vendor VPN remains functional outside the current recognized access model                                     | Retire legacy VPN and require external support to terminate in the OT DMZ through approved remote access and a privileged jump host          | Eliminates an unmanaged remote pathway and centralizes vendor access for authentication, authorization, logging, and review | Approved third-party access remains high privilege and continues to require strong lifecycle governance                  |
-| **LR-04 — Broad Engineering Workstation Reachability**      | Engineering workstation has high privilege and broad controller reachability within the flat OT environment              | Place engineering functions in a separate zone and permit only explicitly authorized paths to required controllers and infrastructure        | Limits the number of assets reachable from a highly privileged workstation and reduces consequences of compromise           | The engineering workstation remains capable of making consequential controller changes to authorized systems             |
-| **LR-05 — Mobile and Third-Party Maintenance Endpoints**    | Company and vendor laptops may connect directly to equipment despite materially different security postures              | Restrict mobile devices to approved local service interfaces and distinguish company-managed from externally managed endpoints               | Reduces the chance that temporary maintenance access becomes broad OT network access                                        | Direct connection to critical equipment still creates exposure during authorized maintenance activities                  |
-| **LR-06 — Historian Within Broad OT Trust Zone**            | Enterprise data demand places pressure on a historian located within the same broad trust environment as control systems | Retain an OT-side historian/collector while replicating approved data to a DMZ reporting or historian service                                | Separates business data consumption from direct OT access and reduces pressure to expose the control environment            | Replication services create a controlled but still significant cross-boundary dependency                                 |
-| **LR-07 — Legacy MS/TP Process Dependencies**               | Operationally required legacy MS/TP devices provide process inputs used by automatic plant logic                         | Contain MS/TP gateways, restrict gateway reachability, prohibit direct enterprise/vendor access, and add passive/anomaly-oriented monitoring | Reduces exposure without disrupting legacy process instrumentation or forcing premature replacement                         | Legacy serial devices remain limited in native security capability and continue to require compensating controls         |
-| **LR-08 — Ambiguous IT/OT/Vendor Administrative Ownership** | Responsibility is shared across operations, controls, IT, and vendors without consistently defined ownership             | Define ownership for network boundaries, accounts, remote access, monitoring, configuration, inventory, and incident coordination            | Reduces gaps caused by unclear responsibility and dependence on informal institutional knowledge                            | Governance effectiveness still depends on documentation, review, staffing, and sustained organizational discipline       |
+| Finding                                                  | Legacy Condition                                                                                             | Target-State Change                                                                                          | Expected Risk Reduction                                                                     | Residual Risk                                                                                    |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| **LR-01 — Broadly Trusted OT Network**                   | Supervisory, engineering, historian, controller, and gateway systems share broad internal reachability       | Separate enterprise, DMZ, supervisory, engineering, and control zones with explicitly permitted paths        | Reduces lateral movement and limits blast radius after endpoint compromise                  | Required cross-zone traffic still creates attack paths and depends on correct rule configuration |
+| **LR-02 — Excess Management Supervisory Privilege**      | Enterprise-connected management workstation can issue commands beyond its actual business need               | Replace direct supervisory control with read-oriented plant visibility                                       | Removes unnecessary command authority and reduces enterprise-originating control exposure   | Management accounts and reporting systems still expose operational information                   |
+| **LR-03 — Persistent Legacy Vendor VPN**                 | Historical vendor VPN remains technically available outside the current recognized access model              | Retire the legacy VPN and require approved remote access through the OT DMZ and jump host                    | Removes an unmanaged remote path and centralizes authentication, logging, and access review | Approved vendor access remains privileged and must still be governed                             |
+| **LR-04 — Broad Engineering Workstation Reachability**   | Engineering workstation has high privilege and broad controller access                                       | Place engineering in a separate zone and allow only approved controller and infrastructure paths             | Reduces the number of systems reachable from a compromised engineering workstation          | The workstation still retains legitimate high-impact capability on approved systems              |
+| **LR-05 — Mobile and Third-Party Maintenance Endpoints** | Company and vendor laptops connect directly to equipment with different security postures                    | Limit mobile devices to approved local service interfaces and approved maintenance tasks                     | Reduces the chance that temporary maintenance access becomes broad OT access                | Direct equipment connection still creates temporary exposure                                     |
+| **LR-06 — Historian Within Broad OT Trust Zone**         | Enterprise reporting demand pushes access toward an OT historian located inside the control environment      | Keep an OT-side historian or collector and replicate approved data to a DMZ reporting service                | Separates business data use from direct OT access                                           | Replication remains a controlled cross-boundary dependency                                       |
+| **LR-07 — Legacy MS/TP Process Dependencies**            | Operationally required MS/TP devices feed process inputs into automatic plant logic                          | Contain gateways, restrict reachability, block unrelated access, and add passive/anomaly-oriented monitoring | Reduces exposure without forcing premature replacement of working field devices             | Legacy devices still have limited native security and require compensating controls              |
+| **LR-08 — Ambiguous IT/OT/Vendor Ownership**             | Responsibility is shared across operations, controls, IT, and vendors without consistently defined ownership | Define ownership for access, boundaries, monitoring, configuration, inventory, and incident coordination     | Reduces gaps caused by unclear responsibility and institutional knowledge                   | Governance can drift if ownership and documentation are not maintained                           |
 
 ---
 
-# Architecture-Level Risk Reduction
+# Architecture-Level Change
 
-The target state changes the trust model of the environment.
+The legacy environment mostly works on this assumption:
 
-The legacy architecture largely assumes:
+> **Connected to OT → Broadly trusted**
 
-**Connected to OT → Broadly trusted**
+The target state replaces that with:
 
-The target architecture instead assumes:
+> **Operational requirement → Explicitly permitted access**
 
-**Operational requirement → Explicitly permitted communication**
+That one change drives most of the risk reduction in the project.
 
-This change reduces the number of systems and users that can reach high-consequence OT assets simply because they are connected to an adjacent network.
+It means:
 
-The primary architectural improvements are:
-
-* Reduced enterprise-to-OT reachability
-* Controlled IT/OT boundary crossings
-* Separation of operator and engineering functions
-* Explicitly authorized engineering access
-* Consolidated vendor remote access
-* Removal of inherited management command authority
-* Separation of enterprise reporting from primary OT data services
-* Containment of legacy field-network gateways
-* Increased visibility into abnormal communications
-* Preservation of manual and degraded operating capability
+* Enterprise users do not reach control assets directly
+* Managers get visibility without inheriting operator authority
+* Vendors enter through one governed remote-access path
+* Engineering retains high privilege without universal reachability
+* Historian data can leave OT without dragging enterprise users into OT
+* Legacy gateways remain useful without being broadly exposed
+* Maintenance access stays practical without becoming permanent trust
 
 ---
 
 # Attack-Path Reduction
 
-The target architecture does not assume that initial compromise can always be prevented.
+The target architecture is not designed around the assumption that compromise can always be prevented.
 
-Instead, several design decisions reduce what an attacker or compromised account can reach after gaining access to one part of the environment.
+It is designed so that compromise of one system does not automatically expose everything around it.
 
-## Example: Enterprise Workstation Compromise
+## Enterprise Workstation
 
-**Legacy condition:**
+**Legacy:**
 
 Enterprise workstation
 → Existing OT access
-→ Broad OT network
+→ Broad OT environment
 → Supervisory or control assets
 
-**Target state:**
+**Target:**
 
 Enterprise workstation
 → Enterprise / DMZ boundary
-→ Approved DMZ service
+→ Approved intermediary service
 → No direct controller path
 
-The target state therefore reduces the ability of an ordinary enterprise compromise to become a direct control-system compromise.
+The enterprise endpoint can still be compromised.
+
+What changes is how far that compromise can travel.
 
 ---
 
-## Example: Vendor Credential Compromise
+## Vendor Credential
 
-**Legacy condition:**
+**Legacy:**
 
-Compromised vendor credential
-→ Legacy or recognized remote pathway
+Vendor credential
+→ Recognized or legacy remote path
 → OT environment
 
-**Target state:**
+**Target:**
 
-Compromised vendor credential
+Vendor credential
 → Approved remote-access gateway
-→ Privileged jump host
+→ Jump host
 → Explicitly authorized destination
 
-The credential remains valuable, but its usable path is narrower and more observable.
+The credential still has value.
+
+The path is narrower, more visible, and easier to revoke.
 
 ---
 
-## Example: Engineering Workstation Compromise
+## Engineering Workstation
 
-**Legacy condition:**
+**Legacy:**
 
 Engineering workstation
-→ Broadly trusted OT network
+→ Broad OT network
 → Multiple controller and supporting systems
 
-**Target state:**
+**Target:**
 
 Engineering workstation
-→ Engineering security zone
+→ Engineering zone
 → Explicitly allowed controller paths
 
-The workstation remains a high-value target, but the architecture reduces unnecessary reachability beyond its approved engineering function.
+The workstation remains powerful because it has to be.
+
+The architecture simply stops treating that power as a reason for unrestricted reachability.
 
 ---
 
-# Legacy Technology Treatment
+# Legacy Technology
 
-The target state does not equate legacy technology with unacceptable technology.
+The target state does not solve legacy OT risk by pretending old devices can disappear overnight.
 
-The BACnet MS/TP devices remain operationally necessary because they supply process information used during automatic plant operation.
+BACnet MS/TP field devices still provide process values used by automatic plant logic.
 
-Risk is therefore reduced around them through:
+The risk-reduction strategy around them is:
 
-* Gateway isolation
-* Restricted IP-side reachability
-* Controlled communication paths
-* Removal of enterprise and remote-vendor exposure
-* Passive network monitoring
-* Behavioral and process-data review
-* Preservation of local/manual operating alternatives
+* Restrict who can reach the gateways
+* Prevent direct enterprise and vendor access
+* Keep the field networks inside defined trust boundaries
+* Monitor BACnet/IP-side behavior where practical
+* Use process context to help identify abnormal conditions
+* Preserve local/manual operating capability
 
-This approach acknowledges that cybersecurity improvements in OT often require compensating controls rather than immediate replacement.
+The design reduces exposure around the devices even when the devices themselves cannot support modern endpoint controls.
 
 ---
 
-# Availability and Operational Risk
+# Operational Tradeoff
 
-Cybersecurity risk reduction is not considered successful if the control itself creates unacceptable operational risk.
+A control is only useful if the plant can still run.
 
-The target-state architecture therefore preserves:
+The target state therefore preserves:
 
 * Required BACnet communications
-* Automatic controller operation
-* Operator HMI functionality
-* Authorized engineering access
-* Equipment service capability
-* Vendor maintenance where necessary
-* Local equipment controls
+* Operator HMI access
+* Engineering functions
+* Historian availability
+* Vendor maintenance
+* Equipment-level service access
+* Local controller logic
 * Central physical-board operation
-* Degraded/manual plant operation
+* Degraded/manual operation
 
-The design intentionally avoids treating isolation as the same thing as security.
+The objective is not maximum isolation.
+
+It is **enough isolation to reduce unnecessary risk without breaking required operations**.
 
 ---
 
 # Residual Risk
 
-The target architecture materially reduces several legacy risk conditions but does not eliminate them.
+The redesign still leaves real risk.
 
-Principal residual risks include:
+That includes:
 
-* Compromise of authorized high-privilege engineering systems
-* Misuse or compromise of approved vendor credentials
-* Configuration errors in firewall or segmentation rules
-* Vulnerabilities in DMZ intermediary systems
-* Exposure introduced during authorized maintenance activity
-* Limited native security capabilities of legacy field devices
-* Failure to maintain accurate asset and access inventories
-* Governance controls becoming outdated as personnel and vendors change
-* Monitoring systems failing to distinguish cyber anomalies from legitimate process behavior
+* High-value engineering systems
+* Approved vendor credentials
+* Firewall and segmentation misconfiguration
+* DMZ intermediary compromise
+* Maintenance activity
+* Legacy device limitations
+* Monitoring false positives and false negatives
+* Outdated inventories
+* Governance drift
 
-These risks require continued technical and governance controls rather than further architectural segmentation alone.
+Those risks are not architecture failures.
+
+They are the remaining risks that still have to be managed after the architecture has done what it can.
+
+For a deeper treatment, see [Validation and Residual Risk](validation%20and%20residual%20risk.md).
 
 ---
 
-# Risk Reduction Conclusion
+# Bottom Line
 
-The target-state architecture reduces risk primarily by limiting unnecessary trust.
+The target state does not make the plant invulnerable.
 
-The redesigned environment does not depend on wholesale equipment replacement or elimination of legitimate operational capabilities.
+It makes compromise harder to spread.
 
-Instead, it introduces:
+It removes access that is no longer justified, narrows high-privilege paths, separates business requirements from control authority, and gives legacy systems protection they cannot provide for themselves.
 
-**Segmentation → Explicit Access → Controlled Intermediation → Reduced Privilege → Improved Visibility → Defined Ownership**
+That is the core risk-reduction outcome:
 
-The resulting architecture remains operationally recognizable as the same central utility plant while materially reducing the number of pathways through which a compromise can affect higher-consequence control functions.
+> **Less unnecessary trust. Smaller blast radius. Better visibility. Same plant.**
