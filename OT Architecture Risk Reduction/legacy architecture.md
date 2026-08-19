@@ -2,52 +2,65 @@
 
 ## Purpose
 
-This document defines the effective legacy architecture of the reference central utility plant.
+This document describes the effective legacy architecture of the reference central utility plant.
 
-The environment represents an operationally functional industrial network that developed over time around availability, maintainability, equipment compatibility, and business convenience rather than around a modern cybersecurity architecture.
+The plant works. That matters.
 
-The legacy state is not intentionally insecure. Many of its weaknesses result from accumulated trust relationships, inherited technology, changing business requirements, and incomplete retirement of older access methods.
+The legacy environment is not presented as a deliberately weak network or a collection of obviously bad decisions. It developed over time around uptime, maintainability, vendor support, equipment compatibility, and day-to-day convenience.
+
+The cybersecurity problem is what accumulated around those requirements.
 
 ---
 
 # Architecture Overview
 
-The plant uses a predominantly BACnet-based supervisory and control environment.
+The plant uses a predominantly BACnet-based control environment.
 
-BACnet/IP provides the primary communications backbone between supervisory systems, operator workstations, engineering resources, controllers, and supporting systems.
+BACnet/IP provides the main supervisory and control backbone between operator workstations, the SCADA/BAS server, engineering resources, controllers, and supporting systems.
 
-A number of operationally important legacy devices remain connected through BACnet MS/TP networks.
+Several operationally important field devices remain on BACnet MS/TP networks.
 
-The result is a hybrid architecture containing modern Ethernet/IP communications alongside legacy serial field networks that continue to support automatic plant operation.
+That gives the plant a hybrid architecture:
 
-From a cybersecurity perspective, the OT environment remains largely flat and broadly trusted.
+* Modern IP-based supervisory communications
+* Legacy serial field networks
+* High-privilege engineering access
+* Local maintenance connections
+* Business-facing access requirements
+* Remote vendor support
+
+From an operating standpoint, this is workable.
+
+From a cybersecurity standpoint, too much of it lives inside one broad trust model.
 
 ---
 
 # Primary OT Network
 
-The principal OT network supports:
+The main OT network includes:
 
 * SCADA/BAS server
 * Operator HMI Station 1
 * Operator HMI Station 2
 * Permanent engineering workstation
 * OT historian
-* BACnet/IP controllers
+* BACnet/IP plant controllers
 * BACnet routers and supervisory controllers
-* Supporting OT network infrastructure
+* Supporting OT switching and network infrastructure
 
-These assets share a broadly trusted plant control environment with limited internal security separation.
+These systems have different jobs and different privilege levels, but the legacy architecture does not strongly separate them.
 
-Access decisions historically rely heavily on an assumption that systems already connected to the OT network are authorized to communicate with other plant systems.
+Once a system is inside the OT environment, it can generally reach more of the plant than its specific function requires.
+
+That is the core architectural weakness.
 
 ---
 
 # BACnet/IP Control Backbone
 
-BACnet/IP is the primary protocol used for plant supervisory and controller communications.
+BACnet/IP carries most of the plant's supervisory and control traffic.
 
-The BACnet/IP environment supports:
+That includes:
 
 * Process values
 * Equipment status
@@ -56,84 +69,99 @@ The BACnet/IP environment supports:
 * Supervisory setpoints
 * Plant sequencing
 * Trend data
-* Controller-to-controller information exchange
+* Controller-to-controller information
 
-The network allows the SCADA/BAS platform and authorized workstations to interact with plant controllers and supporting systems.
+The network was built for interoperability and operations first.
 
-Because the environment developed primarily around operational interoperability, communications between OT assets are more permissive than would be expected in a purpose-built segmented cybersecurity architecture.
+That is not inherently wrong.
+
+The problem is that the same openness that makes systems easy to integrate also creates broader reachability than a modern OT security design would normally accept.
 
 ---
 
 # Legacy BACnet MS/TP Networks
 
-Multiple BACnet MS/TP trunks remain in active service within the plant.
+Multiple BACnet MS/TP trunks remain in active service.
 
-These serial networks primarily support legacy field-level sensing and interface devices that provide process information to the main BACnet/IP control environment.
+These networks are used primarily for field-level sensing and interface devices that feed information into the main BACnet/IP control environment.
 
-Representative MS/TP-connected devices may include:
+Representative devices include:
 
-* Differential-pressure sensing interfaces
-* RTD temperature sensing interfaces
-* Legacy temperature and pressure input modules
-* Flow or status interfaces
-* Field I/O devices
-* Other low-bandwidth process-sensing components
+* Differential-pressure interfaces
+* RTD temperature inputs
+* Legacy pressure and temperature modules
+* Flow and status interfaces
+* Field I/O
+* Other low-bandwidth sensing components
 
-MS/TP communications traverse RS-485 serial networks and enter the broader BACnet/IP environment through BACnet routers, supervisory controllers, or similar gateway functions.
+The MS/TP networks use RS-485 serial communications and connect into the BACnet/IP environment through BACnet routers or supervisory controllers.
+
+The devices are old.
+
+They are also still useful.
+
+That distinction is important.
+
+---
 
 ## Operational Dependency
 
-The MS/TP-connected devices provide process values that are consumed by the primary plant control logic during automatic operation.
+The MS/TP devices provide process values used by the plant's automatic control logic.
 
-Representative inputs may include:
+Examples include:
 
 * Chilled-water differential pressure
 * Supply-water temperature
 * Return-water temperature
 * Condenser-water temperature
-* Pressure values
-* Flow-related measurements
-* Equipment status or permissive indications
+* Flow information
+* Equipment status
+* Permissive signals
 
-These values may be used for:
+Those values may drive:
 
-* Automatic pump-speed control
+* Pump-speed control
 * Chiller staging
 * Cooling-tower operation
 * Setpoint regulation
 * Equipment sequencing
 * Alarm generation
-* Operational permissives
 
-As a result, loss or degradation of an MS/TP segment may not immediately cause complete loss of plant operation, but it can impair automatic control by removing required process inputs.
+If an MS/TP trunk fails, the plant may not immediately stop.
 
-Depending on the affected measurement and control strategy, the plant may enter a degraded operating condition, generate alarms, fall back to predetermined control behavior, or require increased manual operator intervention.
+It may instead lose automatic inputs, fall back to defaults, generate alarms, or force the operator to take more direct control.
 
-The continued operational dependence on legacy MS/TP-connected field devices therefore represents both a reliability consideration and a cybersecurity modernization constraint.
+That is a more realistic failure mode and a more useful cybersecurity constraint.
+
+The serial devices cannot simply be removed from the design because they do not support modern security features.
 
 ---
 
 # Supervisory Access
 
-Two operator workstations provide access to the HMI/SCADA environment.
+Two operator workstations provide normal HMI/SCADA access.
 
-Both stations can:
+Both can:
 
 * Monitor plant conditions
 * Review alarms
 * View equipment states
-* Issue authorized operator commands
-* Modify permitted supervisory setpoints
+* Issue authorized commands
+* Adjust permitted supervisory setpoints
 
-The stations function as normal operational interfaces rather than as a formal primary/standby pair.
+They are active operating stations, not a formal primary/standby pair.
+
+Their job is to run the plant.
+
+They do not need to share the same trust assumptions as engineering systems simply because they sit in the same control room.
 
 ---
 
 # Engineering Access
 
-A permanent engineering workstation is located within the controlled-access plant control room.
+The permanent engineering workstation is located in the controlled-access plant control room.
 
-It provides high-privilege access for:
+It supports:
 
 * PLC programming
 * BACnet controller configuration
@@ -143,17 +171,21 @@ It provides high-privilege access for:
 * Configuration changes
 * Recovery activities
 
-The engineering workstation resides within the broadly trusted OT environment and can communicate with multiple controller systems.
+This is one of the most powerful systems in the environment.
 
-Its legitimate capabilities also make it one of the most consequential assets if compromised or misused.
+That is necessary.
+
+What is not necessary is giving that power broader network reachability than the engineering function requires.
+
+In the legacy design, those two things are largely bundled together.
 
 ---
 
 # Historian Placement
 
-The OT historian resides within the plant OT network.
+The OT historian resides inside the plant network.
 
-It receives operational information from the supervisory environment and supports:
+It supports:
 
 * Trend analysis
 * Troubleshooting
@@ -161,133 +193,164 @@ It receives operational information from the supervisory environment and support
 * Alarm investigation
 * Historical reporting
 
-Its location simplifies access to process information but also places a data-consumption system within the same broadly trusted environment as higher-criticality control functions.
+That makes sense from an operations standpoint.
 
-The appropriate location and data-transfer model for historical information will be reconsidered during target-state design.
+The problem appears when enterprise users also want that data.
+
+Instead of treating historian access as a separate information-sharing requirement, the legacy architecture makes it easier to extend access deeper into OT.
+
+The target state will separate those two needs.
 
 ---
 
 # Enterprise Interaction
 
-The OT environment is connected to the enterprise environment through an existing network boundary.
+The OT environment has a connection to the enterprise network through an existing perimeter boundary.
 
-The boundary provides some perimeter protection but does not create comprehensive internal separation between supervisory, engineering, historian, and controller functions.
+That boundary provides some protection, but it does not solve the internal trust problem.
 
-Selected enterprise users have historically been provided access to plant information and supervisory services.
+Once traffic is allowed into OT, there is limited separation between supervisory, engineering, historian, and controller functions.
+
+Selected enterprise users have also been given access to plant services over time.
+
+Again, the individual reasons are understandable.
+
+The accumulated result is the problem.
 
 ---
 
 # Management Access
 
-An enterprise-connected management workstation has access to the plant supervisory environment.
+An enterprise-connected management workstation can access the plant supervisory environment.
 
-The legitimate business requirement is visibility into current plant conditions.
+The legitimate requirement is straightforward:
 
-Over time, however, the associated account and client configuration accumulated permissions that also allow some supervisory control actions.
+Management wants to know what the plant is doing.
 
-This creates a distinction between:
+Over time, the associated account and client configuration accumulated enough privilege to issue some supervisory commands.
 
-**Required capability:** operational visibility.
+That is not a management requirement.
 
-**Inherited capability:** visibility plus unnecessary process-control authority.
+It is privilege drift.
 
-The access path therefore represents both an architecture issue and a privilege-governance issue.
+The distinction is:
+
+**Required:** visibility.
+
+**Inherited:** visibility plus unnecessary control authority.
+
+That becomes both a network-security issue and a governance issue.
 
 ---
 
 # Maintenance and Local Service Access
 
-Plant maintenance personnel use a company-issued laptop for direct connection to equipment service interfaces when required.
+Plant maintenance personnel use a company-issued laptop for direct connection to supported equipment when needed.
 
-Typical targets may include:
+That may include:
 
 * Chillers
-* Equipment controllers
 * VFDs
-* Manufacturer-specific diagnostic interfaces
+* Equipment controllers
+* Manufacturer diagnostic interfaces
 
-Vendor technicians may similarly connect vendor-owned laptops directly to supported machinery.
+Vendors may arrive with their own laptops and use the same type of local service connection.
 
-These direct service connections may be necessary for effective troubleshooting but introduce endpoints with different levels of organizational control into close proximity with critical equipment.
+Those connections are sometimes the fastest or only practical way to troubleshoot specialized machinery.
+
+The problem is not the existence of the service port.
+
+The problem is what level of trust is granted to the device using it.
+
+A company-managed laptop and a vendor-owned laptop should not automatically be treated the same way.
 
 ---
 
 # Vendor Remote Access
 
-Approved remote vendor support is available for selected systems when remote troubleshooting is required.
+Approved remote vendor support exists for selected systems.
 
-In addition to the currently recognized support mechanism, a historical vendor VPN pathway remains technically functional.
+That is useful when a specialist can diagnose a problem without waiting for someone to travel to the site.
 
-The legacy VPN was originally established for legitimate chiller-related support and remains known to a small number of long-tenured vendor personnel.
+The legacy environment also contains an older vendor VPN used for chiller-related support.
 
-It is no longer fully represented within the current recognized remote-access model.
+It was originally installed for a valid reason and still works.
 
-This creates uncertainty regarding:
+What is less clear is:
 
-* Current ownership
-* Credential lifecycle
-* Reachable assets
-* Authentication controls
-* Continuing necessity
-* Documentation
-* Monitoring
+* Who owns it now
+* Which accounts remain valid
+* What it can reach
+* Whether it is monitored
+* Whether it is still necessary
+* Whether current documentation accurately shows it
 
-The legacy VPN therefore represents part of the effective architecture even if it is absent from the formal architecture.
+A small number of long-tenured vendor personnel still know about the path.
+
+That makes it part of the real network whether or not it appears on the official drawing.
 
 ---
 
 # Local and Degraded Operation
 
-The plant is not entirely dependent on SCADA/BAS availability for physical operation.
+The plant is not completely dependent on SCADA/BAS for physical control.
 
-Controllers retain local process logic where appropriate, and operators have access to:
+Controllers retain local logic, and operators can use:
 
 * Equipment-mounted controls
 * Local control panels
 * Physical selector controls
 * Manufacturer interfaces
-* A central/local physical control board
+* The central physical control board
 
-An experienced operator can maintain a reduced but coordinated plant operating condition if centralized supervisory control is unavailable.
+An experienced operator can keep the plant in a reduced but coordinated operating condition if centralized supervisory control is unavailable.
 
-The loss of SCADA/BAS therefore represents a serious reduction in visibility and supervisory capability but does not inherently equal immediate loss of the physical plant.
+That may be uglier, slower, and more labor-intensive than normal operation.
+
+It is still operation.
+
+The distinction matters because cybersecurity controls should not accidentally remove the plant's ability to function when the network does not.
 
 ---
 
 # Legacy Architecture Characteristics
 
-The legacy environment can be summarized by the following characteristics:
+The legacy environment can be summarized as:
 
-* Predominantly BACnet/IP supervisory and control backbone
-* Operationally important BACnet MS/TP field-sensing networks supporting automatic plant control
-* Broadly trusted internal OT communications
-* Limited segmentation between supervisory and control functions
-* Historian located within the OT environment
-* Permanent high-privilege engineering workstation
-* Two full supervisory operator stations
-* Enterprise-connected management supervisory access
+* Predominantly BACnet/IP supervisory and control communications
+* Operationally important BACnet MS/TP field networks
+* Broad internal OT trust
+* Limited separation between supervisory and control functions
+* Historian inside the OT trust zone
+* Permanent high-privilege engineering access
+* Two active operator HMI stations
+* Enterprise-connected management access
 * Company and vendor maintenance laptops
 * Recognized vendor remote support
-* Persistent legacy vendor VPN
-* Shared IT, OT, maintenance, and vendor responsibilities
-* Local/manual operating capability during supervisory-system impairment
+* A persistent legacy vendor VPN
+* Shared responsibility across IT, OT, maintenance, and vendors
+* Local/manual plant operation during supervisory impairment
 
-These conditions establish the baseline for subsequent cybersecurity risk analysis.
+None of those points by itself defines the problem.
+
+The risk comes from how they interact.
 
 ---
 
 # Assessment Principle
 
-The objective of the target-state architecture will not be to eliminate legacy technology solely because it is old.
+The target state is not going to solve the legacy architecture by deleting everything old.
 
-The assessment will instead determine:
+The real questions are:
 
-* Which communications are operationally required
-* Which access paths are unnecessary
-* Where trust can be reduced
-* Where segmentation can limit exposure
-* Where legacy devices require compensating controls
-* How business and maintenance functionality can be preserved safely
-* How the plant can maintain availability while improving cybersecurity
+* Which communications are actually required?
+* Which access paths are still justified?
+* Where can trust be reduced?
+* Where does segmentation buy real risk reduction?
+* Which legacy devices need compensating controls instead of replacement?
+* How do we keep maintenance practical?
+* How do we preserve plant availability while tightening access?
 
-The legacy architecture therefore serves as the operational baseline rather than as a deliberately weak straw-man design.
+That is the standard the target architecture has to meet.
+
+The legacy environment is the operating baseline, not a straw man.
