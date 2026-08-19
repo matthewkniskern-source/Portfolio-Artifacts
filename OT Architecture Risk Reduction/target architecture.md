@@ -4,29 +4,39 @@
 
 This document defines the target-state cybersecurity architecture for the reference central utility plant.
 
-The target state preserves the plant's existing operational functions while reducing the excessive trust, reachability, privilege, and unmanaged access identified in the legacy environment.
+The plant itself is not being redesigned from scratch.
 
-The design is informed by the findings documented in [Legacy Risk Findings](legacy%20risk%20findings.md) and by the NIST guidance summarized in [NIST Alignment](nist%20alignment.md).
+The same basic process, operators, engineering functions, maintenance requirements, vendor support needs, historian functions, and legacy field networks still exist.
 
-The objective is not to replace every legacy device or eliminate every operational risk. The objective is to introduce defensible security boundaries and compensating controls while preserving plant availability, maintainability, and degraded operating capability.
+What changes is how trust is granted around them.
+
+The target state addresses the risks identified in [Legacy Risk Findings](legacy%20risk%20findings.md) using the design principles documented in [NIST Alignment](nist%20alignment.md).
+
+The goal is straightforward:
+
+> **Reduce unnecessary reachability and privilege without making the plant harder to run.**
 
 ---
 
 # Target-State Design Principles
 
-The target architecture applies the following principles:
+The target architecture is built around a few practical rules:
 
 * Separate enterprise and OT trust domains
-* Require enterprise-to-OT communication to traverse controlled intermediary services
-* Segment supervisory, engineering, and control functions according to operational need
-* Permit only explicitly required communication paths between security zones
-* Remove unnecessary supervisory privilege from business users
-* Consolidate third-party remote access through a governed pathway
-* Treat engineering functions as highly privileged
-* Differentiate company-managed and vendor-managed maintenance devices
-* Contain rather than unnecessarily replace operationally required legacy MS/TP devices
-* Introduce passive monitoring and behavioral visibility where direct endpoint controls are impractical
-* Preserve physical and local control capability during supervisory-system impairment
+* Put a controlled intermediary layer between business systems and control systems
+* Separate operator, engineering, and control functions where their access requirements differ
+* Allow only communication paths that have a defined operational reason
+* Remove command authority where visibility is enough
+* Force external remote access through one governed path
+* Treat engineering systems as highly privileged without treating them as universally trusted
+* Treat company and vendor maintenance devices differently
+* Keep necessary legacy MS/TP devices in service, but reduce what can reach them
+* Use passive monitoring where direct endpoint protection is not realistic
+* Preserve local and degraded plant operation
+
+This is not maximum isolation for its own sake.
+
+It is controlled access based on what the plant actually needs.
 
 ---
 
@@ -34,264 +44,327 @@ The target architecture applies the following principles:
 
 **Addresses:** LR-01, LR-02, LR-03, LR-06
 
-The enterprise network and OT environment are separated by an industrial security boundary rather than relying on direct enterprise-to-control connectivity.
+The enterprise network and OT environment are separated by a dedicated industrial security boundary.
 
-An OT demilitarized zone (DMZ) is introduced between the two environments.
+An OT DMZ sits between them.
 
-The intended communication model becomes:
+The normal communication model becomes:
 
-**Enterprise → OT DMZ → OT Supervisory Environment → Control Environment**
+> **Enterprise → OT DMZ → OT Supervisory Environment → Control Environment**
 
-Direct enterprise communication with PLCs, field-network gateways, engineering systems, or other control assets is not permitted.
+Enterprise systems do not communicate directly with PLCs, field-network gateways, engineering systems, or other control assets.
 
-Services that legitimately bridge enterprise and OT functions terminate or exchange information through systems located in the DMZ.
+If a business or support function needs something from OT, that requirement is handled through an approved intermediary service.
+
+That keeps legitimate IT/OT interaction without treating the enterprise network as an extension of the plant network.
 
 ---
 
 # 2. OT DMZ
 
-The OT DMZ serves as the controlled intermediary between enterprise and plant systems.
+The OT DMZ is the controlled transition point between enterprise and plant systems.
 
-Representative services may include:
+Representative services include:
 
 * Remote-access gateway
 * Privileged jump host
-* Replicated operational reporting data
-* Security monitoring services
-* Approved file-transfer or maintenance staging functions where required
+* Replicated historian or reporting service
+* Security monitoring and log collection
+* Approved maintenance or file-transfer staging where required
 
-The DMZ does not itself become a trusted extension of the OT network.
+The DMZ is not a trusted shortcut into OT.
 
-Communication between:
+Traffic between:
 
 * Enterprise and DMZ
 * DMZ and OT
 
-is separately controlled.
+is controlled separately.
 
-Only required source, destination, service, and direction combinations are permitted.
+Only approved source, destination, service, and direction combinations are allowed.
+
+If a communication path cannot be tied to a real requirement, it does not get added simply because it is convenient.
 
 ---
 
 # 3. Supervisory Zone
 
-The two operator HMI stations and the SCADA/BAS supervisory functions reside within a dedicated supervisory security zone.
+The SCADA/BAS server and the two operator HMI stations reside in a dedicated supervisory zone.
 
-The supervisory zone supports:
+This zone supports:
 
 * Operator visualization
 * Alarm management
-* Permitted operator commands
+* Approved operator commands
 * Supervisory setpoints
 * Plant sequencing
 * Operational status
 
-The operator HMIs remain logically separated from engineering and administrative functions.
+The operator workstations remain fully capable of running the plant.
 
-This reduces the likelihood that compromise or misuse of a privileged engineering resource automatically exposes normal operator workstations, or vice versa.
+What they no longer do is share the same broad trust relationship as engineering and administrative systems.
+
+Operators need control.
+
+They do not need engineering privilege.
+
+Keeping those functions separate reduces the number of ways a compromise can move between routine plant operation and high-privilege configuration activity.
 
 ---
 
 # 4. Engineering / Administrative Zone
 
-The permanent engineering workstation is separated from routine operator workstations.
+The permanent engineering workstation is moved into its own logical security zone.
 
-Its high-privilege capabilities are preserved, including:
+Its capabilities remain intact.
+
+It still supports:
 
 * PLC programming
-* Controller configuration
+* BACnet controller configuration
 * Diagnostics
 * Commissioning
+* Control-logic troubleshooting
 * Recovery
-* Authorized control-logic modification
+* Authorized configuration changes
 
-However, network access is no longer based on unrestricted membership within a broadly trusted OT network.
+The difference is reachability.
 
-Engineering communication is limited to explicitly authorized controller and infrastructure destinations.
+The engineering workstation can only communicate with controller and infrastructure destinations that have an approved engineering requirement.
 
-The design principle is:
+High privilege is necessary.
 
-**High privilege does not require universal reachability.**
+Universal access is not.
 
-Where an engineering function does not require a communication path, that path should not exist by default.
+This is one of the most important changes in the target architecture because the engineering workstation remains one of the highest-impact assets in the environment.
 
 ---
 
 # 5. Control Zone
 
-BACnet/IP plant controllers reside within a control-oriented security zone separated from supervisory and engineering systems by controlled network boundaries.
+The BACnet/IP plant controllers reside in a dedicated control zone.
 
-The control zone retains the communications necessary for:
+This zone supports the communications required for:
 
-* Plant sequencing
 * Chiller control
 * Pump and distribution control
-* Cooling-tower and condenser-water control
+* Condenser-water control
+* Cooling-tower operation
+* Plant sequencing
 * Equipment status
 * Process values
-* Approved operator commands
+* Operator commands
+* Required controller-to-controller communication
 
-Traffic crossing into the control zone is restricted to explicitly required operational communications.
+Traffic into the control zone is restricted to systems that have a reason to be there.
 
-Routine enterprise traffic and general-purpose remote access do not terminate within this zone.
+Routine enterprise traffic does not enter this zone.
+
+Remote vendor sessions do not terminate directly in this zone.
+
+Management workstations do not reach it.
+
+That is the point of the boundary.
 
 ---
 
-# 6. Historian and Operational Data Architecture
+# 6. Historian and Operational Data
 
-The target state separates the operational historian function from enterprise data consumption.
+The legacy historian model is split into two functions.
 
-An OT-side historian or data-collection function remains available to plant operators and engineering personnel for:
+An OT-side historian or data collector remains available to operations and engineering for:
 
-* Process trending
+* Trend review
 * Alarm investigation
 * Troubleshooting
-* Operational analysis
+* Performance analysis
 * Historical comparison
 
-Selected historical and performance data is replicated outward to a DMZ-based reporting or historian service.
+Selected data is then replicated outward to a reporting or historian service in the OT DMZ.
 
-The intended data path is:
+The intended flow is:
 
-**Control / Supervisory Environment → OT Historian → DMZ Reporting or Historian Service → Authorized Enterprise Consumers**
+> **Control / Supervisory Environment → OT Historian → DMZ Reporting Service → Enterprise Consumers**
 
-Enterprise users therefore consume approved operational information without querying the primary OT historian or entering the control environment.
+This solves two different problems separately.
 
-Replication is restricted to defined datasets and communication paths.
+Operations still gets a local historian.
 
-The target architecture does not assume that historian replication is inherently safe merely because it is read-oriented; the replication mechanism remains a controlled cross-boundary service.
+The business still gets the information it needs.
+
+Enterprise users no longer need to reach into the primary OT environment to get it.
+
+The replication path is still treated as a controlled boundary crossing. Read-oriented data does not automatically mean risk-free data movement.
 
 ---
 
 # 7. Management Visibility
 
-Plant management retains legitimate visibility into current plant performance.
+Management keeps visibility into the plant.
 
-However, management access no longer requires an enterprise workstation to run a control-capable supervisory client directly against the OT environment.
+The unnecessary control capability goes away.
 
-The target capability should provide:
+The target management view can provide:
 
 * Plant status
-* Performance information
-* Selected alarms
 * Equipment states
-* Historical and trend information where appropriate
+* Selected alarms
+* Performance information
+* Historical data
+* Trend information
 
-Process-control commands are removed from the management role unless a separately justified operational requirement is established.
+It does not provide routine process-control commands.
 
-This preserves the business requirement while eliminating inherited supervisory privilege.
+That is a better match to the actual business requirement.
+
+The manager can still see what the plant is doing without becoming another operator station from the enterprise network.
 
 ---
 
 # 8. Governed Vendor Remote Access
 
-All recognized external remote support terminates in the OT DMZ.
+All approved external remote access terminates in the OT DMZ.
 
-External users do not connect directly to the control environment.
+The normal vendor path becomes:
 
-The remote-access sequence becomes conceptually:
+> **Vendor → Approved Remote Access → OT DMZ → Jump Host → Explicitly Authorized OT Destination**
 
-**Vendor → Approved Remote-Access Service → OT DMZ → Privileged Jump Host → Explicitly Authorized OT Destination**
+External users do not connect directly to the control network.
 
-The jump host acts as the controlled transition point for remote maintenance activity.
+The jump host becomes the controlled transition point for remote maintenance.
 
-Access should be:
+Vendor access should be:
 
-* Explicitly authorized
-* Limited to approved systems
-* Limited to appropriate time periods where practical
-* Authenticated using the organization's approved mechanism
-* Logged and monitored
-* Reviewed as part of vendor-access governance
+* Explicitly approved
+* Limited to required systems
+* Time-bounded where practical
+* Authenticated through the approved mechanism
+* Logged
+* Monitored
+* Revocable
 
-The historical vendor VPN identified in the legacy architecture is retired rather than reproduced in the target state.
+The legacy vendor VPN identified in the current-state architecture is retired.
+
+It does not get grandfathered into the target state just because it still works.
 
 ---
 
 # 9. Maintenance and Vendor Service Devices
 
-The architecture distinguishes between:
+The target architecture distinguishes between:
 
-**Company-managed maintenance devices**
-and
-**Externally managed vendor devices**
+* Company-managed maintenance laptops
+* Vendor-managed service laptops
 
-The company maintenance laptop may continue to connect to approved equipment service interfaces when required.
+Both may still need direct equipment access.
 
-Vendor-owned laptops may also be necessary for manufacturer-specific troubleshooting.
+That requirement does not disappear.
 
-Neither circumstance automatically grants the mobile device access to the broader OT network.
+What changes is the amount of trust attached to it.
 
-Direct local service connectivity should be constrained to the equipment and interface required for the approved maintenance task.
+Company maintenance devices may connect to approved service interfaces where required.
 
-The target state therefore preserves specialized maintenance capability without treating temporary mobile endpoints as equivalent to permanently trusted OT workstations.
+Vendor devices may do the same during authorized maintenance.
+
+Neither device automatically receives broad access to the OT network.
+
+The connection should be limited to:
+
+* The equipment being serviced
+* The approved service interface
+* The duration of the maintenance task
+
+This keeps the troubleshooting capability without turning every service event into a new network trust path.
 
 ---
 
 # 10. Legacy BACnet MS/TP Containment
 
-The target architecture retains operationally necessary BACnet MS/TP field devices.
+The BACnet MS/TP field networks remain in service.
 
-These devices continue providing process values required by automatic plant operation, including:
+They still provide process inputs that the plant depends on during automatic operation.
+
+Those include:
 
 * Differential pressure
-* Supply and return temperatures
+* Supply and return water temperature
 * Condenser-water temperature
 * Flow information
 * Equipment status
-* Permissive indications
+* Permissive signals
 
-Immediate replacement is not required solely because the devices use legacy serial communications.
+The target state does not force replacement simply because the devices are old.
 
-Instead, protection is concentrated around the transition between the MS/TP field networks and the BACnet/IP control environment.
+Instead, protection is concentrated around the BACnet/IP-to-MS/TP boundary.
 
 Controls include:
 
-* Dedicated BACnet/IP-to-MS/TP gateways
-* Restricted network reachability to those gateways
-* Explicitly permitted BACnet communication paths
+* Dedicated gateways
+* Restricted reachability to those gateways
+* Explicitly allowed BACnet communication paths
 * No direct enterprise access
 * No direct vendor remote access
-* Separation from general supervisory and administrative traffic
-* Passive network visibility on the IP side of the field-network boundary
-* Process-data monitoring where meaningful baselines can be established
+* Separation from routine administrative traffic
+* Passive monitoring on the IP side of the gateway
+* Process-data review where useful baselines can be established
 
-The MS/TP devices themselves remain operationally functional while the accessible attack surface surrounding them is reduced.
+This is the practical tradeoff.
+
+The field devices keep doing the job they were installed to do.
+
+The architecture around them stops giving them more exposure than they need.
 
 ---
 
-# 11. Process and Communications Anomaly Monitoring
+# 11. Passive Monitoring and Anomaly Detection
 
-Because legacy field devices may not support contemporary endpoint-security capabilities, the target architecture introduces monitoring around their communications and process behavior.
+Legacy field devices may not support modern endpoint security.
 
-Monitoring should emphasize non-disruptive collection.
+That does not mean the environment has to remain blind.
 
-Potential observations include:
+The target architecture adds passive monitoring around key OT communication paths.
 
-* Unexpected BACnet devices
-* New communication relationships
+Useful observations may include:
+
+* New BACnet devices
+* Unexpected communication relationships
 * Unexpected protocol use
-* Abnormal communication volume
+* Abnormal traffic volume
 * Unexpected controller-to-gateway activity
-* Process values outside plausible or historically expected ranges
-* Sudden changes in normally stable measurements
-* Communications occurring outside expected operating conditions
+* Remote-access events
+* Administrative changes
+* Process values that move outside expected operating patterns
 
-Process data from SCADA/BAS and historian sources can provide additional context when evaluating suspicious behavior.
+The monitoring should remain non-disruptive.
 
-The objective is not to assume that every unusual process value represents a cyber event.
+That matters in OT.
 
-Operational conditions, instrument failure, calibration issues, maintenance activity, and legitimate process transitions must also be considered.
+The goal is to observe the control environment without creating a new reliability problem.
 
-Cybersecurity monitoring therefore supplements rather than replaces operator and controls expertise.
+Process anomalies also need operational context.
+
+A strange temperature or pressure value might be:
+
+* A cyber event
+* A failed sensor
+* Instrument drift
+* A calibration issue
+* A maintenance condition
+* A legitimate process transition
+
+Security tooling can flag the condition.
+
+Operators and controls personnel still have to help interpret what it means.
 
 ---
 
 # 12. Local and Degraded Operation
 
-The target architecture preserves the plant's existing resilience advantage: physical operation is not entirely dependent on centralized supervisory infrastructure.
+The target architecture preserves the plant's ability to operate when supervisory systems are unavailable.
 
-Controllers retain appropriate local automation, and operators retain access to:
+Controllers retain appropriate local logic.
+
+Operators retain access to:
 
 * Central physical control board
 * Local equipment panels
@@ -299,47 +372,65 @@ Controllers retain appropriate local automation, and operators retain access to:
 * Selector switches
 * Manufacturer interfaces
 
-An experienced operator can continue operating the plant in a reduced or manual condition if supervisory systems are unavailable.
+An experienced operator can maintain a reduced or manual plant configuration when required.
 
-Cybersecurity controls must not compromise this capability.
+This is deliberately preserved as part of the cybersecurity design.
+
+A more secure network that removes a proven fallback operating mode would not be an improvement.
 
 ---
 
 # 13. Administrative Ownership
 
-Target-state governance explicitly assigns responsibility for major OT cybersecurity functions.
+The target state also tightens the organizational side of the architecture.
 
-Responsibilities should be defined for:
+Responsibility is explicitly assigned for:
 
 * OT network ownership
 * Firewall and boundary management
 * Controller administration
 * Engineering workstation administration
 * Remote-access approval
-* Vendor-account lifecycle
+* Vendor account lifecycle
 * Maintenance-device requirements
 * Monitoring and logging
 * Backup and recovery
 * Asset inventory
 * Configuration management
 * Incident coordination
+* System retirement
 
-Plant operations, controls personnel, enterprise IT, cybersecurity personnel, and vendors may continue sharing responsibilities.
+Operations, controls, IT, cybersecurity personnel, and vendors can still share work.
 
-The improvement is that ownership and authorization are explicit rather than dependent on informal institutional knowledge.
+The difference is that important decisions have an identifiable owner.
+
+The environment should not depend on somebody remembering that "the one guy in IT" knows how a particular connection works.
 
 ---
 
 # Resulting Trust Model
 
-The legacy environment largely followed the model:
+The legacy environment mostly operated on:
 
-**Inside OT = broadly trusted**
+> **Inside OT = Trusted**
 
-The target state replaces that assumption with:
+The target architecture replaces that with:
 
-**Operational requirement = explicitly permitted access**
+> **Operational requirement = Explicitly permitted access**
 
-The same plant continues to operate, but systems no longer receive broad network reachability merely because they reside within the OT environment.
+That is the core design change.
 
-This change provides the architectural basis for reducing the risks identified in the legacy-state assessment.
+The plant still has:
+
+* Operators
+* Engineers
+* Vendors
+* Legacy devices
+* Historians
+* Maintenance laptops
+* Business reporting
+* Manual fallback capability
+
+The difference is that those functions no longer inherit more access than their jobs require.
+
+That is where most of the risk reduction comes from.
