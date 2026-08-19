@@ -2,422 +2,365 @@
 
 ## Purpose
 
-This document defines the logical communication requirements of the reference central utility plant before evaluating how those communications should be secured.
+This document defines what actually has to communicate for the plant to operate, be maintained, and support the business around it.
 
-The objective is to identify which systems must exchange information for normal operation, maintenance, troubleshooting, administration, monitoring, and business support.
+The point is to separate **real requirements** from **access that simply exists because it was convenient or inherited**.
 
-These requirements are intentionally architecture-neutral. A legitimate communication requirement does not imply that the participating systems should reside on the same network or communicate directly.
+A system needing information does not automatically mean it needs direct network access to the system that produces it. Likewise, a maintenance requirement does not automatically justify broad OT reachability.
 
-Later stages of the case study will compare how these functional requirements are implemented in the legacy environment and how they can be preserved through a more defensible target-state architecture.
-
----
-
-## Communication Principles
-
-Each communication relationship should have an identifiable operational or business purpose.
-
-The analysis considers:
-
-* Source and destination
-* Operational purpose
-* Direction of communication
-* Frequency or operating condition
-* Relative privilege
-* Availability importance
-* Trust-boundary implications
-* Whether the path is operationally necessary or primarily a matter of convenience
-
-Communications that cannot be tied to a legitimate current requirement should not automatically be preserved in the target architecture.
+This page is the baseline for that distinction.
 
 ---
 
 # Core Process Communications
 
-## 1. PLCs to Field Devices
+## PLCs and Field Devices
 
-**Source / Destination:** PLCs ↔ VFDs, controlled valves, instrumentation, and other connected process equipment
+The controllers exchange data with VFDs, valves, instrumentation, and other connected process equipment.
 
-**Purpose:**
-Provide direct automated process control and acquire the field measurements necessary for plant operation.
+This is the control loop. These communications are not optional.
 
-Typical functions include:
+Typical traffic includes:
 
 * Start and stop commands
 * Speed references
 * Valve-position commands
 * Equipment status
-* Temperature measurements
-* Pressure measurements
-* Flow measurements
-* Equipment alarms and fault conditions
-
-**Operational Frequency:** Continuous or near-continuous during plant operation.
-
-**Privilege:** High.
-
-**Availability Importance:** Critical.
-
-Disruption of these communications may directly affect automated process operation.
-
----
-
-## 2. SCADA/BAS Server to PLCs
-
-**Source / Destination:** SCADA/BAS Server ↔ PLC-1, PLC-2, PLC-3
-
-**Purpose:**
-Provide centralized supervisory monitoring and authorized control of plant systems.
-
-Expected functions include:
-
-* Reading controller process values
-* Receiving alarms and equipment status
-* Writing authorized operator commands
-* Adjusting supervisory setpoints
-* Coordinating plant-level operating sequences
-
-**Operational Frequency:** Continuous.
-
-**Privilege:** High.
-
-**Availability Importance:** High.
-
-Loss of supervisory communication may remove centralized visibility and remote operator control but should not inherently cause immediate loss of local process control.
-
----
-
-## 3. Operator HMI to Supervisory System
-
-**Source / Destination:** Operator HMI ↔ SCADA/BAS Server
-
-**Purpose:**
-Provide the operating staff with centralized process visualization and authorized supervisory control.
-
-Expected functions include:
-
-* Viewing plant conditions
-* Reviewing alarms
-* Issuing authorized commands
-* Changing permitted setpoints
-* Reviewing equipment status
-* Acknowledging alarms
-
-**Operational Frequency:** Continuous during staffed operation.
-
-**Privilege:** Moderate to high depending on operator authorization.
-
-**Availability Importance:** High.
-
----
-
-# Local and Manual Control
-
-## 4. Local and Central Manual Control
-
-**Source / Destination:** Authorized operator or technician → Local equipment controls and central/local physical control board
-
-**Purpose:**  
-Allow continued operation, shutdown, startup, or troubleshooting when centralized supervisory systems are unavailable or when direct local intervention is operationally necessary.
-
-Depending on the equipment and operating condition, local control may include:
-
-- Physical control boards
-- Local control panels
-- Equipment-mounted interfaces
-- Local selector switches
-- Manufacturer-provided control interfaces
-
-An experienced operator may also use the central/local physical board to maintain a reduced but coordinated plant operating state when SCADA/BAS supervisory control is unavailable.
-
-**Operational Frequency:** Exceptional or maintenance-driven.
-
-**Privilege:** High.
-
-**Availability Importance:** Critical as a resilience capability.
-
-Loss of supervisory control should therefore be distinguished from total loss of process control. Manual operation may reduce automation, efficiency, and centralized visibility while still allowing essential plant functions to be maintained.
-
----
-
-# Engineering and Maintenance Communications
-
-## 5. Permanent Engineering Workstation to Controllers
-
-**Source / Destination:** Dedicated Engineering Workstation → PLCs and supported control equipment
-
-**Purpose:**
-Support controller configuration, programming, diagnostics, commissioning, and maintenance.
-
-Potential activities include:
-
-* Uploading and downloading controller programs
-* Reviewing controller configuration
-* Troubleshooting control logic
-* Changing authorized configurations
-* Performing supported firmware or software maintenance
-
-**Operational Frequency:** Intermittent and maintenance-driven.
-
-**Privilege:** Very high.
-
-**Availability Importance:** Low during routine plant operation but potentially high during maintenance and recovery.
-
-Because the engineering workstation can modify controller behavior, it represents one of the highest-value and highest-privilege assets in the OT environment.
-
----
-
-## 6. Company Maintenance Laptop to Equipment Service Ports
-
-**Source / Destination:** Company-issued maintenance laptop ↔ Individual chillers or other equipped machinery
-
-**Purpose:**
-Allow plant maintenance personnel to perform diagnostics and troubleshooting using manufacturer-provided local service interfaces.
-
-Potential activities include:
-
-* Accessing onboard diagnostics
-* Reviewing fault histories
-* Reading operating parameters
-* Conducting equipment-specific troubleshooting
-* Making authorized maintenance changes
-
-**Operational Frequency:** Maintenance-driven.
-
-**Privilege:** Potentially high.
-
-**Availability Importance:** Low during normal operation.
-
-This communication commonly occurs through direct local connection rather than through the plant supervisory network.
-
-The maintenance laptop therefore represents a mobile asset that may interact with both ordinary corporate resources and sensitive industrial equipment during its lifecycle.
-
----
-
-## 7. Vendor Laptop to Equipment Service Ports
-
-**Source / Destination:** Vendor-owned laptop ↔ Supported plant equipment
-
-**Purpose:**
-Allow authorized third-party personnel to perform specialized diagnostics, configuration, commissioning, or repair.
-
-**Operational Frequency:** Exceptional and service-driven.
-
-**Privilege:** Potentially very high.
-
-**Availability Importance:** Low during normal operation.
-
-Unlike company-issued maintenance laptops, vendor-owned devices are not administered under the plant organization's endpoint-management program.
-
-The environment therefore cannot inherently assume the security posture, patch state, software inventory, or prior network exposure of the device.
-
-This relationship will require specific consideration in the target-state architecture and supporting access procedures.
-
----
-
-# Operational Data Communications
-
-## 8. Supervisory System to OT Historian
-
-**Source / Destination:** SCADA/BAS Server → OT Historian
-
-**Purpose:**
-Provide historical storage of operational process information.
-
-Expected information may include:
-
-* Equipment status
 * Temperature
 * Pressure
 * Flow
+* Fault and alarm conditions
+
+These exchanges occur continuously or near-continuously while the plant is running.
+
+**Privilege:** High
+**Operational importance:** Critical
+
+If this communication is disrupted, the plant may lose automated control of the affected process.
+
+---
+
+## SCADA/BAS Server and PLCs
+
+The SCADA/BAS server communicates with the plant controllers for centralized monitoring and supervisory control.
+
+That includes:
+
+* Reading process values
+* Receiving equipment status
+* Receiving alarms
+* Writing approved operator commands
+* Adjusting supervisory setpoints
+* Coordinating plant-level sequences
+
+**Frequency:** Continuous
+**Privilege:** High
+**Operational importance:** High
+
+Loss of this path is serious, but it should not automatically mean loss of the plant.
+
+The PLCs should continue executing appropriate local logic, and operators should retain a path to local or manual control.
+
+---
+
+## Operator HMIs and Supervisory Control
+
+Two operator stations provide access to the HMI/SCADA environment.
+
+Both can:
+
+* View plant conditions
+* Review alarms
+* See equipment states
+* Issue authorized commands
+* Change permitted setpoints
+* Acknowledge alarms
+
+These are active operating stations, not a formal primary/backup pair.
+
+**Frequency:** Continuous during staffed operation
+**Privilege:** Moderate to High
+**Operational importance:** High
+
+---
+
+# Local and Central Manual Control
+
+The plant must remain operable if centralized supervisory control is impaired.
+
+Authorized operators and technicians therefore retain access to:
+
+* Equipment-mounted controls
+* Local control panels
+* Physical selector switches
+* Manufacturer interfaces
+* The central physical control board
+
+An experienced operator should be able to hold the plant in a reduced but coordinated operating condition without relying entirely on SCADA/BAS.
+
+That may mean losing automation, trending, centralized visibility, or efficiency.
+
+It should not automatically mean losing the physical process.
+
+**Frequency:** Exceptional
+**Privilege:** High
+**Operational importance:** Resilience-critical
+
+---
+
+# Engineering and Maintenance
+
+## Permanent Engineering Workstation
+
+The permanent engineering workstation is used for work that can directly change controller behavior.
+
+Typical functions include:
+
+* PLC programming
+* Controller configuration
+* Diagnostics
+* Commissioning
+* Control-logic troubleshooting
+* Authorized software or firmware maintenance
+* Recovery activities
+
+This access is intermittent, but when it is used, it is highly privileged.
+
+**Frequency:** Maintenance-driven
+**Privilege:** Very High
+**Operational importance:** Conditional
+
+The workstation needs powerful access.
+
+It does not need unrestricted access to everything simply because it is an engineering workstation.
+
+That distinction matters in the target state.
+
+---
+
+## Company Maintenance Laptop
+
+Plant maintenance personnel use a company-issued laptop for direct equipment-level troubleshooting when the machinery supports it.
+
+Typical examples include:
+
+* Chiller service interfaces
+* VFD diagnostics
+* Fault-history review
+* Parameter inspection
+* Equipment-specific troubleshooting
+* Authorized maintenance changes
+
+This device is mobile and may spend part of its life outside the control environment.
+
+**Frequency:** Maintenance-driven
+**Privilege:** High
+**Operational importance:** Conditional
+
+The maintenance function is legitimate.
+
+Broad OT trust is not part of that requirement.
+
+---
+
+## Vendor Service Laptop
+
+Vendors may need to connect their own laptops directly to manufacturer service interfaces.
+
+That may be the only practical way to diagnose or restore specialized equipment.
+
+The plant does not manage those laptops and cannot automatically know:
+
+* Their patch level
+* Their endpoint-security posture
+* What software is installed
+* Where the device was connected before arriving
+* Whether removable media has been used
+* How credentials are being handled
+
+This is not an argument for banning vendor laptops.
+
+It is an argument for treating them differently from organization-managed endpoints.
+
+**Frequency:** Exceptional / Service-driven
+**Privilege:** Potentially Very High
+**Operational importance:** Conditional
+
+---
+
+# Operational Data
+
+## SCADA/BAS to OT Historian
+
+The historian collects operational data from the supervisory environment.
+
+Typical data includes:
+
+* Equipment status
+* Temperatures
+* Pressures
+* Flow
 * Runtime
-* Energy consumption
-* Alarm events
-* Operating states
-* Process trends
+* Energy use
+* Alarms
+* Process states
+* Trend data
 
-**Operational Frequency:** Continuous or periodic.
+**Frequency:** Continuous or Periodic
+**Privilege:** Primarily data collection
+**Operational importance:** Moderate
 
-**Privilege:** Primarily data transfer rather than process control.
+The historian belongs inside the OT environment in the legacy state because it supports day-to-day troubleshooting and operations.
 
-**Availability Importance:** Moderate.
-
-The historian resides within the OT environment in the initial architecture.
-
-Temporary historian failure should not interrupt plant operation, although extended loss may affect troubleshooting, reporting, optimization, performance analysis, and historical records.
-
-The appropriate security-zone placement and enterprise-consumption model for historical data will be reconsidered during development of the target-state architecture.
+Later, the architecture will separate the plant's need for a local historian from the enterprise's need to consume selected data.
 
 ---
 
-## 9. OT Workstations to Historian
+## OT Users and Historical Data
 
-**Source / Destination:** Authorized OT workstations → OT Historian
+Operators, maintenance personnel, and engineering staff need access to historical information for:
 
-**Purpose:**
-Support process analysis, troubleshooting, maintenance, and operational optimization.
+* Trend review
+* Fault investigation
+* Performance comparison
+* Troubleshooting
+* Optimization
 
-Expected activities include:
+This is mostly read-oriented access.
 
-* Reviewing historical trends
-* Comparing operating periods
-* Investigating equipment faults
-* Evaluating system performance
-* Reviewing prior alarms and operating states
-
-**Operational Frequency:** On demand.
-
-**Privilege:** Primarily read-oriented.
-
-**Availability Importance:** Moderate.
+**Frequency:** On demand
+**Privilege:** Low to Moderate
+**Operational importance:** Moderate
 
 ---
 
-# Enterprise and Management Communications
+# Enterprise and Management Access
 
-## 10. Enterprise Consumption of Plant Information
+## Enterprise Consumption of Plant Data
 
-**Source / Destination:** Enterprise users or applications → Approved plant information source
-
-**Purpose:**
-Allow authorized business functions to consume selected operational information for legitimate non-control purposes.
-
-Potential uses include:
+Business users may need selected plant information for:
 
 * Energy reporting
-* Management dashboards
 * Cost analysis
 * Maintenance planning
-* Performance analysis
-* Operational reporting
+* Performance review
+* Dashboards
+* Management reporting
 
-**Operational Frequency:** Periodic or on demand.
+That is a legitimate business requirement.
 
-**Privilege:** Read-only wherever practicable.
+Direct controller access is not.
 
-**Availability Importance:** Low to moderate.
+The requirement is:
 
-Direct enterprise access to PLCs or other process controllers is not considered a legitimate business requirement.
+> **Give the business the information it needs without making the control network part of the business network.**
 
----
-
-## 11. Management Supervisory Access
-
-**Source / Destination:** Authorized management workstation → Plant supervisory environment
-
-**Purpose:**
-Provide designated management personnel with remote visibility into current plant conditions.
-
-In the legacy environment, this capability has grown beyond simple reporting and may provide supervisory functionality directly from an enterprise-connected workstation.
-
-Potential functions may include:
-
-* Viewing live plant status
-* Viewing alarms
-* Reviewing equipment states
-* Accessing supervisory interfaces
-* Issuing commands where existing permissions allow
-
-The manager's existing control capability is not considered an operational requirement. It reflects accumulated legacy permissions that exceed the legitimate business need for plant visibility. The target-state architecture should therefore preserve appropriate supervisory visibility while removing unnecessary command authority.
-
-**Operational Frequency:** On demand.
-
-**Privilege:** Potentially high.
-
-**Availability Importance:** Low from the perspective of actual plant operation.
-
-This pathway exists primarily for management convenience rather than because plant operation depends upon it.
-
-Because supervisory actions can affect physical plant operation, the combination of enterprise connectivity and unnecessary command capability represents a significant architecture and governance concern.
-
-The target-state design should preserve legitimate management visibility without assuming that remote management personnel require unrestricted process-control authority.
+**Frequency:** Periodic / On demand
+**Privilege:** Read-only wherever practical
+**Operational importance:** Low
 
 ---
 
-# Vendor Remote Support
+## Management Supervisory Access
 
-## 12. Recognized Vendor Remote Access
+Management has a legitimate reason to see what the plant is doing.
 
-**Source / Destination:** Authorized vendor remote connection → Approved maintenance resource
+In the legacy environment, that requirement drifted into something broader: an enterprise-connected management workstation has access to the supervisory environment and inherited some ability to issue commands.
 
-**Purpose:**
-Allow selected third-party specialists to provide remote support where on-site service is impractical or unnecessarily delays restoration.
+The manager may be able to:
 
-Potential activities include:
+* View live plant status
+* Review alarms
+* See equipment states
+* Open supervisory screens
+* Issue commands where existing permissions allow
+
+The visibility requirement is valid.
+
+The command authority is not.
+
+That is privilege drift.
+
+**Frequency:** On demand
+**Privilege:** Higher than required
+**Operational importance:** Low
+
+The target state should keep the visibility and remove the unnecessary control capability.
+
+---
+
+# Vendor Remote Access
+
+## Recognized Vendor Remote Support
+
+Some vendors need remote access for specialized troubleshooting.
+
+That can include:
 
 * Diagnostic review
 * Software support
-* Specialized controller troubleshooting
-* Vendor-specific configuration assistance
+* Controller troubleshooting
+* Vendor-specific configuration work
 
-**Operational Frequency:** Exceptional or maintenance-driven.
+This access is exceptional, not part of routine plant operation.
 
-**Privilege:** Potentially high.
+**Frequency:** Exceptional
+**Privilege:** High
+**Operational importance:** Low
 
-**Availability Importance:** Normally low.
-
-Remote vendor connectivity is not required for autonomous plant operation.
-
----
-
-## 13. Legacy Vendor Remote-Access Paths
-
-**Source / Destination:** Selected long-established vendor personnel → Legacy OT access mechanism
-
-**Purpose:**
-Historically provided remote troubleshooting or support for specific plant equipment.
-
-**Current Condition:**
-Certain legacy access methods may remain technically functional even though they are no longer part of the organization's formally recognized access model.
-
-These pathways may be known primarily to long-tenured technical or vendor personnel and may have persisted through system upgrades, staffing changes, or incomplete documentation.
-
-**Operational Frequency:** Rare or unknown.
-
-**Privilege:** Potentially high.
-
-**Availability Importance:** Not operationally required.
-
-This condition represents a combination of:
-
-* Technical debt
-* Incomplete asset and access-path inventory
-* Third-party governance risk
-* Institutional knowledge dependency
-* Potential unauthorized persistence
-
-The continued existence of an undocumented or unofficial access pathway does not constitute a legitimate communication requirement.
-
-Such pathways should be identified during current-state assessment rather than silently carried into the target architecture.
+The plant should be able to run without a remote vendor being connected.
 
 ---
 
-# Supporting Infrastructure Communications
+## Legacy Vendor VPN
 
-## 14. Time Synchronization
+A historical vendor VPN remains technically functional for selected chiller-related support.
 
-**Source / Destination:** OT systems → Approved time source
+It was originally installed for a legitimate reason.
 
-**Purpose:**
-Maintain consistent timestamps across operational systems.
+The issue is that the reason, ownership, and governance around the access path did not age as cleanly as the technology itself.
 
-Accurate time supports alarm correlation, historical trending, troubleshooting, event analysis, and security monitoring.
+The pathway is still known to a small number of long-tenured vendor personnel.
 
-**Operational Frequency:** Periodic.
+That raises practical questions:
 
-**Privilege:** Low.
+* Who owns the access today?
+* Which credentials still work?
+* What can the connection reach?
+* Who reviews it?
+* Who monitors it?
+* Is it still needed?
+* Does the current network documentation even show it?
 
-**Availability Importance:** Low in the short term.
+This is not a current communication requirement.
+
+It is an inherited condition that needs to be dealt with during redesign.
 
 ---
 
-## 15. Backup and Configuration Preservation
+# Supporting Infrastructure
 
-**Source / Destination:** Selected OT systems → Approved backup repository
+## Time Synchronization
 
-**Purpose:**
-Preserve critical configurations and data required for restoration.
+OT systems need consistent time for:
 
-Potential content includes:
+* Alarm correlation
+* Trend data
+* Event investigation
+* Troubleshooting
+* Security monitoring
+
+**Frequency:** Periodic
+**Privilege:** Low
+**Operational importance:** Low in the short term, important over time
+
+---
+
+## Backup and Configuration Preservation
+
+Selected OT systems need their configurations and critical data backed up.
+
+That may include:
 
 * PLC programs
 * SCADA/BAS configuration
@@ -426,89 +369,101 @@ Potential content includes:
 * Engineering files
 * Network-device configuration
 
-**Operational Frequency:** Scheduled and following significant configuration changes.
+**Frequency:** Scheduled and after significant changes
+**Privilege:** Moderate to High
+**Operational importance:** Recovery-critical
 
-**Privilege:** Moderate to high.
+Backups do not keep the plant running minute to minute.
 
-**Availability Importance:** Low during routine operation but recovery-critical.
+They become very important when something goes wrong.
 
 ---
 
-## 16. Cybersecurity Monitoring
+## Cybersecurity Monitoring
 
-**Source / Destination:** OT systems and network infrastructure → Security-monitoring capability
+The OT environment needs visibility into activity that may be abnormal, unauthorized, or simply worth investigating.
 
-**Purpose:**
-Provide visibility into abnormal, unauthorized, or security-relevant activity.
-
-Potential information sources include:
+Useful sources include:
 
 * Network traffic metadata
 * Firewall events
-* Authentication activity
-* System logs
-* Remote-access events
+* Authentication events
+* Remote-access activity
 * Administrative actions
+* System logs
+* Controller and gateway communications
 
-**Operational Frequency:** Continuous where technically appropriate.
+Monitoring should be as non-disruptive as possible.
 
-**Privilege:** Primarily monitoring and collection.
+In this environment, visibility is valuable only if the monitoring itself does not create a new operational problem.
 
-**Availability Importance:** Moderate.
-
-Monitoring mechanisms should avoid introducing unacceptable interference with operational control communications.
-
----
-
-# Preliminary Communication Matrix
-
-| Source                     | Destination                    | Purpose                            | Frequency           | Privilege        | Operational Criticality |
-| -------------------------- | ------------------------------ | ---------------------------------- | ------------------- | ---------------- | ----------------------- |
-| PLCs                       | Field devices                  | Process control and telemetry      | Continuous          | High             | Critical                |
-| SCADA/BAS Server           | PLCs                           | Supervisory control and monitoring | Continuous          | High             | High                    |
-| Operator HMI               | SCADA/BAS Server               | Operator control and visualization | Continuous          | Moderate/High    | High                    |
-| Operator/Technician        | Local controls                 | Local/manual process control       | Exceptional         | High             | Resilience-critical     |
-| Engineering Workstation    | Controllers                    | Programming and maintenance        | Maintenance         | Very High        | Conditional             |
-| Company Maintenance Laptop | Equipment service ports        | Local diagnostics                  | Maintenance         | High             | Conditional             |
-| Vendor Laptop              | Equipment service ports        | Vendor diagnostics and service     | Exceptional         | High             | Conditional             |
-| SCADA/BAS Server           | OT Historian                   | Historical process data            | Continuous/Periodic | Low/Moderate     | Moderate                |
-| OT Workstations            | OT Historian                   | Trend analysis                     | On demand           | Read-oriented    | Moderate                |
-| Enterprise Systems         | Plant information source       | Reporting and analytics            | Periodic            | Read-only        | Low                     |
-| Management Workstation     | Supervisory environment        | Remote plant visibility/control    | On demand           | Potentially High | Low                     |
-| Authorized Vendor          | Recognized remote-support path | Technical support                  | Exceptional         | High             | Low                     |
-| Legacy Vendor              | Legacy access mechanism        | Historical remote support          | Rare/Unknown        | Potentially High | None                    |
-| OT Systems                 | Time Source                    | Time synchronization               | Periodic            | Low              | Low                     |
-| OT Systems                 | Backup Repository              | Configuration/data preservation    | Scheduled           | Moderate/High    | Recovery-critical       |
-| OT Environment             | Security Monitoring            | Event and network visibility       | Continuous          | Read-oriented    | Moderate                |
+**Frequency:** Continuous where appropriate
+**Privilege:** Primarily observational
+**Operational importance:** Moderate
 
 ---
 
-# Functional vs. Architectural Requirement
+# Communication Summary
 
-A required operational capability does not automatically justify the communication path through which that capability currently occurs.
+| Source                     | Destination                | Purpose                               | Frequency           | Privilege        | Operational Importance |
+| -------------------------- | -------------------------- | ------------------------------------- | ------------------- | ---------------- | ---------------------- |
+| PLCs                       | Field devices              | Process control and telemetry         | Continuous          | High             | Critical               |
+| SCADA/BAS Server           | PLCs                       | Supervisory control and monitoring    | Continuous          | High             | High                   |
+| Operator HMIs              | SCADA/BAS Server           | Operator control and visualization    | Continuous          | Moderate/High    | High                   |
+| Operator / Technician      | Local and central controls | Manual or degraded operation          | Exceptional         | High             | Resilience-critical    |
+| Engineering Workstation    | Controllers                | Programming and maintenance           | Maintenance-driven  | Very High        | Conditional            |
+| Company Maintenance Laptop | Equipment service ports    | Local diagnostics and troubleshooting | Maintenance-driven  | High             | Conditional            |
+| Vendor Laptop              | Equipment service ports    | Vendor diagnostics and service        | Exceptional         | Very High        | Conditional            |
+| SCADA/BAS Server           | OT Historian               | Historical process data               | Continuous/Periodic | Low/Moderate     | Moderate               |
+| OT Users                   | OT Historian               | Trend and fault analysis              | On demand           | Read-oriented    | Moderate               |
+| Enterprise Systems         | Approved plant data source | Reporting and analytics               | Periodic            | Read-only        | Low                    |
+| Management Workstation     | Supervisory environment    | Visibility / inherited control        | On demand           | Excessive        | Low                    |
+| Authorized Vendor          | Recognized remote path     | Technical support                     | Exceptional         | High             | Low                    |
+| Legacy Vendor              | Historical VPN             | Historical support access             | Rare / Unknown      | Potentially High | None                   |
+| OT Systems                 | Time Source                | Time synchronization                  | Periodic            | Low              | Low                    |
+| OT Systems                 | Backup Repository          | Configuration preservation            | Scheduled           | Moderate/High    | Recovery-critical      |
+| OT Environment             | Security Monitoring        | Visibility and anomaly detection      | Continuous          | Observational    | Moderate               |
+
+---
+
+# What Is Actually Required
+
+This distinction drives the rest of the case study:
+
+**A required capability is not the same thing as the legacy path used to deliver it.**
 
 For example:
 
-**Functional requirement:** Management requires visibility into current plant performance.
+**Requirement:** Management needs plant visibility.
 
-**Legacy implementation:** An enterprise-connected management workstation can directly access the supervisory control environment and may retain command privileges.
+**Legacy implementation:** An enterprise-connected workstation can access the supervisory environment and retains some command capability.
 
-**Target-state question:** How can legitimate management visibility be preserved without maintaining unnecessary control authority or broad enterprise-to-OT reachability?
+**Target-state question:** How do we preserve visibility without preserving unnecessary control authority?
 
-The same distinction applies to remote vendor support, maintenance access, historian data, and engineering functions.
+The same logic applies to:
+
+* Vendor support
+* Engineering access
+* Historian data
+* Maintenance laptops
+* Legacy field networks
+
+The redesign should preserve the function and challenge the access path.
 
 ---
 
 # Design Constraint
 
-The target-state architecture must preserve legitimate operational capabilities while reducing unnecessary:
+The target state should reduce unnecessary:
 
 * Reachability
 * Privilege
 * Trust
 * Bidirectional communication
-* Persistence
+* Persistent access
 * Third-party exposure
-* Dependence on undocumented access paths
+* Dependence on undocumented pathways
 
-Security improvements should not unnecessarily eliminate useful operational capabilities when those capabilities can instead be delivered through a safer architecture.
+It should not make the plant harder to operate simply for the sake of producing a cleaner security diagram.
+
+If a control removes legitimate capability without providing a practical replacement, it is not a complete design.
