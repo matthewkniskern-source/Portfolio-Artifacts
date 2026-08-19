@@ -2,221 +2,155 @@
 
 ## OT Architecture Risk Reduction Case Study
 
-### Executive Objective
+This case study evaluates cybersecurity risk in a representative central utility plant and develops a target-state architecture that reduces unnecessary trust, privilege, and attack-path reachability without disrupting the plant’s ability to operate.
 
-This case study evaluates cybersecurity risk within a representative central utility plant and develops a target-state architecture that reduces unnecessary trust, excessive privilege, unmanaged access, and lateral movement opportunities without disrupting the operational capabilities required to run the plant.
+The reference environment combines BACnet/IP supervisory control, legacy BACnet MS/TP field devices, SCADA/BAS systems, engineering access, historian services, vendor support, and local/manual plant controls.
 
-The reference environment reflects a realistic hybrid OT architecture consisting of:
+The central question is straightforward:
 
-* BACnet/IP supervisory and control communications
-* Operationally necessary BACnet MS/TP field networks
-* SCADA/BAS supervisory systems
-* Operator HMI workstations
-* Engineering and maintenance access
-* Historian services
-* Vendor support pathways
-* Local and physical plant-control capability
-
-The analysis focuses on one central question:
-
-> **How can OT cybersecurity risk be materially reduced while preserving plant availability, maintainability, and operational resilience?**
+> **How do you materially reduce OT cybersecurity risk without creating a larger operational problem?**
 
 ---
 
-# Executive Finding
+## Executive Finding
 
-The principal weakness of the legacy environment is not any single obsolete device or vulnerable protocol.
+The primary weakness in the legacy environment is not simply old equipment.
 
 It is **accumulated trust**.
 
-Over time, legitimate operational, maintenance, management, and vendor requirements created an environment in which systems and users possessed more reachability or privilege than their current functions required.
+Over time, legitimate operating, maintenance, management, and vendor requirements created access that extended beyond what many users and systems actually needed.
 
-The legacy architecture therefore exposes the plant to elevated risk from:
+The result is an operationally functional plant with several avoidable risk conditions:
 
-* Broad internal OT connectivity
-* Excess supervisory privilege
-* Persistent third-party access
-* Highly privileged engineering systems
-* Mobile and externally managed maintenance devices
-* Enterprise demand for operational data
-* Legacy field-device dependencies
-* Unclear administrative ownership
+* A largely flat BACnet/IP OT network
+* Limited separation between operator, engineering, historian, and controller functions
+* Management access with unnecessary supervisory control capability
+* A legacy vendor VPN that remains technically available outside the current access model
+* Broad reachability from a highly privileged engineering workstation
+* Direct maintenance access from both company and vendor laptops
+* Operational dependence on legacy MS/TP process inputs
+* Shared responsibility across operations, controls, IT, and vendors without consistently defined ownership
 
-The plant remains operationally functional, but compromise of a relatively limited endpoint, credential, or access pathway may have consequences beyond that asset's intended role.
+Any one of these conditions is understandable in an operating plant.
 
----
-
-# Legacy-State Risk Profile
-
-The legacy environment relies primarily on a perimeter boundary surrounding a largely flat BACnet/IP control network.
-
-Within that environment, supervisory, engineering, historian, controller, and gateway systems have relatively broad internal reachability.
-
-Several additional conditions increase exposure:
-
-| Risk Condition                                 | Executive Impact                                                                  |
-| ---------------------------------------------- | --------------------------------------------------------------------------------- |
-| Flat OT trust model                            | A compromised OT endpoint may reach systems outside its intended function         |
-| Management workstation with control capability | Business-facing access can directly affect plant operation                        |
-| Persistent legacy vendor VPN                   | Third-party access exists outside the current governance model                    |
-| Broad engineering workstation reachability     | Compromise of a privileged system may affect multiple controllers                 |
-| Vendor and maintenance laptops                 | Temporary endpoints may interact directly with critical equipment                 |
-| Historian inside broad OT trust zone           | Business data requirements encourage deeper enterprise-to-OT access               |
-| Legacy MS/TP dependencies                      | Modernization cannot simply remove older devices without operational consequences |
-| Shared IT/OT/vendor responsibility             | Security tasks may fall between organizational boundaries                         |
-
-Detailed findings are available in the [Legacy Risk Findings](legacy%20risk%20findings.md).
+Taken together, they create an environment where compromise of a relatively limited endpoint, credential, or access path can reach farther than its intended function requires.
 
 ---
 
-# Target-State Response
+## Target-State Response
 
-The proposed architecture changes the plant's trust model without materially changing the underlying industrial process.
+The target architecture changes the trust model while keeping the underlying plant process intact.
 
-The legacy assumption:
+The legacy model is effectively:
 
 > **Connected to OT → Broadly trusted**
 
-is replaced with:
+The target model becomes:
 
 > **Operational requirement → Explicitly permitted access**
 
-The target state introduces:
+The redesign introduces:
 
-### OT DMZ
+* An OT DMZ between enterprise and control environments
+* Separate supervisory, engineering, and control security zones
+* Explicitly allowed communication paths between zones
+* Governed vendor remote access through a controlled gateway and jump host
+* Read-oriented management visibility without unnecessary process-control authority
+* Controlled historian replication for enterprise reporting
+* Restricted reachability around legacy MS/TP gateways
+* Passive and anomaly-oriented OT monitoring
+* Clearer administrative ownership
+* Continued local and manual plant-control capability
 
-Enterprise and external users no longer communicate directly with the control environment.
+The intent is not to make the plant harder to operate.
 
-Approved services terminate or exchange information through an OT demilitarized zone.
-
-### Segmented OT Security Zones
-
-Operator, engineering, administrative, and control functions are logically separated according to their operational roles and privilege levels.
-
-### Explicit Communication Paths
-
-High-privilege systems retain the access required to perform their functions but do not receive unrestricted reachability simply because they reside within OT.
-
-### Governed Vendor Access
-
-Remote vendor connectivity is consolidated through an approved remote-access gateway and privileged jump host.
-
-The inherited legacy VPN is removed.
-
-### Reduced Management Privilege
-
-Management retains plant visibility without unnecessary process-control authority.
-
-### Controlled Historian Architecture
-
-Operational historian functionality remains available to plant personnel while approved data is replicated outward for enterprise reporting.
-
-### Legacy-System Containment
-
-Operationally necessary BACnet MS/TP devices remain in service but are protected through gateway isolation, restricted reachability, compensating controls, and passive monitoring.
-
-### Preserved Manual Operation
-
-Physical plant controls and degraded operating procedures remain available if centralized supervisory systems are unavailable.
+The intent is to make it harder for one compromised system, user, or vendor pathway to affect systems outside its legitimate role.
 
 ---
 
-# Expected Risk Reduction
+## Expected Risk Reduction
 
-The proposed architecture is designed primarily to reduce the consequences of compromise.
+| Legacy Exposure                  | Target-State Effect                                              |
+| -------------------------------- | ---------------------------------------------------------------- |
+| Broad internal OT reachability   | Segmentation reduces lateral movement and blast radius           |
+| Direct enterprise-to-OT exposure | DMZ services control boundary crossings                          |
+| Excess management privilege      | Visibility is preserved while command authority is removed       |
+| Legacy vendor VPN                | Remote access is consolidated into a governed pathway            |
+| Broad engineering reachability   | High-privilege access is limited to required destinations        |
+| Enterprise demand for OT data    | Replicated services separate reporting from control access       |
+| Legacy MS/TP dependencies        | Gateway containment and monitoring provide compensating controls |
+| Informal responsibility          | Ownership and access authority become explicit                   |
 
-| Legacy Exposure                        | Target-State Effect                                   |
-| -------------------------------------- | ----------------------------------------------------- |
-| Broad OT lateral movement              | Security zones reduce reachable assets                |
-| Direct enterprise-to-control exposure  | DMZ intermediates IT/OT communications                |
-| Excess management privilege            | Read-oriented visibility replaces unnecessary control |
-| Unmanaged vendor pathway               | Remote access becomes centralized and governed        |
-| Engineering workstation exposure       | Explicit access limits high-privilege reachability    |
-| Direct business access to OT historian | Replicated data supports enterprise consumption       |
-| Legacy-device exposure                 | Gateways and compensating controls contain risk       |
-| Limited visibility                     | Passive OT monitoring improves anomaly detection      |
-| Informal responsibility                | Administrative ownership becomes explicit             |
-
-The complete comparison is documented in the [Risk Reduction Mapping](risk%20reduction%20mapping.md).
+Detailed analysis is available in the [Risk Reduction Mapping](risk%20reduction%20mapping.md).
 
 ---
 
-# Operational Constraint
+## Operational Constraint
 
-The target architecture is intentionally designed around OT realities rather than conventional enterprise assumptions.
+The plant still has to run.
 
-Cybersecurity controls must not introduce a larger operational risk than the threat they are intended to mitigate.
+That requirement governs every cybersecurity decision in the target state.
 
-The redesign therefore preserves:
+The redesign preserves:
 
-* Automatic control functions
+* Automatic controller operation
 * Required BACnet communications
-* Operator HMI capability
-* Authorized engineering access
-* Vendor maintenance capability
+* Operator HMI functionality
+* Engineering and troubleshooting capability
+* Vendor maintenance where necessary
 * Equipment-level service access
-* Local controller logic
+* Local control panels
 * Central physical-board operation
 * Degraded/manual plant operation
 
-The project does not assume that legacy technology can simply be patched, replaced, or disconnected.
+Legacy field devices are not removed simply because they are old.
 
-Where modern endpoint protections cannot be applied directly, the architecture relies on containment, controlled communications, monitoring, and compensating controls.
+Where those devices cannot support modern endpoint controls, the design reduces risk around them through segmentation, restricted gateway access, passive monitoring, and other compensating controls.
 
----
-
-# NIST Alignment
-
-The architecture is informed by:
-
-* **NIST SP 800-82 Rev. 3** for operational technology security guidance
-* **NIST Cybersecurity Framework 2.0** for cybersecurity outcomes and governance alignment
-* **NIST SP 800-53 Rev. 5** for selected control-level traceability
-
-NIST guidance is used as a decision framework rather than as a compliance checklist.
-
-The analytical model is:
-
-> **Observed Condition → Risk Finding → NIST Guidance → Architecture Decision → Expected Risk Reduction**
-
-Detailed framework mappings are available in [NIST Alignment](nist%20alignment.md).
+This keeps cybersecurity aligned with the physical process rather than treating OT as another enterprise network.
 
 ---
 
-# Residual Risk
+## NIST Basis
 
-The target state materially reduces exposure but does not eliminate cyber risk.
+The design is informed primarily by:
 
-Significant residual risks remain around:
+* **NIST SP 800-82 Rev. 3**
+* **NIST Cybersecurity Framework 2.0**
+* **NIST SP 800-53 Rev. 5**
 
-* Privileged engineering systems
-* Authorized vendor credentials
-* Firewall and segmentation misconfiguration
-* DMZ intermediary systems
-* Temporary maintenance activity
-* Legacy field devices
-* Monitoring accuracy
-* Asset inventory accuracy
-* Governance drift over time
+NIST guidance is used to support design decisions and control traceability rather than to turn the project into a compliance checklist.
 
-These risks require continued technical controls, periodic review, and operational governance.
+The working method is:
 
-The objective is not zero risk.
+> **Observed Condition → Risk Finding → Guidance → Architecture Decision → Expected Risk Reduction**
 
-The objective is to ensure that remaining risks are:
-
-> **Visible, constrained, governed, and operationally understood.**
+Detailed mappings are available in [NIST Alignment](nist%20alignment.md).
 
 ---
 
-# Executive Conclusion
+## Residual Risk
 
-The case study demonstrates that meaningful OT cybersecurity improvement does not require replacing the entire industrial environment.
+The target state reduces exposure but does not eliminate risk.
 
-The most significant risk reduction comes from changing how trust is granted.
+High-value engineering systems remain high-value targets. Approved vendor access still carries third-party risk. Legacy field devices still have limited native security capability. Firewalls and segmentation still depend on correct configuration. Maintenance activity still creates temporary exposure.
 
-By separating enterprise and OT functions, controlling remote access, reducing unnecessary privilege, isolating high-consequence engineering functions, containing legacy field networks, and preserving operational resilience, the target architecture reduces the number of pathways through which a cyber event can affect physical operations.
+Those risks are not hidden by the redesign.
 
-The resulting design preserves the plant's operational purpose while creating a more defensible cybersecurity posture.
+They are made more visible, more constrained, and easier to govern.
+
+---
+
+## Executive Conclusion
+
+The legacy environment does not need to be rebuilt from the ground up to achieve meaningful cybersecurity improvement.
+
+The largest gains come from reducing unnecessary trust.
+
+By separating enterprise and OT functions, controlling remote access, limiting privilege, isolating engineering functions, containing legacy field networks, and improving visibility, the target architecture reduces the number of paths through which a cyber event can reach physical operations.
+
+The plant remains operationally recognizable.
+
+The difference is that access now has to justify itself.
 
 > **Preserve the process. Reduce unnecessary trust. Constrain access. Improve visibility. Maintain operational resilience.**
