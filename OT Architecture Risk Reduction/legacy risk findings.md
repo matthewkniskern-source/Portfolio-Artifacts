@@ -67,7 +67,8 @@ The legacy topology places the following systems within the same broadly trusted
 * BACnet/IP plant controllers
 * Field-network gateways
 
-See [Legacy Architecture](legacy%20architecture.md#primary-ot-network).
+See [Legacy Architecture](legacy%20architecture.md#primary-ot-network) , 
+[Legacy Topology](legacy%20topo.mmd)
 
 ## Risk Statement
 
