@@ -2,11 +2,11 @@
 
 ## Purpose
 
-This inventory defines the principal cyber-relevant assets, user groups, and access relationships within the reference central utility plant.
+This inventory identifies the main cyber-relevant assets, user groups, and access relationships in the reference central utility plant.
 
-It is not intended to represent a complete engineering asset register. Field instruments and individual equipment components are grouped where additional detail would not materially improve the cybersecurity analysis.
+It is not intended to be a complete engineering asset register. Field devices are grouped where additional detail would not add much to the cybersecurity analysis.
 
-The inventory provides a common baseline for development of the legacy-state topology, risk assessment, and target-state architecture.
+The goal is to establish a common baseline for the legacy topology, risk findings, and target-state design.
 
 ---
 
@@ -15,22 +15,22 @@ The inventory provides a common baseline for development of the legacy-state top
 | Asset                     | Function                                                                        | Typical Users                                  | Relative Criticality |
 | ------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------- | -------------------- |
 | SCADA/BAS Server          | Central supervisory control, alarming, coordination, and plant data acquisition | Operators, engineering personnel               | High                 |
-| Operator HMI Station 1    | Operator visualization and supervisory control interface                        | Plant operators                                | High                 |
-| Operator HMI Station 2    | Operator visualization and supervisory control interface                        | Plant operators                                | High                 |
+| Operator HMI Station 1    | Operator visualization and supervisory control                                  | Plant operators                                | High                 |
+| Operator HMI Station 2    | Operator visualization and supervisory control                                  | Plant operators                                | High                 |
 | Engineering Workstation   | PLC programming, configuration, diagnostics, and control-system maintenance     | Authorized controls/maintenance personnel      | Very High            |
-| OT Historian              | Storage of operational trends, alarms, equipment states, and performance data   | Operators, maintenance, engineering            | Moderate             |
+| OT Historian              | Stores trends, alarms, equipment states, and performance data                   | Operators, maintenance, engineering            | Moderate             |
 | PLC-1                     | Chiller process control                                                         | Control system / authorized engineering access | Critical             |
 | PLC-2                     | Pump and chilled-water distribution control                                     | Control system / authorized engineering access | Critical             |
 | PLC-3                     | Cooling-tower and condenser-water control                                       | Control system / authorized engineering access | Critical             |
 | OT Network Infrastructure | Connectivity between supervisory and control assets                             | Authorized technical personnel                 | Critical             |
 
-Both operator HMI stations are capable of accessing the plant supervisory control environment. They are treated as active operator workstations rather than as a formal primary/backup pair.
+Both HMI stations are active operator workstations with access to the plant supervisory environment. They are not modeled as a formal primary/backup pair.
 
 ---
 
 # Field and Process Assets
 
-For cybersecurity architecture purposes, individual field devices are grouped according to their operational function.
+For this case study, field devices are grouped by function rather than listed individually.
 
 | Asset Group                    | Examples                                                             | Primary Interface                  | Operational Importance |
 | ------------------------------ | -------------------------------------------------------------------- | ---------------------------------- | ---------------------- |
@@ -38,12 +38,12 @@ For cybersecurity architecture purposes, individual field devices are grouped ac
 | Pumps                          | Chilled-water and condenser-water pumps                              | PLC/VFD                            | Critical               |
 | Cooling Towers                 | Tower fans and associated equipment                                  | PLC/VFD                            | Critical               |
 | Variable-Frequency Drives      | Pump and fan motor control                                           | PLC / local interface              | High                   |
-| Controlled Valves              | Automated water-flow control                                         | PLC                                | High                   |
+| Controlled Valves              | Automated process-flow control                                       | PLC                                | High                   |
 | Instrumentation                | Temperature, pressure, flow, status                                  | PLC                                | High                   |
 | Local Equipment Controls       | Equipment boards, local panels, selectors, manufacturer interfaces   | Operator/technician                | Resilience-critical    |
 | Central Physical Control Board | Coordinated local plant control during supervisory-system impairment | Plant operator                     | Resilience-critical    |
 
-Individual sensors, actuators, and similar field components are not modeled as separate network assets unless their connectivity becomes relevant to a specific cybersecurity finding.
+Individual sensors, actuators, and similar devices are only broken out separately when they matter to a specific communication path or risk finding.
 
 ---
 
@@ -51,60 +51,56 @@ Individual sensors, actuators, and similar field components are not modeled as s
 
 ## Permanent Engineering Workstation
 
-A dedicated engineering workstation is permanently installed within the plant control room.
+A dedicated engineering workstation is installed in the plant control room, which is treated as a controlled-access area.
 
-The control room is a controlled-access operational area, limiting casual physical access to high-privilege control-system assets.
-
-The engineering workstation supports:
+The workstation supports:
 
 * PLC programming and configuration
 * Control-logic troubleshooting
-* Commissioning support
+* Commissioning
 * Controller diagnostics
 * Authorized configuration changes
-* Recovery and restoration activities
+* Recovery and restoration
 
-Although physical placement provides an additional layer of protection, the workstation remains one of the most privileged cyber assets in the OT environment because compromise or misuse may directly affect controller behavior.
+Physical access control helps, but this is still one of the highest-value cyber assets in the plant. If it is compromised or misused, it can directly affect controller behavior.
 
 ---
 
 ## Company Maintenance Laptop
 
-A company-issued mobile maintenance workstation is available to authorized plant technical personnel.
+Plant maintenance personnel use a company-issued laptop for direct service work on equipment where required.
 
-The laptop may be used for:
+Typical uses include:
 
-* Direct connection to manufacturer service ports
+* Manufacturer service-port access
 * Equipment diagnostics
 * Fault-history review
 * Parameter inspection
 * Troubleshooting
 * Authorized maintenance changes
 
-The device may interact with both ordinary organizational resources and industrial equipment during its lifecycle.
+Unlike the fixed engineering workstation, this laptop moves between normal company use and direct interaction with industrial equipment.
 
-Because it is mobile, its security characteristics differ from those of the permanently installed engineering workstation.
+That makes it a different trust problem.
 
 ---
 
 ## Vendor Service Laptop
 
-Third-party technicians may use vendor-owned laptops to connect directly to manufacturer-supported service interfaces on plant equipment.
+Vendor technicians may use their own laptops to connect directly to manufacturer-supported service interfaces.
 
-These systems are not administered by the plant organization.
-
-The organization therefore cannot automatically assume:
+The plant does not administer those devices, so it cannot automatically assume:
 
 * Current patch status
-* Endpoint-security configuration
+* Endpoint-security posture
 * Software inventory
 * Prior network exposure
 * Removable-media history
 * Credential hygiene
 
-Direct vendor service access may nevertheless be operationally necessary for specialized troubleshooting and repair.
+That does not mean vendor laptops can simply be banned. In some cases, the vendor's tools are what get the equipment diagnosed or returned to service.
 
-The cybersecurity problem is therefore not solved simply by prohibiting vendor equipment. Appropriate controls must account for a legitimate maintenance requirement involving an endpoint outside organizational administration.
+The real requirement is to allow the maintenance function without treating the vendor device as broadly trusted OT infrastructure.
 
 ---
 
@@ -120,26 +116,30 @@ The cybersecurity problem is therefore not solved simply by prohibiting vendor e
 | Vendor Technician                 | Specific supported equipment or systems during approved maintenance | Temporary / scoped high privilege            |
 | Senior Legacy Vendor Personnel    | Historically retained remote-support capability                     | Potentially high and insufficiently governed |
 
-The required privilege of a role is distinguished from privilege that may have accumulated in the legacy environment.
+The important distinction is between **what a role needs** and **what access it may have accumulated over time**.
 
 ---
 
 # Enterprise IT Support
 
-Corporate IT provides limited support for selected infrastructure that intersects with the OT environment, including server, workstation, network, and enterprise-connectivity functions.
+Corporate IT supports selected infrastructure that overlaps with the OT environment, including servers, workstations, networking, and enterprise connectivity.
 
-OT-specific knowledge within the IT organization is limited and may depend heavily on a small number of personnel with prior familiarity with industrial control systems.
+OT-specific knowledge is limited and may depend heavily on a small number of people who have enough familiarity with plant systems to work effectively across the boundary.
 
-As a result, responsibility for OT-connected infrastructure may be shared across:
+That creates a practical problem.
+
+Responsibility may be spread across:
 
 * Plant operations
-* Controls and maintenance personnel
+* Controls and maintenance
 * Corporate IT
 * Vendors
 
-This creates a potential governance risk when technical ownership, cybersecurity responsibility, and operational authority are not clearly aligned.
+Shared responsibility is not automatically a weakness. Unclear responsibility is.
 
-The target-state architecture should therefore define administrative boundaries and ownership rather than assuming that either IT or plant personnel have complete responsibility for all OT-connected systems.
+If nobody is sure who owns an account, firewall rule, remote-access path, backup, or retirement decision, those things tend to persist long after the original reason for them is gone.
+
+The target state should make those boundaries explicit.
 
 ---
 
@@ -147,23 +147,23 @@ The target-state architecture should therefore define administrative boundaries 
 
 ## Management Workstation
 
-An enterprise-connected management workstation is used by plant management for operational visibility.
+An enterprise-connected management workstation is used for plant visibility.
 
-In the legacy environment, the installed supervisory client and accumulated account permissions allow the manager to perform some control actions in addition to viewing plant conditions.
+In the legacy environment, the installed supervisory client and accumulated permissions also allow some control actions.
 
-This capability exceeds the legitimate management requirement.
+That is more capability than the role requires.
 
 **Required capability:** Plant visibility and performance awareness.
 
 **Legacy capability:** Visibility plus unnecessary supervisory command authority.
 
-This distinction will be evaluated as both an access-control and governance issue.
+This is both an access-control problem and a governance problem.
 
 ---
 
 ## Enterprise Reporting Users
 
-Business and facilities personnel may require selected plant information for:
+Business and facilities personnel may need selected plant data for:
 
 * Energy reporting
 * Cost analysis
@@ -171,7 +171,9 @@ Business and facilities personnel may require selected plant information for:
 * Maintenance planning
 * Management dashboards
 
-These users require plant information but do not require direct access to controllers or process-control functions.
+They need information.
+
+They do not need direct access to controllers or process-control functions.
 
 ---
 
@@ -179,71 +181,79 @@ These users require plant information but do not require direct access to contro
 
 ## Recognized Vendor Access
 
-Approved vendors may be provided remote support capability for specific systems when remote troubleshooting is justified.
+Approved vendors may be given remote access to specific systems when remote troubleshooting is justified.
 
-Remote access is not necessary for routine autonomous plant operation and should therefore be treated as an exceptional privileged pathway.
+That access is not required for routine plant operation and should be treated as an exceptional privileged path.
 
 ---
 
 ## Legacy Vendor VPN Access
 
-A historical vendor VPN pathway remains technically available for remote support of selected chiller-related systems.
+A historical vendor VPN remains technically available for selected chiller-related support.
 
-The connection was originally established to support legitimate vendor troubleshooting and maintenance but has persisted beyond the period in which it was actively governed as part of the current remote-access model.
+It was originally installed for legitimate troubleshooting and maintenance. The problem is that it outlived the governance around it.
 
-Access remains known to a small number of long-tenured vendor personnel.
+A small number of long-tenured vendor personnel still know about the path and may still be able to use it.
 
-The pathway may therefore represent:
+That raises several questions:
 
-* Persistent third-party access
-* Incomplete credential and access review
-* Unclear current ownership
-* Incomplete network documentation
-* Dependence on institutional knowledge
-* Potential inconsistency between approved and effective remote-access architecture
+* Who owns it now?
+* Which credentials still work?
+* What can it actually reach?
+* Is anyone monitoring it?
+* Is it still needed?
+* Is it even represented accurately in current network documentation?
 
-The existence of this VPN path does not establish a continuing business requirement.
+The VPN is part of the **effective architecture** whether or not it appears on the current approved diagram.
 
-Its purpose, ownership, authentication method, reachable assets, and continuing necessity should be reassessed during the legacy-state review.
+If there is no current business requirement for it, it should not survive into the target state.
 
 ---
 
 # Access Classification
 
-For this case study, access relationships are classified into four broad categories.
+For this case study, access is grouped into four practical categories.
 
 ### Operational Access
 
-Access necessary for normal plant operation, such as operator use of the HMI and controller communication with field devices.
+Access required to run the plant.
+
+Examples include operator HMI access and controller communication with field devices.
 
 ### Maintenance Access
 
-Privileged access required intermittently for diagnostics, configuration, repair, or commissioning.
+Privileged access used for diagnostics, repair, commissioning, or configuration.
+
+This is often intermittent but can be very high impact.
 
 ### Business Access
 
-Access to operational information needed for reporting, management, planning, or analysis without a legitimate need to control the physical process.
+Access to plant information for reporting, management, planning, or analysis.
+
+These users may need visibility into OT data without needing control authority.
 
 ### Legacy or Inherited Access
 
-Connectivity or permissions that remain available because of historical implementation, convenience, privilege accumulation, or incomplete retirement rather than a current operational requirement.
+Access that still exists because it was once useful, convenient, or approved.
 
-This classification will be used during the legacy-state assessment to distinguish necessary functionality from avoidable exposure.
+It may no longer reflect a current operational requirement.
+
+That distinction becomes important later because the target architecture should preserve required capability without automatically preserving every old access path that came with it.
 
 ---
 
 # Inventory Boundary
 
-This inventory intentionally emphasizes assets and access relationships that materially affect cybersecurity architecture.
+This inventory focuses on assets and access relationships that matter to the cybersecurity architecture.
 
-It does not attempt to enumerate:
+It does not attempt to list:
 
-* Every field sensor or actuator
+* Every sensor or actuator
 * Individual electrical components
 * Complete safety circuitry
-* Every workstation in the enterprise environment
+* Every enterprise workstation
 * Detailed PLC I/O
 * Vendor-specific controller internals
-* Complete network-device inventories
+* A complete network-device inventory
 
-Additional assets will be introduced only when they are necessary to explain an architecture decision, communication requirement, or risk condition.
+More detail is only added when it changes the architecture, communication requirements, or risk analysis.
