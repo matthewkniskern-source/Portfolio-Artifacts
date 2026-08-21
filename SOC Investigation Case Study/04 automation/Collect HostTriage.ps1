@@ -22,7 +22,10 @@
     .\Collect-HostTriage.ps1 `
         -StartTime "2026-08-17 06:45:00" `
         -EndTime "2026-08-17 07:05:00" `
-        -OutputPath ".\triage-output"
+        -OutputPath ".\SOC-2026-0817-0042"
+
+    Collects the investigation window used in the SOC case study and
+    writes the evidence package to the incident-specific output directory.
 
 .NOTES
     Designed as a defensive SOC case-study utility.
