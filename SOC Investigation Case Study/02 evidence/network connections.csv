@@ -1,1 +1,40 @@
-
+Timestamp,Host,User,ProcessName,PID,Protocol,LocalIP,LocalPort,RemoteIP,RemotePort,Direction,Action,TelemetrySource,Notes
+2026-08-17 06:44:09,IT-LT-017,SYSTEM,MsMpEng.exe,1840,TCP,10.20.14.87,49721,20.190.128.25,443,Outbound,Allowed,Firewall,Microsoft Defender cloud service traffic
+2026-08-17 06:44:22,IT-LT-017,SYSTEM,InventoryAgent.exe,3976,TCP,10.20.14.87,49733,10.20.30.27,443,Outbound,Allowed,Firewall,Routine inventory agent connection to management server
+2026-08-17 06:45:13,IT-LT-017,SYSTEM,svchost.exe,4128,UDP,10.20.14.87,53541,10.20.30.10,53,Outbound,Allowed,Firewall,Routine DNS query
+2026-08-17 06:46:08,IT-LT-017,SYSTEM,MoUsoCoreWorker.exe,4220,TCP,10.20.14.87,49764,13.107.246.40,443,Outbound,Allowed,Firewall,Windows Update traffic
+2026-08-17 06:47:55,IT-LT-017,SYSTEM,svchost.exe,4128,UDP,10.20.14.87,53562,10.20.30.10,53,Outbound,Allowed,Firewall,Routine DNS query
+2026-08-17 06:50:59,IT-LT-017,sarnold,userinit.exe,4864,TCP,10.20.14.87,49802,10.20.30.11,88,Outbound,Allowed,Firewall,Kerberos session initialization
+2026-08-17 06:51:03,IT-LT-017,sarnold,explorer.exe,4932,TCP,10.20.14.87,49806,10.20.30.12,445,Outbound,Allowed,Firewall,Normal domain file resource connection
+2026-08-17 06:51:22,IT-LT-017,sarnold,OneDrive.exe,5236,TCP,10.20.14.87,49817,52.108.8.10,443,Outbound,Allowed,Firewall,Microsoft 365 synchronization
+2026-08-17 06:51:53,IT-LT-017,sarnold,msedge.exe,5488,TCP,10.20.14.87,49831,13.107.42.14,443,Outbound,Allowed,Firewall,Normal Microsoft Edge web traffic
+2026-08-17 06:52:04,IT-LT-017,sarnold,msedge.exe,5488,TCP,10.20.14.87,49834,142.250.72.14,443,Outbound,Allowed,Firewall,Normal browser HTTPS traffic
+2026-08-17 06:52:48,IT-LT-017,SYSTEM,svchost.exe,4128,UDP,10.20.14.87,53591,10.20.30.10,53,Outbound,Allowed,Firewall,Routine DNS query
+2026-08-17 06:53:51,IT-LT-017,sarnold,powershell.exe,6184,TCP,10.20.14.87,49877,10.20.30.11,389,Outbound,Allowed,Firewall,LDAP query generated during administrative activity
+2026-08-17 06:54:02,IT-LT-017,sarnold,powershell.exe,6184,TCP,10.20.14.87,49882,10.20.30.11,445,Outbound,Allowed,Firewall,Internal domain resource connection
+2026-08-17 06:54:37,IT-LT-017,sarnold,ipconfig.exe,6380,UDP,10.20.14.87,53612,10.20.30.10,53,Outbound,Allowed,Firewall,DNS activity during network configuration review
+2026-08-17 06:54:59,IT-LT-017,sarnold,net.exe,6496,TCP,10.20.14.87,49896,10.20.30.11,445,Outbound,Allowed,Firewall,Domain account query activity
+2026-08-17 06:55:22,IT-LT-017,sarnold,nltest.exe,6572,TCP,10.20.14.87,49903,10.20.30.11,445,Outbound,Allowed,Firewall,Domain trust discovery activity
+2026-08-17 06:55:49,IT-LT-017,sarnold,net.exe,6680,TCP,10.20.14.87,49911,10.20.30.11,445,Outbound,Allowed,Firewall,Network resource enumeration
+2026-08-17 06:56:14,IT-LT-017,sarnold,powershell.exe,6764,TCP,10.20.14.87,49918,10.20.30.27,443,Outbound,Allowed,Firewall,Normal management server connection visible during local network review
+2026-08-17 06:56:52,IT-LT-017,sarnold,SecurityHealthSystray.exe,6840,TCP,10.20.14.87,49929,20.190.128.25,443,Outbound,Allowed,Firewall,Normal Windows security service traffic
+2026-08-17 06:57:45,IT-LT-017,sarnold,msedge.exe,7024,TCP,10.20.14.87,49944,13.107.42.14,443,Outbound,Allowed,Firewall,Normal browser HTTPS traffic
+2026-08-17 06:58:03,IT-LT-017,sarnold,powershell.exe,7116,TCP,10.20.14.87,49951,198.51.100.42,443,Outbound,Allowed,Firewall,Unusual PowerShell initiated external HTTPS connection
+2026-08-17 06:58:04,IT-LT-017,sarnold,powershell.exe,7116,TCP,10.20.14.87,49951,198.51.100.42,443,Outbound,Allowed,Defender Endpoint,Endpoint telemetry confirms PowerShell as initiating process
+2026-08-17 06:58:39,IT-LT-017,SYSTEM,svchost.exe,4128,UDP,10.20.14.87,53648,10.20.30.10,53,Outbound,Allowed,Firewall,Routine DNS query
+2026-08-17 06:59:47,IT-LT-017,sarnold,ping.exe,7396,ICMP,10.20.14.87,,10.20.14.31,,Outbound,Allowed,Firewall,Reachability test to IT-WS-031
+2026-08-17 07:00:10,IT-LT-017,sarnold,net.exe,7516,TCP,10.20.14.87,49976,10.20.14.31,445,Outbound,Allowed,Firewall,Remote SMB resource query to IT-WS-031
+2026-08-17 07:00:12,IT-LT-017,sarnold,net.exe,7516,TCP,10.20.14.87,49977,10.20.14.31,445,Outbound,Allowed,Defender Endpoint,Endpoint telemetry confirms remote SMB query
+2026-08-17 07:01:52,IT-LT-017,sarnold,net.exe,7688,TCP,10.20.14.87,49994,10.20.14.31,445,Outbound,Allowed,Firewall,Administrative share authentication attempt to IT-WS-031
+2026-08-17 07:01:54,IT-LT-017,sarnold,net.exe,7688,TCP,10.20.14.87,49996,10.20.14.31,445,Outbound,Allowed,Defender Endpoint,Endpoint telemetry confirms attempted ADMIN$ connection
+2026-08-17 07:02:18,IT-LT-017,sarnold,lsass.exe,932,TCP,10.20.14.87,50002,10.20.14.31,445,Outbound,Allowed,Firewall,Authentication traffic associated with failed network logon
+2026-08-17 07:02:35,IT-LT-017,sarnold,lsass.exe,932,TCP,10.20.14.87,50005,10.20.14.31,445,Outbound,Allowed,Firewall,Second authentication attempt associated with failed network logon
+2026-08-17 07:03:17,IT-LT-017,sarnold,msedge.exe,7844,TCP,10.20.14.87,50021,52.96.165.18,443,Outbound,Allowed,Firewall,Normal Microsoft 365 traffic
+2026-08-17 07:04:29,IT-LT-017,SYSTEM,backgroundTaskHost.exe,7936,TCP,10.20.14.87,50033,20.190.128.25,443,Outbound,Allowed,Firewall,Routine Windows background traffic
+2026-08-17 07:05:42,IT-LT-017,sarnold,RuntimeBroker.exe,8020,TCP,10.20.14.87,50047,13.107.42.14,443,Outbound,Allowed,Firewall,Normal Windows cloud service traffic
+2026-08-17 07:07:18,IT-LT-017,SYSTEM,InventoryAgent.exe,8172,TCP,10.20.14.87,50058,10.20.30.27,443,Outbound,Allowed,Firewall,Routine inventory telemetry
+2026-08-17 07:09:51,IT-LT-017,SYSTEM,svchost.exe,4128,UDP,10.20.14.87,53702,10.20.30.10,53,Outbound,Allowed,Firewall,Routine DNS query
+2026-08-17 07:11:42,IT-LT-017,SYSTEM,MoUsoCoreWorker.exe,8384,TCP,10.20.14.87,50079,13.107.246.40,443,Outbound,Allowed,Firewall,Routine Windows Update traffic
+2026-08-17 07:14:25,IT-LT-017,sarnold,msedge.exe,8476,TCP,10.20.14.87,50101,142.250.72.14,443,Outbound,Allowed,Firewall,Normal browser HTTPS traffic
+2026-08-17 07:18:57,IT-LT-017,SYSTEM,SecurityHealthService.exe,8612,TCP,10.20.14.87,50128,20.190.128.25,443,Outbound,Allowed,Firewall,Routine Windows security traffic
+2026-08-17 07:23:12,IT-LT-017,SYSTEM,InventoryAgent.exe,8744,TCP,10.20.14.87,50153,10.20.30.27,443,Outbound,Allowed,Firewall,Routine inventory telemetry
