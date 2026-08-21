@@ -69,29 +69,24 @@ A more detailed visual sequence is available in [Incident Progression](08%20diag
 
 ---
 
-## Start Here
+## Project Navigation
 
-For a quick review of the project, I recommend these five files:
+The repository follows the same general progression as the incident lifecycle:
 
-1. [Incident Scenario](01%20case%20overview/incident%20scenario.md)  
-   Establishes the organization, affected account, endpoint, incident conditions, and final ground truth.
+**Case Overview → Evidence → Investigation → Automation → Detection → Response → Post-Incident Review**
 
-2. [Evidence Correlation](08%20diagrams/evidence-correlation.md)  
-   Shows how authentication, process, and network telemetry combine to support the finding.
+Each section can stand on its own, with cross-links included where they add useful context.
 
-3. [CLI Investigation](03%20investigation/cli%20investigation.md)  
-   Documents the Windows and PowerShell investigation used to validate the alert and follow the activity across the endpoint.
-
-4. [Security Automation](04%20automation/README.md)  
-   Documents the PowerShell utilities used for triage collection, authentication analysis, and evidence packaging.
-
-5. [Analyst Findings](03%20investigation/analyst%20findings.md)  
-   Records the evidence-backed disposition, confirmed scope, unresolved gaps, and response recommendation.
-
-For a deeper technical review, continue through the repository in numbered order.
-
----
-
+- [01 - Case Overview](01%20case%20overview/)
+- [02 - Evidence](02%20evidence/)
+- [03 - Investigation](03%20investigation/)
+- [04 - Automation](04%20automation/)
+- [05 - Detection](05%20detection/)
+- [06 - Response](06%20response/)
+- [07 - Post-Incident Review](07%20post%20incident/)
+- [08 - Diagrams](08%20diagrams/)
+- [09 - References](09%20references/)
+- 
 # Repository Structure
 
 ## 01 - Case Overview
