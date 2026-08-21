@@ -1,0 +1,47 @@
+# Control Improvement Map
+
+This diagram connects the conditions exposed during the incident to the control improvements recommended after review.
+
+```mermaid
+flowchart TD
+    A["SOC-2026-0817-0042"]
+
+    A --> B["Authentication and Identity"]
+    A --> C["Detection and Telemetry"]
+    A --> D["Endpoint and Privilege"]
+    A --> E["Asset Custody"]
+    A --> F["Physical Security"]
+    A --> G["SOC Automation"]
+
+    B --> B1["Separate administrative<br/>accounts where practical"]
+    B --> B2["Baseline IT accounts<br/>separately"]
+    B --> B3["Review privilege scope"]
+
+    C --> C1["Correlate authentication<br/>with post-logon activity"]
+    C --> C2["Preserve process-to-network<br/>attribution"]
+    C --> C3["Correlate cross-host<br/>authentication and SMB"]
+    C --> C4["Validate 4624 / 4625 / 4688<br/>logging coverage"]
+
+    D --> D1["Enforce workstation locking"]
+    D --> D2["Review remote<br/>administrative paths"]
+    D --> D3["Rebuild affected endpoint<br/>from trusted baseline"]
+
+    E --> E1["Track shared-device custody"]
+    E --> E2["Record assignment<br/>and return status"]
+    E --> E3["Define idle state for<br/>unassigned devices"]
+
+    F --> F1["Review help desk<br/>access controls"]
+    F --> F2["Review badge / camera<br/>evidence where available"]
+
+    G --> G1["Automate host triage"]
+    G --> G2["Automate authentication<br/>pattern review"]
+    G --> G3["Automate evidence packaging<br/>and integrity hashing"]
+```
+
+## Control Principle
+
+The incident does not justify adding controls simply because they are available.
+
+Each improvement should trace back to a condition that affected detection, attribution, containment, or recovery.
+
+The highest-value changes improve correlation, context, least privilege, and shared-device accountability without preventing IT staff from performing legitimate administrative work.
