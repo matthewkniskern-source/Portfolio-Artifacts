@@ -36,7 +36,7 @@ IT-LT-017 is a shared IT loaner and troubleshooting laptop. The device is not pe
 
 ## Initial Activity
 
-At approximately 08:12 on a normal business day, the SIEM generates a medium-severity alert after detecting several failed authentication attempts for sarnold, followed shortly afterward by a successful authentication from IT-LT-017.
+At approximately 06:31 on a normal business day, the SIEM generates a medium-severity alert after detecting several failed authentication attempts for sarnold, followed shortly afterward by a successful authentication from IT-LT-017.
 
 The successful authentication alone does not establish compromise. A technician could have entered an incorrect password several times, reconnected to a system using stale credentials, or performed normal troubleshooting from the shared laptop.
 
