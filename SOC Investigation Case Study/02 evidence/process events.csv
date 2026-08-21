@@ -1,1 +1,50 @@
-
+Timestamp,EventID,Host,User,ParentProcess,ProcessName,PID,CommandLine,IntegrityLevel,TelemetrySource,Notes
+2026-08-17 06:44:03,4688,IT-LT-017,SYSTEM,services.exe,MsMpEng.exe,1840,"C:\ProgramData\Microsoft\Windows Defender\Platform\MsMpEng.exe",System,Windows Security,Routine Microsoft Defender process
+2026-08-17 06:44:18,4688,IT-LT-017,SYSTEM,services.exe,InventoryAgent.exe,3976,"C:\Program Files\Northstar\InventoryAgent\InventoryAgent.exe",System,Windows Security,Routine asset inventory agent
+2026-08-17 06:45:07,4688,IT-LT-017,SYSTEM,svchost.exe,MoUsoCoreWorker.exe,4220,"C:\Windows\System32\MoUsoCoreWorker.exe",System,Windows Security,Windows Update orchestration
+2026-08-17 06:46:32,4688,IT-LT-017,SYSTEM,services.exe,SecurityHealthService.exe,2712,"C:\Windows\System32\SecurityHealthService.exe",System,Windows Security,Routine Windows security service
+2026-08-17 06:49:11,4688,IT-LT-017,SYSTEM,svchost.exe,backgroundTaskHost.exe,4356,"C:\Windows\System32\backgroundTaskHost.exe",Medium,Windows Security,Routine Windows background task
+2026-08-17 06:50:57,4688,IT-LT-017,sarnold,winlogon.exe,userinit.exe,4864,"C:\Windows\System32\userinit.exe",Medium,Windows Security,Interactive session initialization following successful logon
+2026-08-17 06:51:00,4688,IT-LT-017,sarnold,userinit.exe,explorer.exe,4932,"C:\Windows\explorer.exe",Medium,Windows Security,Windows desktop shell starts
+2026-08-17 06:51:07,4688,IT-LT-017,sarnold,explorer.exe,SearchHost.exe,5060,"C:\Windows\SystemApps\MicrosoftWindows.Client.CBS\SearchHost.exe",Medium,Windows Security,Normal Windows user-session process
+2026-08-17 06:51:11,4688,IT-LT-017,sarnold,explorer.exe,StartMenuExperienceHost.exe,5112,"C:\Windows\SystemApps\Microsoft.Windows.StartMenuExperienceHost\StartMenuExperienceHost.exe",Medium,Windows Security,Normal Windows user-session process
+2026-08-17 06:51:19,4688,IT-LT-017,sarnold,explorer.exe,OneDrive.exe,5236,"C:\Program Files\Microsoft OneDrive\OneDrive.exe /background",Medium,Windows Security,Normal Microsoft 365 synchronization
+2026-08-17 06:51:48,4688,IT-LT-017,sarnold,explorer.exe,msedge.exe,5488,"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",Medium,Windows Security,Normal browser launch
+2026-08-17 06:51:49,4688,IT-LT-017,sarnold,msedge.exe,msedge.exe,5524,"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe --type=crashpad-handler",Medium,Windows Security,Normal browser child process
+2026-08-17 06:51:51,4688,IT-LT-017,sarnold,msedge.exe,msedge.exe,5592,"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe --type=gpu-process",Medium,Windows Security,Normal browser child process
+2026-08-17 06:52:14,4688,IT-LT-017,sarnold,explorer.exe,RuntimeBroker.exe,5716,"C:\Windows\System32\RuntimeBroker.exe",Medium,Windows Security,Normal Windows process
+2026-08-17 06:52:37,4688,IT-LT-017,SYSTEM,svchost.exe,taskhostw.exe,5832,"C:\Windows\System32\taskhostw.exe",System,Windows Security,Routine scheduled Windows activity
+2026-08-17 06:53:06,4688,IT-LT-017,sarnold,explorer.exe,notepad.exe,6012,"C:\Windows\System32\notepad.exe",Medium,Windows Security,Normal interactive application
+2026-08-17 06:53:42,4688,IT-LT-017,sarnold,explorer.exe,powershell.exe,6184,"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoLogo",Medium,Windows Security,PowerShell interactive session begins
+2026-08-17 06:54:07,4688,IT-LT-017,sarnold,powershell.exe,whoami.exe,6268,"C:\Windows\System32\whoami.exe",Medium,Windows Security,Current user discovery
+2026-08-17 06:54:19,4688,IT-LT-017,sarnold,powershell.exe,hostname.exe,6312,"C:\Windows\System32\hostname.exe",Medium,Windows Security,Host identification
+2026-08-17 06:54:36,4688,IT-LT-017,sarnold,powershell.exe,ipconfig.exe,6380,"C:\Windows\System32\ipconfig.exe /all",Medium,Windows Security,Network configuration discovery
+2026-08-17 06:54:58,4688,IT-LT-017,sarnold,powershell.exe,cmd.exe,6444,"C:\Windows\System32\cmd.exe /c net user sarnold /domain",Medium,Windows Security,Domain account information queried
+2026-08-17 06:54:59,4688,IT-LT-017,sarnold,cmd.exe,net.exe,6496,"C:\Windows\System32\net.exe user sarnold /domain",Medium,Windows Security,Domain account discovery
+2026-08-17 06:55:21,4688,IT-LT-017,sarnold,powershell.exe,nltest.exe,6572,"C:\Windows\System32\nltest.exe /domain_trusts",Medium,Windows Security,Domain trust discovery
+2026-08-17 06:55:47,4688,IT-LT-017,sarnold,powershell.exe,cmd.exe,6636,"C:\Windows\System32\cmd.exe /c net view /domain",Medium,Windows Security,Network and domain resource discovery
+2026-08-17 06:55:48,4688,IT-LT-017,sarnold,cmd.exe,net.exe,6680,"C:\Windows\System32\net.exe view /domain",Medium,Windows Security,Network resource discovery
+2026-08-17 06:56:13,4688,IT-LT-017,sarnold,powershell.exe,powershell.exe,6764,"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -Command Get-NetTCPConnection",Medium,Windows Security,Local network connection review
+2026-08-17 06:56:51,4688,IT-LT-017,sarnold,explorer.exe,SecurityHealthSystray.exe,6840,"C:\Windows\System32\SecurityHealthSystray.exe",Medium,Windows Security,Normal security notification process
+2026-08-17 06:57:16,4688,IT-LT-017,SYSTEM,services.exe,CompatTelRunner.exe,6912,"C:\Windows\System32\CompatTelRunner.exe",System,Windows Security,Routine Windows telemetry process
+2026-08-17 06:57:44,4688,IT-LT-017,sarnold,msedge.exe,msedge.exe,7024,"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe --type=utility",Medium,Windows Security,Normal browser utility process
+2026-08-17 06:58:03,4688,IT-LT-017,sarnold,powershell.exe,powershell.exe,7116,"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -Command Invoke-WebRequest -UseBasicParsing https://198.51.100.42/status -OutFile C:\Users\Public\Documents\status.txt",Medium,Windows Security,PowerShell initiates unusual external HTTPS request
+2026-08-17 06:58:41,4688,IT-LT-017,sarnold,explorer.exe,notepad.exe,7192,"C:\Windows\System32\notepad.exe C:\Users\Public\Documents\status.txt",Medium,Windows Security,Downloaded file opened locally
+2026-08-17 06:59:12,4688,IT-LT-017,sarnold,powershell.exe,cmd.exe,7276,"C:\Windows\System32\cmd.exe /c arp -a",Medium,Windows Security,Local network neighbor discovery
+2026-08-17 06:59:13,4688,IT-LT-017,sarnold,cmd.exe,ARP.EXE,7312,"C:\Windows\System32\ARP.EXE -a",Medium,Windows Security,Local ARP table queried
+2026-08-17 06:59:46,4688,IT-LT-017,sarnold,powershell.exe,ping.exe,7396,"C:\Windows\System32\PING.EXE IT-WS-031",Medium,Windows Security,Internal endpoint reachability test
+2026-08-17 07:00:09,4688,IT-LT-017,sarnold,powershell.exe,cmd.exe,7464,"C:\Windows\System32\cmd.exe /c net view \\IT-WS-031",Medium,Windows Security,Remote system resources queried
+2026-08-17 07:00:10,4688,IT-LT-017,sarnold,cmd.exe,net.exe,7516,"C:\Windows\System32\net.exe view \\IT-WS-031",Medium,Windows Security,Remote resource discovery
+2026-08-17 07:01:51,4688,IT-LT-017,sarnold,powershell.exe,cmd.exe,7632,"C:\Windows\System32\cmd.exe /c net use \\IT-WS-031\ADMIN$ /user:NPS\sarnold",Medium,Windows Security,Attempt to authenticate to administrative share on second endpoint
+2026-08-17 07:01:52,4688,IT-LT-017,sarnold,cmd.exe,net.exe,7688,"C:\Windows\System32\net.exe use \\IT-WS-031\ADMIN$ /user:NPS\sarnold",Medium,Windows Security,Attempted administrative share connection
+2026-08-17 07:02:41,4688,IT-LT-017,SYSTEM,MsMpEng.exe,NisSrv.exe,7760,"C:\ProgramData\Microsoft\Windows Defender\Platform\NisSrv.exe",System,Windows Security,Routine Defender network inspection process
+2026-08-17 07:03:12,4688,IT-LT-017,sarnold,explorer.exe,msedge.exe,7844,"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",Medium,Windows Security,Additional browser process
+2026-08-17 07:04:27,4688,IT-LT-017,SYSTEM,svchost.exe,backgroundTaskHost.exe,7936,"C:\Windows\System32\backgroundTaskHost.exe",System,Windows Security,Routine Windows background activity
+2026-08-17 07:05:39,4688,IT-LT-017,sarnold,explorer.exe,RuntimeBroker.exe,8020,"C:\Windows\System32\RuntimeBroker.exe",Medium,Windows Security,Normal Windows user-session process
+2026-08-17 07:07:16,4688,IT-LT-017,SYSTEM,services.exe,InventoryAgent.exe,8172,"C:\Program Files\Northstar\InventoryAgent\InventoryAgent.exe",System,Windows Security,Routine asset inventory activity
+2026-08-17 07:09:04,4688,IT-LT-017,sarnold,explorer.exe,notepad.exe,8256,"C:\Windows\System32\notepad.exe",Medium,Windows Security,Normal application activity
+2026-08-17 07:11:38,4688,IT-LT-017,SYSTEM,svchost.exe,MoUsoCoreWorker.exe,8384,"C:\Windows\System32\MoUsoCoreWorker.exe",System,Windows Security,Routine Windows Update activity
+2026-08-17 07:14:22,4688,IT-LT-017,sarnold,explorer.exe,msedge.exe,8476,"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe --type=utility",Medium,Windows Security,Normal browser background activity
+2026-08-17 07:18:53,4688,IT-LT-017,SYSTEM,services.exe,SecurityHealthService.exe,8612,"C:\Windows\System32\SecurityHealthService.exe",System,Windows Security,Routine Windows security activity
+2026-08-17 07:23:09,4688,IT-LT-017,SYSTEM,services.exe,InventoryAgent.exe,8744,"C:\Program Files\Northstar\InventoryAgent\InventoryAgent.exe",System,Windows Security,Routine inventory telemetry
+2026-08-17 07:28:41,4688,IT-LT-017,sarnold,explorer.exe,SearchHost.exe,8860,"C:\Windows\SystemApps\MicrosoftWindows.Client.CBS\SearchHost.exe",Medium,Windows Security,Normal Windows process
