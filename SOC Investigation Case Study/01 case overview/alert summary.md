@@ -6,7 +6,7 @@
 | ------------------ | --------------------------- |
 | Alert ID           | SOC-2026-0817-0042          |
 | Date               | 17 August 2026              |
-| Initial Time       | 08:12                       |
+| Initial Time       | 06:31                       |
 | Initial Severity   | Medium                      |
 | Alert Source       | SIEM correlation rule       |
 | Detection Category | Authentication anomaly      |
@@ -30,14 +30,14 @@ The alert requires analyst review because the successful authentication occurred
 
 The SIEM presents the following authentication pattern:
 
-| Time     | Event | Account | Source Asset | Result           |
-| -------- | ----- | ------- | ------------ | ---------------- |
-| 08:11:41 | 4625  | sarnold | IT-LT-017    | Failed logon     |
-| 08:11:58 | 4625  | sarnold | IT-LT-017    | Failed logon     |
-| 08:12:13 | 4625  | sarnold | IT-LT-017    | Failed logon     |
-| 08:12:31 | 4625  | sarnold | IT-LT-017    | Failed logon     |
-| 08:12:46 | 4625  | sarnold | IT-LT-017    | Failed logon     |
-| 08:14:22 | 4624  | sarnold | IT-LT-017    | Successful logon |
+| Time | Event | Account | Source Asset | Result |
+|---|---|---|---|---|
+| 06:47:09 | 4625 | sarnold | IT-LT-017 | Failed logon |
+| 06:47:26 | 4625 | sarnold | IT-LT-017 | Failed logon |
+| 06:47:44 | 4625 | sarnold | IT-LT-017 | Failed logon |
+| 06:48:03 | 4625 | sarnold | IT-LT-017 | Failed logon |
+| 06:48:21 | 4625 | sarnold | IT-LT-017 | Failed logon |
+| 06:50:54 | 4624 | sarnold | IT-LT-017 | Successful logon |
 
 The alert logic is based primarily on the concentration of failed authentication attempts followed by a successful authentication from the same source.
 
