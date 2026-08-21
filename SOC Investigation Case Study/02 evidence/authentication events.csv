@@ -1,1 +1,51 @@
-
+Timestamp,EventID,EventDescription,Account,SourceAsset,SourceIP,TargetAsset,LogonType,AuthenticationPackage,Status,FailureReason,Notes
+2026-08-17 06:31:08,4624,Successful logon,svc_backup,SRV-BACKUP-01,10.20.30.15,FS-01,3,Kerberos,Success,,Scheduled backup service authentication
+2026-08-17 06:32:44,4624,Successful logon,svc_monitor,SRV-MON-01,10.20.30.21,DC-01,3,Kerberos,Success,,Routine monitoring service authentication
+2026-08-17 06:34:17,4625,Failed logon,svc_scan,SEC-SCAN-01,10.20.30.34,APP-02,3,NTLM,Failure,Unknown user name or bad password,Known service account retry
+2026-08-17 06:34:32,4624,Successful logon,svc_scan,SEC-SCAN-01,10.20.30.34,APP-02,3,NTLM,Success,,Service retry succeeds
+2026-08-17 06:36:51,4624,Successful logon,mreyes,VPN-POOL,10.20.60.24,DC-01,3,Kerberos,Success,,Early remote project manager session
+2026-08-17 06:38:05,4624,Successful logon,svc_print,PRINT-01,10.20.30.42,DC-01,3,Kerberos,Success,,Routine service activity
+2026-08-17 06:39:48,4625,Failed logon,jpatel,VPN-POOL,10.20.60.31,VPN-GW-01,3,Negotiate,Failure,Unknown user name or bad password,Single failed remote authentication
+2026-08-17 06:40:11,4624,Successful logon,jpatel,VPN-POOL,10.20.60.31,VPN-GW-01,3,Negotiate,Success,,User successfully retries
+2026-08-17 06:41:27,4624,Successful logon,svc_inventory,SRV-MGMT-01,10.20.30.27,IT-WS-011,3,Kerberos,Success,,Scheduled asset inventory polling
+2026-08-17 06:42:53,4624,Successful logon,awilson,ENG-LT-044,10.20.8.44,ENG-LT-044,2,Negotiate,Success,,Early engineering user interactive logon
+2026-08-17 06:44:06,4624,Successful logon,svc_inventory,SRV-MGMT-01,10.20.30.27,IT-LT-016,3,Kerberos,Success,,Scheduled asset inventory polling
+2026-08-17 06:44:19,4624,Successful logon,svc_inventory,SRV-MGMT-01,10.20.30.27,IT-LT-017,3,Kerberos,Success,,Scheduled asset inventory polling
+2026-08-17 06:45:37,4625,Failed logon,ccarter,FIN-WS-018,10.20.5.18,FIN-WS-018,2,Negotiate,Failure,Unknown user name or bad password,Single local password entry failure
+2026-08-17 06:45:49,4624,Successful logon,ccarter,FIN-WS-018,10.20.5.18,FIN-WS-018,2,Negotiate,Success,,Normal user retry
+2026-08-17 06:47:09,4625,Failed logon,sarnold,IT-LT-017,10.20.14.87,IT-LT-017,2,Negotiate,Failure,Unknown user name or bad password,First failed authentication in suspicious sequence
+2026-08-17 06:47:26,4625,Failed logon,sarnold,IT-LT-017,10.20.14.87,IT-LT-017,2,Negotiate,Failure,Unknown user name or bad password,Repeated authentication failure
+2026-08-17 06:47:44,4625,Failed logon,sarnold,IT-LT-017,10.20.14.87,IT-LT-017,2,Negotiate,Failure,Unknown user name or bad password,Repeated authentication failure
+2026-08-17 06:48:03,4625,Failed logon,sarnold,IT-LT-017,10.20.14.87,IT-LT-017,2,Negotiate,Failure,Unknown user name or bad password,Repeated authentication failure
+2026-08-17 06:48:21,4625,Failed logon,sarnold,IT-LT-017,10.20.14.87,IT-LT-017,2,Negotiate,Failure,Unknown user name or bad password,Fifth failed authentication
+2026-08-17 06:49:02,4624,Successful logon,svc_monitor,SRV-MON-01,10.20.30.21,DC-01,3,Kerberos,Success,,Routine monitoring service authentication
+2026-08-17 06:50:54,4624,Successful logon,sarnold,IT-LT-017,10.20.14.87,IT-LT-017,2,Negotiate,Success,,Successful interactive authentication following repeated failures
+2026-08-17 06:51:18,4624,Successful logon,svc_inventory,SRV-MGMT-01,10.20.30.27,OPS-WS-012,3,Kerberos,Success,,Scheduled asset inventory polling
+2026-08-17 06:52:46,4624,Successful logon,lnguyen,VPN-POOL,10.20.60.42,VPN-GW-01,3,Negotiate,Success,,Remote estimator VPN session
+2026-08-17 06:54:11,4625,Failed logon,rthomas,PM-LT-029,10.20.8.92,PM-LT-029,2,Negotiate,Failure,Unknown user name or bad password,Normal single password failure
+2026-08-17 06:54:29,4624,Successful logon,rthomas,PM-LT-029,10.20.8.92,PM-LT-029,2,Negotiate,Success,,Normal retry succeeds
+2026-08-17 06:56:03,4624,Successful logon,svc_patch,SRV-MGMT-02,10.20.30.28,IT-LT-014,3,Kerberos,Success,,Routine patch management activity
+2026-08-17 06:58:41,4624,Successful logon,svc_patch,SRV-MGMT-02,10.20.30.28,IT-LT-015,3,Kerberos,Success,,Routine patch management activity
+2026-08-17 07:00:26,4624,Successful logon,dharper,OPS-WS-031,10.20.9.31,OPS-WS-031,2,Negotiate,Success,,Operations employee begins shift
+2026-08-17 07:02:17,4625,Failed logon,sarnold,IT-LT-017,10.20.14.87,IT-WS-031,3,NTLM,Failure,Unknown user name or bad password,Attempted network authentication to second internal endpoint
+2026-08-17 07:02:34,4625,Failed logon,sarnold,IT-LT-017,10.20.14.87,IT-WS-031,3,NTLM,Failure,Unknown user name or bad password,Second failed attempt against internal endpoint
+2026-08-17 07:03:52,4624,Successful logon,svc_monitor,SRV-MON-01,10.20.30.21,DC-01,3,Kerberos,Success,,Routine monitoring service authentication
+2026-08-17 07:05:14,4624,Successful logon,kmorris,EST-WS-022,10.20.7.22,EST-WS-022,2,Negotiate,Success,,Estimator begins workday
+2026-08-17 07:07:49,4625,Failed logon,svc_legacy,APP-LEGACY-01,10.20.30.48,FS-02,3,NTLM,Failure,Expired password,Known legacy service authentication issue
+2026-08-17 07:08:13,4625,Failed logon,svc_legacy,APP-LEGACY-01,10.20.30.48,FS-02,3,NTLM,Failure,Expired password,Known repeated service failure
+2026-08-17 07:10:31,4624,Successful logon,mbrooks,FIELD-LT-062,10.20.8.126,VPN-GW-01,3,Negotiate,Success,,Field superintendent connects remotely
+2026-08-17 07:12:44,4624,Successful logon,svc_inventory,SRV-MGMT-01,10.20.30.27,IT-WS-021,3,Kerberos,Success,,Scheduled asset inventory polling
+2026-08-17 07:15:18,4624,Successful logon,aparker,HR-WS-007,10.20.6.7,HR-WS-007,2,Negotiate,Success,,HR employee begins workday
+2026-08-17 07:18:06,4625,Failed logon,tsimmons,PM-LT-037,10.20.8.103,PM-LT-037,2,Negotiate,Failure,Unknown user name or bad password,Single user authentication failure
+2026-08-17 07:18:19,4624,Successful logon,tsimmons,PM-LT-037,10.20.8.103,PM-LT-037,2,Negotiate,Success,,Normal retry succeeds
+2026-08-17 07:21:47,4624,Successful logon,svc_monitor,SRV-MON-01,10.20.30.21,DC-01,3,Kerberos,Success,,Routine monitoring activity
+2026-08-17 07:24:28,4624,Successful logon,dfoster,ACC-WS-013,10.20.5.13,ACC-WS-013,2,Negotiate,Success,,Accounting employee begins workday
+2026-08-17 07:27:53,4624,Successful logon,rlopez,IT-WS-019,10.20.14.19,IT-WS-019,2,Negotiate,Success,,Help desk day shift technician begins work
+2026-08-17 07:29:16,4624,Successful logon,knguyen,IT-WS-020,10.20.14.20,IT-WS-020,2,Negotiate,Success,,Help desk day shift technician begins work
+2026-08-17 07:31:42,4624,Successful logon,dmiller,IT-WS-022,10.20.14.22,IT-WS-022,2,Negotiate,Success,,Help desk day shift technician begins work
+2026-08-17 07:34:08,4624,Successful logon,sarnold,IT-WS-023,10.20.14.23,IT-WS-023,2,Negotiate,Success,,sarnold logs into normally assigned workstation after day shift begins
+2026-08-17 07:36:25,4624,Successful logon,svc_inventory,SRV-MGMT-01,10.20.30.27,IT-WS-023,3,Kerberos,Success,,Routine asset inventory polling
+2026-08-17 07:39:51,4625,Failed logon,egreen,EST-WS-026,10.20.7.26,EST-WS-026,2,Negotiate,Failure,Unknown user name or bad password,Single user password failure
+2026-08-17 07:40:06,4624,Successful logon,egreen,EST-WS-026,10.20.7.26,EST-WS-026,2,Negotiate,Success,,Normal retry succeeds
+2026-08-17 07:43:29,4624,Successful logon,svc_monitor,SRV-MON-01,10.20.30.21,DC-01,3,Kerberos,Success,,Routine monitoring service authentication
+2026-08-17 07:46:12,4624,Successful logon,jallen,PM-LT-041,10.20.8.111,PM-LT-041,2,Negotiate,Success,,Project manager begins workday
