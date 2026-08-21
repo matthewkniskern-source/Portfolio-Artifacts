@@ -1,0 +1,56 @@
+# Investigation and Response Flow
+
+This diagram summarizes the analyst workflow from initial alert through containment and remediation.
+
+```mermaid
+flowchart TD
+    A["SIEM Alert<br/>Failed logons followed by success"]
+    B["Validate Alert<br/>Confirm raw authentication events"]
+    C["Validate Account and Asset<br/>sarnold / IT-LT-017"]
+    D["Review Authentication History"]
+    E["Pivot to Endpoint Processes"]
+    F["Review PowerShell and<br/>administrative discovery"]
+    G["Correlate Network Activity"]
+    H["Check for Internal<br/>Follow-On Activity"]
+    I["Review IT-WS-031"]
+    J["Validate User and<br/>Device Context"]
+    K{"Does activity remain<br/>reasonably benign?"}
+    L["Document / Tune Detection"]
+    M["Escalate Incident"]
+    N["Isolate IT-LT-017"]
+    O["Secure sarnold Account"]
+    P["Validate Secondary Scope"]
+    Q["Preserve Evidence"]
+    R["Remediate and Recover"]
+    S["Post-Incident Review"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    G --> H
+    H --> I
+    I --> J
+    J --> K
+
+    K -->|Yes| L
+    K -->|No| M
+
+    M --> N
+    M --> O
+    N --> P
+    O --> P
+    P --> Q
+    Q --> R
+    R --> S
+```
+
+## Workflow Principle
+
+The investigation moves outward from the original alert rather than assuming the initial event already proves compromise.
+
+Containment begins only after authentication, process, network, and user context are sufficiently correlated to justify disruptive action.
+
+The same approach limits unnecessary business impact while still allowing the SOC to move quickly when the evidence becomes strong.
