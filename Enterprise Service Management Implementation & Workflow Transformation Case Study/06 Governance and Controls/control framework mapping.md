@@ -450,6 +450,4 @@ The important distinction is that the framework sits behind the operating model.
 
 It does not replace it.
 
-**Section 06 — Governance and Controls Complete**
-
 **Next:** [Automation Opportunities](../07%20Automation%20and%20AI/automation%20opportunities.md)
