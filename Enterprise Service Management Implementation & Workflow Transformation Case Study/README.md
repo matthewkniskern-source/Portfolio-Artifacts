@@ -12,7 +12,7 @@ The result is an environment where people are doing the work, but the process su
 
 The target design is intentionally **vendor-neutral**.
 
-It is not an implementation of ServiceNow, Halo, Jira, Freshservice, or any other specific platform. The workflows, requirements, controls, data relationships, implementation approach, and validation model are intended to be portable across modern Enterprise Service Management platforms.
+It is not an implementation of ServiceNow, Halo, Jira, Freshservice, or another specific platform. The workflows, requirements, controls, data relationships, implementation approach, and validation model are designed to be portable across modern Enterprise Service Management platforms.
 
 The core design principle is:
 
@@ -191,6 +191,21 @@ The objective is to maintain traceability from the original problem through the 
 
 ---
 
+## Visual Overview
+
+For a faster view of the design, these diagrams summarize the major operating, workflow, data, and governance decisions.
+
+* [Current State vs Target Operating Model](./12%20Diagrams/current%20vs%20target%20operating%20model.md)
+* [Requirements Traceability Flow](./12%20Diagrams/requirements%20traceability%20flow.md)
+* [Ownership and Escalation Model](./12%20Diagrams/ownership%20and%20escalation%20model.md)
+* [Service Management Data Model](./12%20Diagrams/service%20management%20data%20model.md)
+* [Incident Management Workflow](./12%20Diagrams/incident%20management%20workflow.md)
+* [Change Management Workflow](./12%20Diagrams/change%20management%20workflow.md)
+* [SLA and Escalation Model](./12%20Diagrams/sla%20and%20escalation%20model.md)
+* [Stakeholder Influence Map](./12%20Diagrams/stakeholder%20influence%20map.md)
+
+---
+
 ## Core Service Model
 
 The target operating model focuses on four core service-management processes.
@@ -204,6 +219,7 @@ Technical troubleshooting can remain flexible.
 The service process around that troubleshooting should not be.
 
 [View Incident Management](./04%20Workflow%20Design/incident%20management.md)
+[View Incident Workflow](./12%20Diagrams/incident%20management%20workflow.md)
 
 ### Service Request Management
 
@@ -222,6 +238,7 @@ The objective is not zero change failures.
 It is fewer avoidable failures, faster recovery when failure occurs, and enough traceability to understand what happened.
 
 [View Change Management](./04%20Workflow%20Design/change%20management.md)
+[View Change Workflow](./12%20Diagrams/change%20management%20workflow.md)
 
 ### Knowledge Management
 
@@ -248,12 +265,14 @@ The primary traceability spine is:
 **Failure Mode → Requirement → Design → Control → Test → Metric**
 
 [View Requirements Traceability Matrix](./02%20Requirements%20Discovery/requirements%20traceability%20matrix.md)
+[View Requirements Traceability Flow](./12%20Diagrams/requirements%20traceability%20flow.md)
 
 ### Target Operating Model
 
 Defines how intake, ownership, prioritization, SLA, approval, vendor dependency, knowledge, and reporting work together in the future state.
 
 [View Target Operating Model](./03%20Target%20Service%20Model/target%20operating%20model.md)
+[View Current vs Target Operating Model](./12%20Diagrams/current%20vs%20target%20operating%20model.md)
 
 ### Service Management Data Model
 
@@ -263,7 +282,8 @@ Defines the relationships between:
 
 The model focuses on relationships that support real operational decisions rather than collecting data simply because the platform provides the field.
 
-[View Service Management Data Model](./05%20Data%20and%20Configuration%20Model/service%20management%20data%20model.md)
+[View Service Management Data Model](./05%20Data%20Configuration%20Model/service%20management%20data%20model.md)
+[View Data Model Diagram](./12%20Diagrams/service%20management%20data%20model.md)
 
 ### Governance & Control Matrix
 
@@ -561,15 +581,18 @@ Because this case study represents an implementation design rather than a live d
 
 ## Repository Structure
 
-### 01 Current State
+### 01 Current State Assessment
 
 Documents the current operating environment, stakeholders, failure modes, and baseline measures.
 
-[View Current-State Assessment](./01%20Current%20State/current%20state%20assessment.md)
+[View Current-State Assessment](./01%20Current%20State%20Assessment/current%20state.md)
+[View Stakeholder Map](./01%20Current%20State%20Assessment/stakeholder%20map.md)
+[View Failure Modes](./01%20Current%20State%20Assessment/pain%20points%20and%20failure%20modes.md)
+[View Baseline Metrics](./01%20Current%20State%20Assessment/baseline%20service%20metrics.md)
 
 ### 02 Requirements Discovery
 
-Translates operational problems and stakeholder needs into formal business, functional, and nonfunctional requirements.
+Translates operational problems and stakeholder needs into formal business, functional, and nonfunctional requirements with traceability into design and testing.
 
 [View Requirements Discovery](./02%20Requirements%20Discovery/requirements%20discovery.md)
 
@@ -585,11 +608,11 @@ Defines Incident, Service Request, Change, and Knowledge workflows.
 
 [View Workflow Design](./04%20Workflow%20Design/incident%20management.md)
 
-### 05 Data and Configuration Model
+### 05 Data Configuration Model
 
 Defines the service-management data model, entity relationships, and data governance.
 
-[View Data Model](./05%20Data%20and%20Configuration%20Model/service%20management%20data%20model.md)
+[View Data Model](./05%20Data%20Configuration%20Model/service%20management%20data%20model.md)
 
 ### 06 Governance and Controls
 
@@ -626,6 +649,19 @@ Defines adoption strategy, training, communications, and feedback.
 Defines the performance framework, metric definitions, and continuous-improvement model.
 
 [View Metrics and Optimization](./11%20Metrics%20and%20Optimization/performance%20framework.md)
+
+### 12 Diagrams
+
+Provides visual summaries of the operating model, traceability, ownership, data relationships, Incident and Change workflows, SLA/escalation, and stakeholder influence.
+
+* [Current State vs Target Operating Model](./12%20Diagrams/current%20vs%20target%20operating%20model.md)
+* [Requirements Traceability Flow](./12%20Diagrams/requirements%20traceability%20flow.md)
+* [Ownership and Escalation Model](./12%20Diagrams/ownership%20and%20escalation%20model.md)
+* [Service Management Data Model](./12%20Diagrams/service%20management%20data%20model.md)
+* [Incident Management Workflow](./12%20Diagrams/incident%20management%20workflow.md)
+* [Change Management Workflow](./12%20Diagrams/change%20management%20workflow.md)
+* [SLA and Escalation Model](./12%20Diagrams/sla%20and%20escalation%20model.md)
+* [Stakeholder Influence Map](./12%20Diagrams/stakeholder%20influence%20map.md)
 
 ---
 
