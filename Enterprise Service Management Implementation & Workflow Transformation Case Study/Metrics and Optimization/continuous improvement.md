@@ -860,4 +860,3 @@ The implementation provides the structure.
 
 Continuous improvement is what keeps that structure useful.
 
-**Section 11 — Metrics and Optimization Complete**
