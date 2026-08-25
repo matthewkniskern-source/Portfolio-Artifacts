@@ -25,7 +25,7 @@ Customer-facing steps should remain straightforward even when the internal proce
 
 ### Separate Customer Experience from Internal Processing
 
-The website may present a simple action such as `Submit Special Order`, while staff and supplier review occurs behind that interaction.
+The website may present a simple action such as "Submit Special Order", while staff and supplier review occurs behind that interaction.
 
 ### Use Defined Statuses
 
