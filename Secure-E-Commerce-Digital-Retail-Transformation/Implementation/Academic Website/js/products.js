@@ -1,4 +1,3 @@
-```javascript
 "use strict";
 
 /* =========================================================
@@ -436,5 +435,4 @@ function escapeHtml(value) {
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
 }
-```
 
