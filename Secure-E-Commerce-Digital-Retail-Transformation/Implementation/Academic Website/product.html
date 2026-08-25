@@ -4,32 +4,267 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Coming Soon | One-Punch Anime Emporium</title>
+    <meta
+        name="description"
+        content="Product details and store availability for One-Punch Anime Emporium."
+    >
+
+    <title>Product Detail | One-Punch Anime Emporium</title>
 
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
 
-    <main class="section">
-        <div class="container">
+    <header class="site-header">
+        <div class="container header-inner">
 
-            <p class="eyebrow">One-Punch Anime Emporium</p>
-
-            <h1>Page Under Construction</h1>
-
-            <p>
-                This section is being developed as part of the academic website
-                implementation.
-            </p>
-
-            <a class="button button-primary" href="index.html">
-                Return Home
+            <a class="site-brand" href="index.html">
+                <span class="brand-name">One-Punch</span>
+                <span class="brand-subtitle">Anime Emporium</span>
             </a>
 
+            <button
+                class="nav-toggle"
+                type="button"
+                aria-label="Open navigation"
+                aria-expanded="false"
+                aria-controls="primary-navigation"
+            >
+                Menu
+            </button>
+
+            <nav
+                id="primary-navigation"
+                class="primary-nav"
+                aria-label="Primary navigation"
+            >
+                <a href="index.html">Home</a>
+                <a href="products.html" aria-current="page">Products</a>
+                <a href="locations.html">Locations</a>
+                <a href="special-orders.html">Special Orders</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+                <a class="cart-link" href="cart.html">
+                    Cart
+                    <span
+                        id="cart-count"
+                        class="cart-count"
+                        aria-label="0 items in cart"
+                    >
+                        0
+                    </span>
+                </a>
+            </nav>
+
         </div>
+    </header>
+
+    <main>
+
+        <section class="section">
+            <div class="container">
+
+                <a class="back-link" href="products.html">
+                    ← Back to Products
+                </a>
+
+                <div id="product-detail" class="product-detail">
+
+                    <div class="product-detail-image">
+                        <img
+                            id="product-image"
+                            src=""
+                            alt=""
+                        >
+                    </div>
+
+                    <div class="product-detail-content">
+
+                        <p id="product-category" class="eyebrow"></p>
+
+                        <h1 id="product-name">Loading Product...</h1>
+
+                        <p id="product-franchise" class="product-franchise"></p>
+
+                        <p id="product-description" class="product-description"></p>
+
+                        <p id="product-price" class="product-price"></p>
+
+                        <div class="product-purchase-panel">
+
+                            <div>
+                                <p class="panel-label">Overall Availability</p>
+                                <p
+                                    id="overall-availability"
+                                    class="availability-status"
+                                ></p>
+                            </div>
+
+                            <div id="purchase-actions" class="product-actions">
+                                <label for="product-quantity">
+                                    Quantity
+                                </label>
+
+                                <select
+                                    id="product-quantity"
+                                    name="product-quantity"
+                                >
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                </select>
+
+                                <button
+                                    id="add-to-cart"
+                                    class="button button-primary"
+                                    type="button"
+                                >
+                                    Add to Cart
+                                </button>
+                            </div>
+
+                            <p
+                                id="cart-message"
+                                class="status-message"
+                                role="status"
+                                aria-live="polite"
+                            ></p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+
+        <section class="section section-alt">
+            <div class="container">
+
+                <div class="section-heading">
+                    <p class="eyebrow">Store Availability</p>
+                    <h2>Check the shelf before you make the trip.</h2>
+                    <p>
+                        Inventory shown below is demonstration data used to
+                        model product availability across multiple store locations.
+                    </p>
+                </div>
+
+                <div
+                    id="store-availability"
+                    class="availability-grid"
+                >
+                </div>
+
+            </div>
+        </section>
+
+
+        <section
+            id="special-order-section"
+            class="section"
+            hidden
+        >
+            <div class="container callout">
+
+                <div>
+                    <p class="eyebrow">Currently Unavailable</p>
+
+                    <h2>Still looking for it?</h2>
+
+                    <p>
+                        This item is currently out of stock across all demonstration
+                        locations. Submit a special-order request and provide the
+                        product details to start the sourcing workflow.
+                    </p>
+                </div>
+
+                <a
+                    id="special-order-link"
+                    class="button button-primary"
+                    href="special-orders.html"
+                >
+                    Request Special Order
+                </a>
+
+            </div>
+        </section>
+
+
+        <section
+            id="product-error"
+            class="section"
+            hidden
+        >
+            <div class="container">
+
+                <p class="eyebrow">Product Not Found</p>
+
+                <h1>We could not find that product.</h1>
+
+                <p>
+                    The product link may be invalid, or the item may no longer
+                    exist in the demonstration catalog.
+                </p>
+
+                <a
+                    class="button button-primary"
+                    href="products.html"
+                >
+                    Browse Products
+                </a>
+
+            </div>
+        </section>
+
     </main>
 
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+
+            <div>
+                <p class="footer-brand">
+                    One-Punch Anime Emporium
+                </p>
+
+                <p>
+                    Fictional retailer created for an academic website project
+                    and expanded as a portfolio systems-analysis case study.
+                </p>
+            </div>
+
+            <div>
+                <p class="footer-heading">Shop</p>
+                <a href="products.html">Products</a>
+                <a href="special-orders.html">Special Orders</a>
+                <a href="cart.html">Cart</a>
+            </div>
+
+            <div>
+                <p class="footer-heading">Company</p>
+                <a href="locations.html">Locations</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+            </div>
+
+        </div>
+
+        <div class="container footer-bottom">
+            <p>
+                &copy; <span id="current-year"></span>
+                One-Punch Anime Emporium. Demonstration site.
+            </p>
+        </div>
+    </footer>
+
+
+    <script src="js/data.js"></script>
+    <script src="js/product.js"></script>
     <script src="js/site.js"></script>
 
 </body>
