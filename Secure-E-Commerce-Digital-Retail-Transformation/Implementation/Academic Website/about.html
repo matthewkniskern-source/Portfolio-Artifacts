@@ -4,31 +4,286 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Coming Soon | One-Punch Anime Emporium</title>
+    <meta
+        name="description"
+        content="Learn about One-Punch Anime Emporium, a fictional four-location specialty retailer serving Chico, California."
+    >
+
+    <title>About | One-Punch Anime Emporium</title>
 
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
 
-    <main class="section">
-        <div class="container">
+    <header class="site-header">
+        <div class="container header-inner">
 
-            <p class="eyebrow">One-Punch Anime Emporium</p>
-
-            <h1>Page Under Construction</h1>
-
-            <p>
-                This section is being developed as part of the academic website
-                implementation.
-            </p>
-
-            <a class="button button-primary" href="index.html">
-                Return Home
+            <a class="site-brand" href="index.html">
+                <span class="brand-name">One-Punch</span>
+                <span class="brand-subtitle">Anime Emporium</span>
             </a>
 
+            <button
+                class="nav-toggle"
+                type="button"
+                aria-label="Open navigation"
+                aria-expanded="false"
+                aria-controls="primary-navigation"
+            >
+                Menu
+            </button>
+
+            <nav
+                id="primary-navigation"
+                class="primary-nav"
+                aria-label="Primary navigation"
+            >
+                <a href="index.html">Home</a>
+                <a href="products.html">Products</a>
+                <a href="locations.html">Locations</a>
+                <a href="special-orders.html">Special Orders</a>
+                <a href="about.html" aria-current="page">About</a>
+                <a href="contact.html">Contact</a>
+
+                <a class="cart-link" href="cart.html">
+                    Cart
+                    <span
+                        id="cart-count"
+                        class="cart-count"
+                        aria-label="0 items in cart"
+                    >
+                        0
+                    </span>
+                </a>
+            </nav>
+
         </div>
+    </header>
+
+
+    <main>
+
+        <section class="section">
+            <div class="container">
+
+                <div class="section-heading">
+                    <p class="eyebrow">About Us</p>
+
+                    <h1>Built for fans. Connected across Chico.</h1>
+
+                    <p>
+                        One-Punch Anime Emporium is a fictional specialty
+                        retailer serving the Chico, California area through
+                        four store locations and a shared online storefront.
+                    </p>
+                </div>
+
+
+                <div class="about-grid">
+
+                    <article class="about-panel">
+
+                        <p class="eyebrow">The Business</p>
+
+                        <h2>More than a single storefront.</h2>
+
+                        <p>
+                            The company carries manga, figures, collectibles,
+                            apparel, accessories, and comics for customers
+                            across the Chico area.
+                        </p>
+
+                        <p>
+                            Each location maintains its own inventory, while
+                            the online catalog gives customers a single place
+                            to search products and check availability before
+                            visiting a store.
+                        </p>
+
+                    </article>
+
+
+                    <article class="about-panel">
+
+                        <p class="eyebrow">The Customer Experience</p>
+
+                        <h2>Find it before making the trip.</h2>
+
+                        <p>
+                            Customers can browse the catalog, compare product
+                            availability across all four locations, add
+                            available merchandise to a cart, and complete a
+                            demonstration checkout workflow.
+                        </p>
+
+                        <p>
+                            If an item is unavailable, the Special Orders
+                            workflow provides a separate path for requesting
+                            hard-to-find merchandise.
+                        </p>
+
+                    </article>
+
+                </div>
+
+            </div>
+        </section>
+
+
+        <section class="section section-alt">
+            <div class="container">
+
+                <div class="section-heading">
+                    <p class="eyebrow">What We Carry</p>
+
+                    <h2>Six core product categories.</h2>
+                </div>
+
+
+                <div class="feature-grid">
+
+                    <article class="feature-card">
+                        <h3>Manga</h3>
+                        <p>
+                            Popular series, new-reader starting points, and
+                            shelf-ready volumes.
+                        </p>
+                    </article>
+
+
+                    <article class="feature-card">
+                        <h3>Figures</h3>
+                        <p>
+                            Character figures and display pieces from major
+                            anime franchises.
+                        </p>
+                    </article>
+
+
+                    <article class="feature-card">
+                        <h3>Collectibles</h3>
+                        <p>
+                            Pins, replicas, display sets, and other fan-focused
+                            merchandise.
+                        </p>
+                    </article>
+
+
+                    <article class="feature-card">
+                        <h3>Apparel</h3>
+                        <p>
+                            Shirts, hoodies, hats, and other wearable
+                            merchandise.
+                        </p>
+                    </article>
+
+
+                    <article class="feature-card">
+                        <h3>Accessories</h3>
+                        <p>
+                            Bags, wallets, keychains, lanyards, and everyday
+                            fan gear.
+                        </p>
+                    </article>
+
+
+                    <article class="feature-card">
+                        <h3>Comics</h3>
+                        <p>
+                            Selected graphic novels and comic collections
+                            alongside the anime-focused catalog.
+                        </p>
+                    </article>
+
+                </div>
+
+            </div>
+        </section>
+
+
+        <section class="section">
+            <div class="container">
+
+                <div class="about-project-note">
+
+                    <p class="eyebrow">Project Note</p>
+
+                    <h2>Academic website. Portfolio-level implementation.</h2>
+
+                    <p>
+                        One-Punch Anime Emporium is a fictional organization
+                        created for an academic e-commerce project. The website
+                        has been expanded beyond the minimum assignment scope
+                        to demonstrate requirements analysis, multi-location
+                        inventory modeling, customer workflows, validation,
+                        checkout logic, and front-end implementation.
+                    </p>
+
+                    <div class="hero-actions">
+
+                        <a
+                            class="button button-primary"
+                            href="products.html"
+                        >
+                            Browse Products
+                        </a>
+
+                        <a
+                            class="button button-secondary"
+                            href="locations.html"
+                        >
+                            View Locations
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
     </main>
+
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+
+            <div>
+                <p class="footer-brand">
+                    One-Punch Anime Emporium
+                </p>
+
+                <p>
+                    Fictional retailer created for an academic website project
+                    and expanded as a portfolio systems-analysis case study.
+                </p>
+            </div>
+
+            <div>
+                <p class="footer-heading">Shop</p>
+                <a href="products.html">Products</a>
+                <a href="special-orders.html">Special Orders</a>
+                <a href="cart.html">Cart</a>
+            </div>
+
+            <div>
+                <p class="footer-heading">Company</p>
+                <a href="locations.html">Locations</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+            </div>
+
+        </div>
+
+        <div class="container footer-bottom">
+            <p>
+                &copy; <span id="current-year"></span>
+                One-Punch Anime Emporium. Demonstration site.
+            </p>
+        </div>
+    </footer>
+
 
     <script src="js/site.js"></script>
 
