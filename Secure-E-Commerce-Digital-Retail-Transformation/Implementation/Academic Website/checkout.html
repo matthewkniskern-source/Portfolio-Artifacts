@@ -4,32 +4,456 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Coming Soon | One-Punch Anime Emporium</title>
+    <meta
+        name="description"
+        content="Demonstration checkout for One-Punch Anime Emporium."
+    >
+
+    <title>Checkout | One-Punch Anime Emporium</title>
 
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
 
-    <main class="section">
-        <div class="container">
+    <header class="site-header">
+        <div class="container header-inner">
 
-            <p class="eyebrow">One-Punch Anime Emporium</p>
-
-            <h1>Page Under Construction</h1>
-
-            <p>
-                This section is being developed as part of the academic website
-                implementation.
-            </p>
-
-            <a class="button button-primary" href="index.html">
-                Return Home
+            <a class="site-brand" href="index.html">
+                <span class="brand-name">One-Punch</span>
+                <span class="brand-subtitle">Anime Emporium</span>
             </a>
 
+            <button
+                class="nav-toggle"
+                type="button"
+                aria-label="Open navigation"
+                aria-expanded="false"
+                aria-controls="primary-navigation"
+            >
+                Menu
+            </button>
+
+            <nav
+                id="primary-navigation"
+                class="primary-nav"
+                aria-label="Primary navigation"
+            >
+                <a href="index.html">Home</a>
+                <a href="products.html">Products</a>
+                <a href="locations.html">Locations</a>
+                <a href="special-orders.html">Special Orders</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+
+                <a class="cart-link" href="cart.html">
+                    Cart
+                    <span
+                        id="cart-count"
+                        class="cart-count"
+                        aria-label="0 items in cart"
+                    >
+                        0
+                    </span>
+                </a>
+            </nav>
+
         </div>
+    </header>
+
+
+    <main>
+
+        <section class="section">
+            <div class="container">
+
+                <div class="section-heading">
+                    <p class="eyebrow">Checkout</p>
+                    <h1>Finish the order.</h1>
+
+                    <p>
+                        Complete the demonstration checkout form below. No real
+                        payment is processed and no information is transmitted
+                        to an external service.
+                    </p>
+                </div>
+
+
+                <div class="checkout-layout">
+
+                    <form
+                        id="checkout-form"
+                        class="checkout-form"
+                        novalidate
+                    >
+
+                        <div class="form-section">
+
+                            <h2>Customer Information</h2>
+
+                            <div class="form-grid">
+
+                                <div class="form-field">
+                                    <label for="checkout-name">
+                                        Full Name
+                                        <span aria-hidden="true">*</span>
+                                    </label>
+
+                                    <input
+                                        id="checkout-name"
+                                        name="checkout-name"
+                                        type="text"
+                                        autocomplete="name"
+                                        required
+                                    >
+
+                                    <p
+                                        class="field-error"
+                                        id="checkout-name-error"
+                                    ></p>
+                                </div>
+
+
+                                <div class="form-field">
+                                    <label for="checkout-email">
+                                        Email
+                                        <span aria-hidden="true">*</span>
+                                    </label>
+
+                                    <input
+                                        id="checkout-email"
+                                        name="checkout-email"
+                                        type="email"
+                                        autocomplete="email"
+                                        required
+                                    >
+
+                                    <p
+                                        class="field-error"
+                                        id="checkout-email-error"
+                                    ></p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-section">
+
+                            <h2>Shipping Address</h2>
+
+                            <div class="form-grid">
+
+                                <div class="form-field form-field-full">
+                                    <label for="checkout-address">
+                                        Street Address
+                                        <span aria-hidden="true">*</span>
+                                    </label>
+
+                                    <input
+                                        id="checkout-address"
+                                        name="checkout-address"
+                                        type="text"
+                                        autocomplete="street-address"
+                                        required
+                                    >
+
+                                    <p
+                                        class="field-error"
+                                        id="checkout-address-error"
+                                    ></p>
+                                </div>
+
+
+                                <div class="form-field">
+                                    <label for="checkout-city">
+                                        City
+                                        <span aria-hidden="true">*</span>
+                                    </label>
+
+                                    <input
+                                        id="checkout-city"
+                                        name="checkout-city"
+                                        type="text"
+                                        autocomplete="address-level2"
+                                        required
+                                    >
+
+                                    <p
+                                        class="field-error"
+                                        id="checkout-city-error"
+                                    ></p>
+                                </div>
+
+
+                                <div class="form-field">
+                                    <label for="checkout-state">
+                                        State
+                                        <span aria-hidden="true">*</span>
+                                    </label>
+
+                                    <input
+                                        id="checkout-state"
+                                        name="checkout-state"
+                                        type="text"
+                                        maxlength="2"
+                                        placeholder="FL"
+                                        autocomplete="address-level1"
+                                        required
+                                    >
+
+                                    <p
+                                        class="field-error"
+                                        id="checkout-state-error"
+                                    ></p>
+                                </div>
+
+
+                                <div class="form-field">
+                                    <label for="checkout-zip">
+                                        ZIP Code
+                                        <span aria-hidden="true">*</span>
+                                    </label>
+
+                                    <input
+                                        id="checkout-zip"
+                                        name="checkout-zip"
+                                        type="text"
+                                        inputmode="numeric"
+                                        autocomplete="postal-code"
+                                        required
+                                    >
+
+                                    <p
+                                        class="field-error"
+                                        id="checkout-zip-error"
+                                    ></p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-section">
+
+                            <h2>Fulfillment</h2>
+
+                            <div class="form-grid">
+
+                                <div class="form-field">
+                                    <label for="fulfillment-method">
+                                        Fulfillment Method
+                                    </label>
+
+                                    <select
+                                        id="fulfillment-method"
+                                        name="fulfillment-method"
+                                    >
+                                        <option value="ship">
+                                            Standard Shipping
+                                        </option>
+
+                                        <option value="pickup">
+                                            Store Pickup
+                                        </option>
+                                    </select>
+                                </div>
+
+
+                                <div
+                                    id="pickup-store-field"
+                                    class="form-field"
+                                    hidden
+                                >
+                                    <label for="pickup-store">
+                                        Pickup Store
+                                    </label>
+
+                                    <select
+                                        id="pickup-store"
+                                        name="pickup-store"
+                                    >
+                                    </select>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-section">
+
+                            <h2>Payment</h2>
+
+                            <div class="form-notice">
+                                <strong>Demonstration only.</strong>
+                                Do not enter a real credit-card number. Use any
+                                fictional test number such as 4242 4242 4242 4242.
+                            </div>
+
+
+                            <div class="form-grid">
+
+                                <div class="form-field form-field-full">
+                                    <label for="card-number">
+                                        Card Number
+                                        <span aria-hidden="true">*</span>
+                                    </label>
+
+                                    <input
+                                        id="card-number"
+                                        name="card-number"
+                                        type="text"
+                                        inputmode="numeric"
+                                        autocomplete="off"
+                                        placeholder="4242 4242 4242 4242"
+                                        required
+                                    >
+
+                                    <p
+                                        class="field-error"
+                                        id="card-number-error"
+                                    ></p>
+                                </div>
+
+
+                                <div class="form-field">
+                                    <label for="card-expiration">
+                                        Expiration
+                                        <span aria-hidden="true">*</span>
+                                    </label>
+
+                                    <input
+                                        id="card-expiration"
+                                        name="card-expiration"
+                                        type="text"
+                                        autocomplete="off"
+                                        placeholder="MM/YY"
+                                        required
+                                    >
+
+                                    <p
+                                        class="field-error"
+                                        id="card-expiration-error"
+                                    ></p>
+                                </div>
+
+
+                                <div class="form-field">
+                                    <label for="card-cvv">
+                                        CVV
+                                        <span aria-hidden="true">*</span>
+                                    </label>
+
+                                    <input
+                                        id="card-cvv"
+                                        name="card-cvv"
+                                        type="text"
+                                        inputmode="numeric"
+                                        autocomplete="off"
+                                        maxlength="4"
+                                        required
+                                    >
+
+                                    <p
+                                        class="field-error"
+                                        id="card-cvv-error"
+                                    ></p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            class="button button-primary"
+                            type="submit"
+                        >
+                            Place Demonstration Order
+                        </button>
+
+                    </form>
+
+
+                    <aside class="checkout-summary">
+
+                        <p class="eyebrow">Order Summary</p>
+
+                        <div
+                            id="checkout-items"
+                            class="checkout-items"
+                        >
+                        </div>
+
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span id="checkout-subtotal">$0.00</span>
+                        </div>
+
+                        <div class="summary-row">
+                            <span>Estimated Tax</span>
+                            <span id="checkout-tax">$0.00</span>
+                        </div>
+
+                        <div class="summary-row summary-total">
+                            <span>Total</span>
+                            <span id="checkout-total">$0.00</span>
+                        </div>
+
+                    </aside>
+
+                </div>
+
+            </div>
+        </section>
+
     </main>
 
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+
+            <div>
+                <p class="footer-brand">
+                    One-Punch Anime Emporium
+                </p>
+
+                <p>
+                    Fictional retailer created for an academic website project
+                    and expanded as a portfolio systems-analysis case study.
+                </p>
+            </div>
+
+            <div>
+                <p class="footer-heading">Shop</p>
+                <a href="products.html">Products</a>
+                <a href="special-orders.html">Special Orders</a>
+                <a href="cart.html">Cart</a>
+            </div>
+
+            <div>
+                <p class="footer-heading">Company</p>
+                <a href="locations.html">Locations</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+            </div>
+
+        </div>
+
+        <div class="container footer-bottom">
+            <p>
+                &copy; <span id="current-year"></span>
+                One-Punch Anime Emporium. Demonstration site.
+            </p>
+        </div>
+    </footer>
+
+
+    <script src="js/data.js"></script>
+    <script src="js/checkout.js"></script>
     <script src="js/site.js"></script>
 
 </body>
