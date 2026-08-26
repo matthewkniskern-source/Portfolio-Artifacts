@@ -1587,106 +1587,179 @@ textarea:focus-visible {
     }
 }
 /* =========================================================
-   Featured Category Image Cards
+   Homepage Featured Categories
    ========================================================= */
 
-.category-grid {
+.featured-category-grid {
     display: grid;
     grid-template-columns:
-        repeat(3, minmax(0, 1fr));
+        repeat(4, minmax(0, 1fr));
     gap: 1.25rem;
 }
 
 
-.category-card {
-    position: relative;
-    min-height: 280px;
+.featured-category-card {
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
     border: 2px solid #111;
-    background: #111;
+    background: #fff;
+    color: #111;
     text-decoration: none;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 
-.category-card-image {
+.featured-category-image {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: #f5f5f7;
+}
+
+
+.featured-category-image img {
+    display: block;
     width: 100%;
     height: 100%;
-    position: absolute;
-    inset: 0;
     object-fit: cover;
-    transition:
-        transform 0.25s ease,
-        opacity 0.25s ease;
+    transition: transform 0.25s ease;
 }
 
 
-.category-card::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background:
-        linear-gradient(
-            to top,
-            rgba(0, 0, 0, 0.82),
-            rgba(0, 0, 0, 0.08) 65%
-        );
+.featured-category-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1.1rem;
+    border-top: 2px solid #111;
 }
 
 
-.category-card-overlay {
-    position: absolute;
-    z-index: 2;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 1.25rem;
-    color: #fff;
+.featured-category-content h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #111;
 }
 
 
-.category-card-overlay h3 {
-    margin: 0 0 0.25rem;
-    font-size: 1.5rem;
-    color: #fff;
-}
-
-
-.category-card-overlay span {
+.featured-category-content span {
     font-weight: 800;
-    color: #fff;
+    color: #111;
 }
 
 
-.category-card:hover .category-card-image,
-.category-card:focus-visible .category-card-image {
-    transform: scale(1.04);
-    opacity: 0.9;
+.featured-category-card:hover,
+.featured-category-card:focus-visible {
+    transform: translateY(-3px);
+    box-shadow: 4px 4px 0 #111;
 }
 
 
-.category-card:focus-visible {
+.featured-category-card:hover
+.featured-category-image img,
+.featured-category-card:focus-visible
+.featured-category-image img {
+    transform: scale(1.035);
+}
+
+
+.featured-category-card:focus-visible {
     outline: 3px solid #111;
-    outline-offset: 3px;
+    outline-offset: 4px;
 }
 
 
-@media (max-width: 850px) {
+.featured-category-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
 
-    .category-grid {
+
+/* =========================================================
+   Homepage Availability Callout
+   ========================================================= */
+
+.home-availability-callout {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem;
+    border: 2px solid #111;
+    background: #fff;
+}
+
+
+.home-availability-callout h2 {
+    margin-top: 0;
+}
+
+
+.home-availability-callout p:last-child {
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   Homepage Special Order Callout
+   ========================================================= */
+
+.home-special-order {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem;
+    border: 2px solid #111;
+    background: #fff;
+}
+
+
+.home-special-order h2 {
+    margin-top: 0;
+}
+
+
+.home-special-order p:last-child {
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   Homepage Responsive
+   ========================================================= */
+
+@media (max-width: 1050px) {
+
+    .featured-category-grid {
         grid-template-columns:
             repeat(2, minmax(0, 1fr));
     }
 }
 
 
+@media (max-width: 750px) {
+
+    .home-availability-callout,
+    .home-special-order {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+
 @media (max-width: 550px) {
 
-    .category-grid {
+    .featured-category-grid {
         grid-template-columns: 1fr;
     }
 
 
-    .category-card {
-        min-height: 240px;
+    .featured-category-image {
+        aspect-ratio: 5 / 4;
     }
 }
