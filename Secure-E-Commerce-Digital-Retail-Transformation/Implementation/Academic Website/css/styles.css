@@ -1093,3 +1093,156 @@ textarea:focus-visible {
         grid-column: auto;
     }
 }
+/* =========================================================
+   Special Orders
+   ========================================================= */
+
+.special-order-layout {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1fr)
+        320px;
+    gap: 2rem;
+    align-items: start;
+}
+
+
+.special-order-form {
+    padding: 2rem;
+    border: 1px solid #d8d8d8;
+    background: #fff;
+}
+
+
+.form-section {
+    margin-bottom: 2.5rem;
+}
+
+
+.form-section h2 {
+    margin-bottom: 1.25rem;
+}
+
+
+.form-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+
+.form-field-full {
+    grid-column: 1 / -1;
+}
+
+
+.form-field label {
+    font-weight: 800;
+}
+
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+    width: 100%;
+    min-height: 46px;
+    padding: 0.7rem 0.75rem;
+    border: 1px solid #888;
+    background: #fff;
+}
+
+
+.form-field textarea {
+    resize: vertical;
+}
+
+
+.form-field input[aria-invalid="true"],
+.form-field select[aria-invalid="true"],
+.form-field textarea[aria-invalid="true"] {
+    border: 2px solid #9f1d1d;
+}
+
+
+.field-error {
+    min-height: 1.25rem;
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 750;
+    color: #9f1d1d;
+}
+
+
+.form-notice {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border-left: 4px solid #111;
+    background: #f5f5f7;
+}
+
+
+.special-order-sidebar {
+    position: sticky;
+    top: 100px;
+    padding: 1.5rem;
+    border: 2px solid #111;
+}
+
+
+.special-order-steps {
+    margin: 0;
+    padding-left: 1.4rem;
+}
+
+
+.special-order-steps li {
+    margin-bottom: 1.25rem;
+}
+
+
+.special-order-confirmation {
+    padding: 2rem;
+    border: 2px solid #111;
+    background: #f5f5f7;
+}
+
+
+.special-order-confirmation h2 {
+    margin-top: 0;
+}
+
+
+@media (max-width: 850px) {
+
+    .special-order-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .special-order-sidebar {
+        position: static;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .special-order-form {
+        padding: 1.25rem;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-field-full {
+        grid-column: auto;
+    }
+}
