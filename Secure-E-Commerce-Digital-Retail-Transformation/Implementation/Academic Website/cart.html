@@ -4,32 +4,214 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Coming Soon | One-Punch Anime Emporium</title>
+    <meta
+        name="description"
+        content="Review your shopping cart at One-Punch Anime Emporium."
+    >
+
+    <title>Cart | One-Punch Anime Emporium</title>
 
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
 
-    <main class="section">
-        <div class="container">
+    <header class="site-header">
+        <div class="container header-inner">
 
-            <p class="eyebrow">One-Punch Anime Emporium</p>
-
-            <h1>Page Under Construction</h1>
-
-            <p>
-                This section is being developed as part of the academic website
-                implementation.
-            </p>
-
-            <a class="button button-primary" href="index.html">
-                Return Home
+            <a class="site-brand" href="index.html">
+                <span class="brand-name">One-Punch</span>
+                <span class="brand-subtitle">Anime Emporium</span>
             </a>
 
+            <button
+                class="nav-toggle"
+                type="button"
+                aria-label="Open navigation"
+                aria-expanded="false"
+                aria-controls="primary-navigation"
+            >
+                Menu
+            </button>
+
+            <nav
+                id="primary-navigation"
+                class="primary-nav"
+                aria-label="Primary navigation"
+            >
+                <a href="index.html">Home</a>
+                <a href="products.html">Products</a>
+                <a href="locations.html">Locations</a>
+                <a href="special-orders.html">Special Orders</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+
+                <a
+                    class="cart-link"
+                    href="cart.html"
+                    aria-current="page"
+                >
+                    Cart
+                    <span
+                        id="cart-count"
+                        class="cart-count"
+                        aria-label="0 items in cart"
+                    >
+                        0
+                    </span>
+                </a>
+            </nav>
+
         </div>
+    </header>
+
+
+    <main>
+
+        <section class="section">
+            <div class="container">
+
+                <div class="section-heading">
+                    <p class="eyebrow">Shopping Cart</p>
+                    <h1>Review your haul.</h1>
+
+                    <p>
+                        Adjust quantities, remove products, and review the
+                        demonstration order total before continuing to checkout.
+                    </p>
+                </div>
+
+
+                <div
+                    id="cart-layout"
+                    class="cart-layout"
+                >
+
+                    <div>
+                        <div
+                            id="cart-items"
+                            class="cart-items"
+                        >
+                        </div>
+
+                        <div
+                            id="empty-cart"
+                            class="cart-empty"
+                            hidden
+                        >
+                            <h2>Your cart is empty.</h2>
+
+                            <p>
+                                Apparently restraint won this round.
+                            </p>
+
+                            <a
+                                class="button button-primary"
+                                href="products.html"
+                            >
+                                Browse Products
+                            </a>
+                        </div>
+                    </div>
+
+
+                    <aside
+                        id="cart-summary"
+                        class="cart-summary"
+                    >
+                        <p class="eyebrow">Order Summary</p>
+
+                        <div class="summary-row">
+                            <span>Items</span>
+                            <span id="summary-item-count">0</span>
+                        </div>
+
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span id="summary-subtotal">$0.00</span>
+                        </div>
+
+                        <div class="summary-row">
+                            <span>Estimated Tax</span>
+                            <span id="summary-tax">$0.00</span>
+                        </div>
+
+                        <div class="summary-row summary-total">
+                            <span>Estimated Total</span>
+                            <span id="summary-total">$0.00</span>
+                        </div>
+
+                        <p class="summary-note">
+                            Shipping and fulfillment options are selected
+                            during the demonstration checkout workflow.
+                        </p>
+
+                        <a
+                            id="checkout-button"
+                            class="button button-primary cart-checkout-button"
+                            href="checkout.html"
+                        >
+                            Continue to Checkout
+                        </a>
+
+                        <button
+                            id="clear-cart"
+                            class="button button-secondary cart-clear-button"
+                            type="button"
+                        >
+                            Clear Cart
+                        </button>
+                    </aside>
+
+                </div>
+
+            </div>
+        </section>
+
     </main>
 
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+
+            <div>
+                <p class="footer-brand">
+                    One-Punch Anime Emporium
+                </p>
+
+                <p>
+                    Fictional retailer created for an academic website project
+                    and expanded as a portfolio systems-analysis case study.
+                </p>
+            </div>
+
+            <div>
+                <p class="footer-heading">Shop</p>
+                <a href="products.html">Products</a>
+                <a href="special-orders.html">Special Orders</a>
+                <a href="cart.html">Cart</a>
+            </div>
+
+            <div>
+                <p class="footer-heading">Company</p>
+                <a href="locations.html">Locations</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+            </div>
+
+        </div>
+
+        <div class="container footer-bottom">
+            <p>
+                &copy; <span id="current-year"></span>
+                One-Punch Anime Emporium. Demonstration site.
+            </p>
+        </div>
+    </footer>
+
+
+    <script src="js/data.js"></script>
+    <script src="js/cart.js"></script>
     <script src="js/site.js"></script>
 
 </body>
