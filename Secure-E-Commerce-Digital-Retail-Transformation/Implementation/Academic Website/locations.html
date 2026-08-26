@@ -4,32 +4,215 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Coming Soon | One-Punch Anime Emporium</title>
+    <meta
+        name="description"
+        content="Find One-Punch Anime Emporium store locations throughout Chico, California."
+    >
+
+    <title>Locations | One-Punch Anime Emporium</title>
 
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
 
-    <main class="section">
-        <div class="container">
+    <header class="site-header">
+        <div class="container header-inner">
 
-            <p class="eyebrow">One-Punch Anime Emporium</p>
-
-            <h1>Page Under Construction</h1>
-
-            <p>
-                This section is being developed as part of the academic website
-                implementation.
-            </p>
-
-            <a class="button button-primary" href="index.html">
-                Return Home
+            <a class="site-brand" href="index.html">
+                <span class="brand-name">One-Punch</span>
+                <span class="brand-subtitle">Anime Emporium</span>
             </a>
 
+            <button
+                class="nav-toggle"
+                type="button"
+                aria-label="Open navigation"
+                aria-expanded="false"
+                aria-controls="primary-navigation"
+            >
+                Menu
+            </button>
+
+            <nav
+                id="primary-navigation"
+                class="primary-nav"
+                aria-label="Primary navigation"
+            >
+                <a href="index.html">Home</a>
+                <a href="products.html">Products</a>
+                <a href="locations.html" aria-current="page">Locations</a>
+                <a href="special-orders.html">Special Orders</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+
+                <a class="cart-link" href="cart.html">
+                    Cart
+                    <span
+                        id="cart-count"
+                        class="cart-count"
+                        aria-label="0 items in cart"
+                    >
+                        0
+                    </span>
+                </a>
+            </nav>
+
         </div>
+    </header>
+
+
+    <main>
+
+        <section class="section">
+            <div class="container">
+
+                <div class="section-heading">
+                    <p class="eyebrow">Store Locations</p>
+
+                    <h1>Four stores. One Chico community.</h1>
+
+                    <p>
+                        One-Punch Anime Emporium serves customers throughout
+                        Chico, California with four retail locations carrying
+                        manga, figures, collectibles, apparel, accessories,
+                        and comics.
+                    </p>
+                </div>
+
+
+                <div class="locations-callout">
+
+                    <div>
+                        <p class="eyebrow">Before You Go</p>
+
+                        <h2>Check the shelf before making the trip.</h2>
+
+                        <p>
+                            Product availability varies by location. Use the
+                            online catalog to check inventory across all four
+                            stores before heading out.
+                        </p>
+                    </div>
+
+                    <a
+                        class="button button-primary"
+                        href="products.html"
+                    >
+                        Check Product Availability
+                    </a>
+
+                </div>
+
+
+                <div
+                    id="locations-grid"
+                    class="locations-grid"
+                    aria-live="polite"
+                >
+                </div>
+
+            </div>
+        </section>
+
+
+        <section class="section section-alt">
+            <div class="container">
+
+                <div class="section-heading">
+                    <p class="eyebrow">Multi-Store Inventory</p>
+
+                    <h2>Shop across the whole network.</h2>
+
+                    <p>
+                        The demonstration catalog separates product information
+                        from store inventory, allowing the same item to show
+                        different availability at each Chico location.
+                    </p>
+                </div>
+
+
+                <div class="feature-grid">
+
+                    <article class="feature-card">
+                        <h3>Search Online</h3>
+                        <p>
+                            Browse the full product catalog by category,
+                            keyword, or availability.
+                        </p>
+                    </article>
+
+
+                    <article class="feature-card">
+                        <h3>Check Each Store</h3>
+                        <p>
+                            Product pages show inventory status for all four
+                            Chico locations.
+                        </p>
+                    </article>
+
+
+                    <article class="feature-card">
+                        <h3>Request Hard-to-Find Items</h3>
+                        <p>
+                            If an item is unavailable, start a special-order
+                            request directly from the product page.
+                        </p>
+
+                        <a href="special-orders.html">
+                            Special Orders
+                        </a>
+                    </article>
+
+                </div>
+
+            </div>
+        </section>
+
     </main>
 
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+
+            <div>
+                <p class="footer-brand">
+                    One-Punch Anime Emporium
+                </p>
+
+                <p>
+                    Fictional retailer created for an academic website project
+                    and expanded as a portfolio systems-analysis case study.
+                </p>
+            </div>
+
+            <div>
+                <p class="footer-heading">Shop</p>
+                <a href="products.html">Products</a>
+                <a href="special-orders.html">Special Orders</a>
+                <a href="cart.html">Cart</a>
+            </div>
+
+            <div>
+                <p class="footer-heading">Company</p>
+                <a href="locations.html">Locations</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+            </div>
+
+        </div>
+
+        <div class="container footer-bottom">
+            <p>
+                &copy; <span id="current-year"></span>
+                One-Punch Anime Emporium. Demonstration site.
+            </p>
+        </div>
+    </footer>
+
+
+    <script src="js/data.js"></script>
+    <script src="js/locations.js"></script>
     <script src="js/site.js"></script>
 
 </body>
