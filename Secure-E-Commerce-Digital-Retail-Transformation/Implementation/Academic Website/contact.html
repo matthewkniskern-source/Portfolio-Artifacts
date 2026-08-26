@@ -4,32 +4,332 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Coming Soon | One-Punch Anime Emporium</title>
+    <meta
+        name="description"
+        content="Contact One-Punch Anime Emporium for general questions about products, stores, and customer service."
+    >
+
+    <title>Contact | One-Punch Anime Emporium</title>
 
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
 
-    <main class="section">
-        <div class="container">
+    <header class="site-header">
+        <div class="container header-inner">
 
-            <p class="eyebrow">One-Punch Anime Emporium</p>
-
-            <h1>Page Under Construction</h1>
-
-            <p>
-                This section is being developed as part of the academic website
-                implementation.
-            </p>
-
-            <a class="button button-primary" href="index.html">
-                Return Home
+            <a class="site-brand" href="index.html">
+                <span class="brand-name">One-Punch</span>
+                <span class="brand-subtitle">Anime Emporium</span>
             </a>
 
+            <button
+                class="nav-toggle"
+                type="button"
+                aria-label="Open navigation"
+                aria-expanded="false"
+                aria-controls="primary-navigation"
+            >
+                Menu
+            </button>
+
+            <nav
+                id="primary-navigation"
+                class="primary-nav"
+                aria-label="Primary navigation"
+            >
+                <a href="index.html">Home</a>
+                <a href="products.html">Products</a>
+                <a href="locations.html">Locations</a>
+                <a href="special-orders.html">Special Orders</a>
+                <a href="about.html">About</a>
+                <a href="contact.html" aria-current="page">Contact</a>
+
+                <a class="cart-link" href="cart.html">
+                    Cart
+                    <span
+                        id="cart-count"
+                        class="cart-count"
+                        aria-label="0 items in cart"
+                    >
+                        0
+                    </span>
+                </a>
+            </nav>
+
         </div>
+    </header>
+
+
+    <main>
+
+        <section class="section">
+            <div class="container">
+
+                <div class="section-heading">
+                    <p class="eyebrow">Contact</p>
+
+                    <h1>Questions? Send us a message.</h1>
+
+                    <p>
+                        Use this demonstration contact form for general
+                        questions about products, store locations, online
+                        orders, or customer service.
+                    </p>
+                </div>
+
+
+                <div class="contact-layout">
+
+                    <form
+                        id="contact-form"
+                        class="contact-form"
+                        novalidate
+                    >
+
+                        <div class="form-grid">
+
+                            <div class="form-field">
+                                <label for="contact-name">
+                                    Name
+                                    <span aria-hidden="true">*</span>
+                                </label>
+
+                                <input
+                                    id="contact-name"
+                                    name="contact-name"
+                                    type="text"
+                                    autocomplete="name"
+                                    required
+                                >
+
+                                <p
+                                    id="contact-name-error"
+                                    class="field-error"
+                                ></p>
+                            </div>
+
+
+                            <div class="form-field">
+                                <label for="contact-email">
+                                    Email
+                                    <span aria-hidden="true">*</span>
+                                </label>
+
+                                <input
+                                    id="contact-email"
+                                    name="contact-email"
+                                    type="email"
+                                    autocomplete="email"
+                                    required
+                                >
+
+                                <p
+                                    id="contact-email-error"
+                                    class="field-error"
+                                ></p>
+                            </div>
+
+
+                            <div class="form-field">
+                                <label for="contact-topic">
+                                    Topic
+                                </label>
+
+                                <select
+                                    id="contact-topic"
+                                    name="contact-topic"
+                                >
+                                    <option value="general">
+                                        General Question
+                                    </option>
+
+                                    <option value="product">
+                                        Product Question
+                                    </option>
+
+                                    <option value="store">
+                                        Store Location
+                                    </option>
+
+                                    <option value="order">
+                                        Order Question
+                                    </option>
+
+                                    <option value="other">
+                                        Other
+                                    </option>
+                                </select>
+                            </div>
+
+
+                            <div class="form-field">
+                                <label for="contact-store">
+                                    Preferred Store
+                                </label>
+
+                                <select
+                                    id="contact-store"
+                                    name="contact-store"
+                                >
+                                    <option value="">
+                                        No Preference
+                                    </option>
+                                </select>
+                            </div>
+
+
+                            <div class="form-field form-field-full">
+                                <label for="contact-message">
+                                    Message
+                                    <span aria-hidden="true">*</span>
+                                </label>
+
+                                <textarea
+                                    id="contact-message"
+                                    name="contact-message"
+                                    rows="7"
+                                    required
+                                ></textarea>
+
+                                <p
+                                    id="contact-message-error"
+                                    class="field-error"
+                                ></p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-notice">
+                            <strong>Demonstration only.</strong>
+                            This form does not transmit information to a real
+                            customer-service system.
+                        </div>
+
+
+                        <button
+                            class="button button-primary"
+                            type="submit"
+                        >
+                            Send Message
+                        </button>
+
+                    </form>
+
+
+                    <aside class="contact-sidebar">
+
+                        <p class="eyebrow">Need Something Else?</p>
+
+                        <h2>Use the right path.</h2>
+
+                        <p>
+                            Product availability is shown directly in the
+                            online catalog.
+                        </p>
+
+                        <a href="products.html">
+                            Browse Products
+                        </a>
+
+                        <p>
+                            Looking for something unavailable or not listed?
+                        </p>
+
+                        <a href="special-orders.html">
+                            Submit a Special Order
+                        </a>
+
+                        <p>
+                            Need store hours or location information?
+                        </p>
+
+                        <a href="locations.html">
+                            View Chico Locations
+                        </a>
+
+                    </aside>
+
+                </div>
+
+
+                <div
+                    id="contact-confirmation"
+                    class="contact-confirmation"
+                    hidden
+                >
+                    <p class="eyebrow">Message Received</p>
+
+                    <h2>Your demonstration message has been submitted.</h2>
+
+                    <p>
+                        Reference Number:
+                        <strong id="contact-reference"></strong>
+                    </p>
+
+                    <p>
+                        In a production system, this request would be routed
+                        to the appropriate customer-service queue.
+                    </p>
+
+                    <button
+                        id="contact-new-message"
+                        class="button button-primary"
+                        type="button"
+                    >
+                        Send Another Message
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
     </main>
 
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+
+            <div>
+                <p class="footer-brand">
+                    One-Punch Anime Emporium
+                </p>
+
+                <p>
+                    Fictional retailer created for an academic website project
+                    and expanded as a portfolio systems-analysis case study.
+                </p>
+            </div>
+
+            <div>
+                <p class="footer-heading">Shop</p>
+                <a href="products.html">Products</a>
+                <a href="special-orders.html">Special Orders</a>
+                <a href="cart.html">Cart</a>
+            </div>
+
+            <div>
+                <p class="footer-heading">Company</p>
+                <a href="locations.html">Locations</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+            </div>
+
+        </div>
+
+        <div class="container footer-bottom">
+            <p>
+                &copy; <span id="current-year"></span>
+                One-Punch Anime Emporium. Demonstration site.
+            </p>
+        </div>
+    </footer>
+
+
+    <script src="js/data.js"></script>
+    <script src="js/contact.js"></script>
     <script src="js/site.js"></script>
 
 </body>
