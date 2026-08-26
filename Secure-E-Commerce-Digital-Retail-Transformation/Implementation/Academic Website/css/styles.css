@@ -1246,3 +1246,74 @@ textarea:focus-visible {
         grid-column: auto;
     }
 }
+/* =========================================================
+   Checkout
+   ========================================================= */
+
+.checkout-layout {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1fr)
+        360px;
+    gap: 2rem;
+    align-items: start;
+}
+
+
+.checkout-form {
+    padding: 2rem;
+    border: 1px solid #d8d8d8;
+    background: #fff;
+}
+
+
+.checkout-summary {
+    position: sticky;
+    top: 100px;
+    padding: 1.5rem;
+    border: 2px solid #111;
+    background: #fff;
+}
+
+
+.checkout-items {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
+
+
+.checkout-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid #ddd;
+}
+
+
+.checkout-item p {
+    margin: 0.25rem 0 0;
+    font-size: 0.85rem;
+    color: #555;
+}
+
+
+@media (max-width: 900px) {
+
+    .checkout-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .checkout-summary {
+        position: static;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .checkout-form {
+        padding: 1.25rem;
+    }
+}
