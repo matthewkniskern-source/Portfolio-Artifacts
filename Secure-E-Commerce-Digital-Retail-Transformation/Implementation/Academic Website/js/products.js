@@ -295,16 +295,28 @@ function createProductCard(product) {
 
     card.innerHTML = `
 
-        <a
-            class="product-card-image"
-            href="product.html?id=${product.id}"
-            aria-label="View ${escapeHtml(product.name)}"
-        >
-            <img
-                src="${escapeHtml(product.image)}"
-                alt="${escapeHtml(product.name)}"
-            >
-        </a>
+  <a
+    class="product-card-image"
+    href="product.html?id=${product.id}"
+    aria-label="View ${escapeHtml(product.name)}"
+>
+    <img
+        src="/.netlify/images?url=${encodeURIComponent(product.image)}&w=400&q=75"
+        srcset="
+            /.netlify/images?url=${encodeURIComponent(product.image)}&w=300&q=75 300w,
+            /.netlify/images?url=${encodeURIComponent(product.image)}&w=500&q=75 500w,
+            /.netlify/images?url=${encodeURIComponent(product.image)}&w=700&q=75 700w
+        "
+        sizes="
+            (max-width: 600px) 100vw,
+            (max-width: 900px) 50vw,
+            25vw
+        "
+        loading="lazy"
+        decoding="async"
+        alt="${escapeHtml(product.name)}"
+    >
+</a>
 
         <div class="product-card-content">
 
