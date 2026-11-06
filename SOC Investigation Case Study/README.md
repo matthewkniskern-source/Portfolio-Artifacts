@@ -80,7 +80,7 @@ flowchart LR
 
 The full timeline is available in [Incident Timeline](03%20investigation/timeline.md).
 
-A more detailed visual sequence is available in [Incident Progression](08%20diagrams/incident-progression.md).
+A more detailed visual sequence is available in [Incident Progression](08%20diagrams/incident%20progression.md).
 
 ---
 
@@ -120,10 +120,10 @@ The alert is intentionally ambiguous at intake. The reader is not expected to ac
 
 The evidence package contains normalized synthetic telemetry used throughout the investigation.
 
-- [Authentication Events](02%20evidence/authentication-events.csv)
-- [Process Events](02%20evidence/process-events.csv)
-- [Network Connections](02%20evidence/network-connections.csv)
-- [Evidence Notes](02%20evidence/evidence-notes.md)
+- [Authentication Events](02%20evidence/authentication%20events.csv)
+- [Process Events](02%20evidence/process%20events.csv)
+- [Network Connections](02%20evidence/network%20connections.csv)
+- [Evidence Notes](02%20evidence/evidence%20notes.md)
 
 The datasets contain both routine and incident-relevant activity.
 
@@ -137,7 +137,7 @@ The evidence package is deliberately built so that no single CSV hands the analy
 
 This section follows the investigation from alert validation through final analyst disposition.
 
-- [Triage Workflow](03%20investigation/triage-workflow.md)
+- [Triage Workflow](03%20investigation/triage%20workflow.md)
 - [Incident Timeline](03%20investigation/timeline.md)
 - [CLI Investigation](03%20investigation/cli%20investigation.md)
 - [Analyst Findings](03%20investigation/analyst%20findings.md)
@@ -305,10 +305,10 @@ The better controls improve context, attribution, correlation, and privilege wit
 
 The diagrams provide quick visual paths through the case.
 
-- [Incident Progression](08%20diagrams/incident-progression.md)
-- [Evidence Correlation](08%20diagrams/evidence-correlation.md)
-- [Investigation and Response Flow](08%20diagrams/investigation-response-flow.md)
-- [Control Improvement Map](08%20diagrams/control-improvement-map.md)
+- [Incident Progression](08%20diagrams/incident%20progression.md)
+- [Evidence Correlation](08%20diagrams/evidence%20correlation.md)
+- [Investigation and Response Flow](08%20diagrams/investigation%20response%20flow)
+- [Control Improvement Map](08%20diagrams/control%20improvement%20map)
 
 Each diagram answers a different question:
 
