@@ -44,4 +44,4 @@ All institutional and student-identifying information is excluded or anonymized.
 
 [Risk-Control Matrix](core/05%20risk%20control%20matrix.md)
 
-[Requirements and Testing](core/06%20requirments%20and%20testing.md)
+[Requirements and Testing](core/06%20requirements%20and%20testing.md)

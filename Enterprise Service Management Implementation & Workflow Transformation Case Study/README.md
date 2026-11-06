@@ -1,5 +1,21 @@
 # Enterprise Service Management Implementation & Workflow Transformation Case Study
 
+## Reviewer quick start
+
+For a concise review, use this route through the existing work rather than reading every document in order:
+
+| Time | Starting artifact | What it demonstrates |
+| --- | --- | --- |
+| 2 minutes | [Client Solution Brief](Client%20Solution%20Brief.md) | Business problem, recommended scope, implementation posture and operating outcomes |
+| 5 minutes | [Requirements Traceability Matrix](02%20Requirements%20Discovery/requirements%20traceability%20matrix.md) | Mapping business issues to specified, verifiable requirements |
+| 5 minutes | [Target Operating Model](03%20Target%20Service%20Model/target%20operating%20model.md) | Ownership, service channels, support roles and target decisions |
+| 5 minutes | [Control Matrix](06%20Governance%20and%20Controls/control%20matrix.md) | Approval boundaries, RBAC and control evidence |
+| 5 minutes | [Implementation Plan](08%20Implementation%20Plan/implementation%20plan.md) and [UAT Plan](09%20Testing%20and%20UAT/uat%20plan.md) | Phased transition, acceptance, and validation |
+
+**Scope:** This is a vendor-neutral fictional service-management *design case*, not a claim of production deployment, implemented AI workflow automation, or measured operational improvement. The longer chapters below provide the supporting reasoning.
+
+---
+
 ## Executive Summary
 
 A service-management platform does not fix a broken service process by itself.
