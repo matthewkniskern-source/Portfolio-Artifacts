@@ -1,5 +1,20 @@
 # SOC Endpoint Investigation & Security Automation Case Study
 
+## Reviewer quick start
+
+This is a **synthetic incident investigation**, not evidence from a production breach.
+
+- [Alert and case facts](01%20case%20overview/alert%20summary.md)
+- [Normalized authentication, process and network records](02%20evidence/)
+- [Timeline and analyst findings](03%20investigation/timeline.md)
+- [Defensive PowerShell tools and their limits](04%20automation/README.md)
+- [Detection logic](05%20detection/detection%20logic.md)
+- [Response decisions](06%20response/incident%20disposition.md)
+
+A [repeatable verification checklist](04%20automation/validation-checklist.md) identifies tests to run before treating the utilities as validated. Script execution is **not claimed** by this README update.
+
+---
+
 ## Overview
 
 This case study follows a synthetic Windows endpoint incident from the first SIEM alert through investigation, containment, remediation, and post-incident control improvement.
@@ -86,8 +101,8 @@ Each section can stand on its own, with cross-links included where they add usef
 - [07 - Post-Incident Review](07%20post%20incident/)
 - [08 - Diagrams](08%20diagrams/)
 - [09 - References](09%20references/)
-- 
-# Repository Structure
+
+## Repository Structure
 
 ## 01 - Case Overview
 

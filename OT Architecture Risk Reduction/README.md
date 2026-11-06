@@ -14,6 +14,18 @@ It is to take a plant that already works and answer a harder question:
 
 ---
 
+## Five-minute architecture walkthrough
+
+1. [Executive case summary](executive%20summary.md) — business risk and operating constraints.
+2. [Legacy topology](legacy%20topo.mmd) and [legacy risk findings](legacy%20risk%20findings.md) — inherited trust, vendor reachability and process dependencies.
+3. [Target topology](target%20topo.mmd) — proposed zones, controlled remote access and explicit flows.
+4. [Risk-reduction mapping](risk%20reduction%20mapping.md) — risk-by-risk rationale for changes.
+5. [Residual-risk validation](validation%20and%20residual%20risk.md) — what remains and how to check the design.
+
+**Evidence boundary:** The plant is fictionalized and the diagrams are conceptual. They do not represent commissioned firewall policies, validated safety logic or a production change record.
+
+---
+
 ## Quick Navigation
 
 If you only have a few minutes, start here:
