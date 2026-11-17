@@ -1,6 +1,5 @@
 import sys
 import unittest
-import json
 from copy import deepcopy
 from datetime import date
 from pathlib import Path
@@ -10,7 +9,28 @@ from gate import evaluate, EXIT_CODES
 
 class GateTests(unittest.TestCase):
     def setUp(self):
-        self.policy = json.loads((ROOT / "governance/requirements.example.json").read_text())
+        # Hermetic fixture: tests must not depend on live risk acceptance records.
+        self.policy = {
+            "blocked_severities": ["HIGH", "CRITICAL"],
+            "human_approval_required": True,
+            "exceptions": [{
+                "id": "EXC-TEST",
+                "scope": {
+                    "kind": "Misconfigurations",
+                    "target": "main.tf",
+                    "check_id": "AWS-0132",
+                    "resource": "aws_s3_bucket_server_side_encryption_configuration.access_logs",
+                    "severity": "HIGH",
+                },
+                "status": "pending",
+                "reason": "Synthetic test justification",
+                "compensating_controls": ["Synthetic test control"],
+                "review_interval_days": 90,
+                "approved_by": None,
+                "approved_on": None,
+                "expires_on": None,
+            }],
+        }
         self.today = date(2026, 11, 17)
         self.item = {"ID": "AWS-0132", "Severity": "HIGH", "CauseMetadata": {"Resource": "aws_s3_bucket_server_side_encryption_configuration.access_logs"}}
     def run_gate(self, items, target="main.tf"):
