@@ -1,4 +1,8 @@
 {
-  "github_logins": [],
-  "note": "Owner must designate independent reviewer via protected change. Empty by default."
+  "approval_mode": "owner_attestation",
+  "final_authority": "matthewkniskern-source",
+  "github_logins": [
+    "matthewkniskern-source"
+  ],
+  "note": "Sole-owner final authority; no independent review claimed."
 }

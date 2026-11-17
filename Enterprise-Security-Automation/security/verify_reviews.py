@@ -32,6 +32,26 @@ def verify_record(record, pr, reviews, reviewed_record, authorized, active_pr=No
     return {"exception_id": record["id"], "pr": pr["number"], "review_id": latest["id"],
             "reviewer": reviewer, "reviewed_sha": latest["commit_id"], "review_url": latest.get("html_url")}
 
+def verify_owner_record(record, pr, comments, reviewed_record, authority, active_pr=None):
+    owner = authority.get("final_authority")
+    if not owner or record.get("approved_by") != owner or owner not in authority["github_logins"]:
+        raise ValueError("Owner authority required")
+    if pr["base"]["ref"] != BASE or (not pr.get("merged") and pr["number"] != active_pr):
+        raise ValueError("Invalid approval PR")
+    if reviewed_record != record:
+        raise ValueError("Current exception differs from reviewed record")
+    prefix = "EXCEPTION " + record["id"] + " "
+    decisions = [c for c in comments if c["user"]["login"] == owner and c["body"].startswith(prefix)]
+    latest = max(decisions, key=lambda c: (c["created_at"], c["id"]), default=None)
+    expected = prefix + "APPROVE " + pr["head"]["sha"]
+    if not latest or latest["body"].strip() != expected or latest["created_at"] != latest["updated_at"]:
+        raise ValueError("Missing unedited owner attestation of exact PR head")
+    if latest["created_at"][:10] != record.get("approved_on"):
+        raise ValueError("Approval date does not match owner attestation")
+    return {"exception_id": record["id"], "pr": pr["number"], "comment_id": latest["id"],
+            "reviewer": owner, "reviewed_sha": pr["head"]["sha"], "review_url": latest.get("html_url"),
+            "approval_mode": "owner_attestation", "independent_review": False}
+
 def main():
     repo = os.environ["GITHUB_REPOSITORY"]
     token = os.environ["GH_TOKEN"]
@@ -54,6 +74,14 @@ def main():
             if len(batch) < 100:
                 return out
         raise ValueError("Review pagination limit exceeded")
+    def all_comments(number):
+        out = []
+        for page in range(1, 101):
+            batch = get(f"issues/{number}/comments?per_page=100&page={page}")
+            out.extend(batch)
+            if len(batch) < 100:
+                return out
+        raise ValueError("Comment pagination limit exceeded")
     policy = json.loads(Path(POLICY).read_text())
     authority = read_at(REVIEWERS, event["pull_request"]["base"]["sha"]) if active else json.loads(Path(REVIEWERS).read_text())
     authorized = set(authority["github_logins"])
@@ -71,7 +99,13 @@ def main():
         matches = [r for r in reviewed.get("exceptions", []) if r["id"] == record["id"]]
         if len(matches) != 1:
             raise ValueError("Missing or duplicate reviewed exception")
-        evidence.append(verify_record(record, pr, all_reviews(number), matches[0], authorized, active))
+        mode = authority.get("approval_mode", "independent_review")
+        if mode == "owner_attestation":
+            evidence.append(verify_owner_record(record, pr, all_comments(number), matches[0], authority, active))
+        elif mode == "independent_review":
+            evidence.append(verify_record(record, pr, all_reviews(number), matches[0], authorized, active))
+        else:
+            raise ValueError("Unsupported approval mode")
     Path("review-evidence.json").write_text(json.dumps(evidence, indent=2) + "\n")
     print(f"Verified {len(evidence)} approved exceptions against GitHub reviews")
 
