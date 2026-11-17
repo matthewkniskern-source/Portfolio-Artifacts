@@ -4,10 +4,19 @@ This repository contains selected technical and systems-analysis work covering s
 
 The common thread is **turning operational requirements and risk into documented designs, controls, workflows, and testable implementations**. Some artifacts are working demonstrations; others are explicitly conceptual case studies. Those distinctions are noted below rather than implying production deployments.
 
+## Featured active project — SGMA
+
+**Security Governance Management Application (SGMA)** connects automated security engineering with configurable organizational and contractual requirements, evidence assessment and human governance. The local requirements workbench has completed four user acceptance tests, and the integrated application foundation has passed 57 automated tests. MySQL runtime, authentication/RBAC and cloud deployment remain future work.
+
+[Explore the active project](https://github.com/matthewkniskern-source/Portfolio-Artifacts/tree/develop/enterprise-security-automation/Enterprise-Security-Automation) · [Latest verified CI](https://github.com/matthewkniskern-source/Portfolio-Artifacts/actions/runs/44163139855) · [User acceptance testing](https://github.com/matthewkniskern-source/Portfolio-Artifacts/issues/12)
+
+Development is intentionally isolated from the default portfolio branch.
+
 ## Start here — selected work
 
 | Project | What to review first | Evidence and scope |
 | --- | --- | --- |
+| **SGMA — enterprise security governance (active development)** | [Project overview](https://github.com/matthewkniskern-source/Portfolio-Artifacts/tree/develop/enterprise-security-automation/Enterprise-Security-Automation) · [Security validation](https://github.com/matthewkniskern-source/Portfolio-Artifacts/issues/8) | Working static DevSecOps and advisory GRC prototype; local browser UAT completed, database runtime and production deployment not yet validated. |
 | **OT architecture and risk reduction** | [Architecture case study](OT%20Architecture%20Risk%20Reduction/README.md) · [Legacy findings](OT%20Architecture%20Risk%20Reduction/legacy%20risk%20findings.md) · [Target topology](OT%20Architecture%20Risk%20Reduction/target%20topo.mmd) | Fictionalized utility-plant case: BACnet/IP, legacy MS/TP dependencies, trust boundaries, vendor access, risk reduction, and operational continuity. **Conceptual design.** |
 | **SOC investigation and PowerShell** | [Incident overview](SOC%20Investigation%20Case%20Study/README.md) · [Evidence](SOC%20Investigation%20Case%20Study/02%20evidence/) · [Automation](SOC%20Investigation%20Case%20Study/04%20automation/README.md) | Synthetic event evidence, investigation chronology, containment reasoning, ATT&CK mapping, and defensive PowerShell utilities. **Case simulation and source code.** |
 | **Enterprise service-management transformation** | [Client solution brief](Enterprise%20Service%20Management%20Implementation%20%26%20Workflow%20Transformation%20Case%20Study/Client%20Solution%20Brief.md) · [Full case](Enterprise%20Service%20Management%20Implementation%20%26%20Workflow%20Transformation%20Case%20Study/README.md) | Vendor-neutral workflows, RBAC/approvals, traceability, migration, UAT, metrics and governance for a fictional organization. **Proposed operating model.** |
@@ -22,7 +31,9 @@ The common thread is **turning operational requirements and risk into documented
 
 **SOC / security analyst:** Synthetic evidence → investigation timeline → detection logic → PowerShell automation → containment and lessons learned.
 
-**GRC / systems analysis:** ESM solution brief → requirements traceability → governance controls → UAT; then SAP decision modeling.
+**DevSecOps / cybersecurity engineering:** SGMA → protected CI → automated findings → governed risk acceptance → validation evidence.
+
+**GRC / systems analysis:** SGMA requirements assessment → ESM solution brief → requirements traceability → governance controls → UAT; then SAP decision modeling.
 
 **Business systems / implementation:** DBMS relational model → digital commerce integration architecture → retail prototype.
 
