@@ -84,11 +84,12 @@ def verify_package(data):
                                reports["review-evidence.json"])
             if expected != decision:
                 raise ValueError("Inconsistent unified decision")
-            for name in ("trivy.json", "sca.json", "semgrep.json"):
-                if not isinstance(reports[name], dict):
-                    raise ValueError("Invalid scanner report")
-            if not isinstance(reports["gitleaks.json"], list):
-                raise ValueError("Invalid secret report")
+            from expanded_gate import evaluate as evaluate_expanded
+            if evaluate_expanded(reports["semgrep.json"], reports["sca.json"], reports["gitleaks.json"]) != reports["expanded-gate.json"]:
+                raise ValueError("Inconsistent expanded gate")
+            iac = reports["trivy.json"]
+            if not isinstance(iac, dict) or not isinstance(iac.get("Results"), list) or not iac["Results"]:
+                raise ValueError("Invalid IaC report")
             return {"integrity": "MANIFEST_MATCH", "provenance": "UNAUTHENTICATED",
                     "archive_sha256": hashlib.sha256(data).hexdigest(),
                     "source": {k: manifest[k] for k in ("repository", "run_id", "attempt", "commit")},
