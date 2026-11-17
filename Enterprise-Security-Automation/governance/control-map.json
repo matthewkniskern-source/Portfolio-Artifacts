@@ -1,0 +1,23 @@
+{
+  "framework": "NIST SP 800-171 Rev 3 (illustrative mapping, not certification)",
+  "controls": [
+    {
+      "id": "03.01.03",
+      "objective": "Information flow enforcement",
+      "evidence": "IaC configuration findings",
+      "coverage": "partial"
+    },
+    {
+      "id": "03.04.03",
+      "objective": "Configuration change control",
+      "evidence": "pull request and gate results",
+      "coverage": "partial"
+    },
+    {
+      "id": "03.11.02",
+      "objective": "Vulnerability monitoring and scanning",
+      "evidence": "scanner reports",
+      "coverage": "partial"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "profile": "synthetic-baseline",
+  "blocked_severities": [
+    "HIGH",
+    "CRITICAL"
+  ],
+  "human_approval_required": true,
+  "contract_overlays": [],
+  "note": "No real contract requirements asserted."
+}

@@ -1,0 +1,41 @@
+name: Enterprise security baseline
+on:
+  push:
+    branches: ['develop/enterprise-security-automation']
+    paths: ['Enterprise-Security-Automation/**', '.github/workflows/enterprise-security-baseline.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unit tests
+        run: python3 -m unittest discover -s Enterprise-Security-Automation/tests -v
+      - uses: hashicorp/setup-terraform@v3
+      - name: Terraform validation
+        working-directory: Enterprise-Security-Automation/infrastructure/aws
+        run: |
+          terraform init -backend=false
+          terraform validate
+      - name: Scan infrastructure
+        uses: aquasecurity/trivy-action@0.30.0
+        with:
+          scan-type: config
+          scan-ref: Enterprise-Security-Automation/infrastructure/aws
+          format: json
+          output: trivy.json
+          exit-code: '0'
+      - name: Evaluate gate
+        run: python3 Enterprise-Security-Automation/security/gate.py trivy.json Enterprise-Security-Automation/governance/requirements.example.json gate.json
+      - name: Retain evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-evidence
+          path: |
+            trivy.json
+            gate.json
+          retention-days: 14
