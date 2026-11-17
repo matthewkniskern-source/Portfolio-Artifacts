@@ -6,5 +6,53 @@
   ],
   "human_approval_required": true,
   "contract_overlays": [],
-  "note": "No real contract requirements asserted."
+  "exceptions": [
+    {
+      "id": "EXC-0001",
+      "scope": {
+        "kind": "Misconfigurations",
+        "target": "main.tf",
+        "check_id": "AWS-0132",
+        "resource": "aws_s3_bucket_server_side_encryption_configuration.access_logs",
+        "severity": "HIGH"
+      },
+      "status": "pending",
+      "owner": "Portfolio security reviewer (role, not assigned)",
+      "reason": "S3 server access logging destination requires SSE-S3 compatibility; retain encryption rather than break log delivery.",
+      "compensating_controls": [
+        "SSE-S3 encryption",
+        "public access blocking",
+        "BucketOwnerEnforced ownership",
+        "restricted logging service principal, source account and ARN",
+        "versioning"
+      ],
+      "approved_by": null,
+      "approved_on": null,
+      "expires_on": null,
+      "review_interval_days": 90
+    },
+    {
+      "id": "EXC-0002",
+      "scope": {
+        "kind": "Misconfigurations",
+        "target": "main.tf",
+        "check_id": "AWS-0089",
+        "resource": "aws_s3_bucket.access_logs",
+        "severity": "LOW"
+      },
+      "status": "pending",
+      "owner": "Portfolio security reviewer (role, not assigned)",
+      "reason": "Avoid recursive server access logging on the dedicated log destination; evaluate CloudTrail data events before deployment.",
+      "compensating_controls": [
+        "dedicated private log destination",
+        "restricted log delivery",
+        "versioning"
+      ],
+      "approved_by": null,
+      "approved_on": null,
+      "expires_on": null,
+      "review_interval_days": 90
+    }
+  ],
+  "note": "Synthetic portfolio only. Approval metadata is not authenticated by this prototype; independent review and protected policy changes are required before production use."
 }
