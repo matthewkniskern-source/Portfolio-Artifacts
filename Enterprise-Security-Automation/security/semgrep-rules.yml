@@ -1,0 +1,39 @@
+rules:
+  - id: python-dynamic-evaluation
+    languages: [python]
+    severity: ERROR
+    message: Dynamic evaluation of Python input is prohibited in this lab.
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: exec(...)
+  - id: python-shell-injection
+    languages: [python]
+    severity: ERROR
+    message: Avoid shell=True; pass a list of arguments to subprocess.
+    patterns:
+      - pattern-either:
+          - pattern: subprocess.run(..., shell=True, ...)
+          - pattern: subprocess.Popen(..., shell=True, ...)
+          - pattern: subprocess.call(..., shell=True, ...)
+  - id: python-unsafe-pickle
+    languages: [python]
+    severity: ERROR
+    message: Avoid unsafe pickle deserialization.
+    pattern-either:
+      - pattern: pickle.load(...)
+      - pattern: pickle.loads(...)
+  - id: python-disabled-tls-verification
+    languages: [python]
+    severity: ERROR
+    message: Do not disable TLS verification for HTTP requests.
+    pattern-either:
+      - pattern: requests.get(..., verify=False, ...)
+      - pattern: requests.post(..., verify=False, ...)
+      - pattern: requests.request(..., verify=False, ...)
+  - id: python-weak-hash
+    languages: [python]
+    severity: ERROR
+    message: Avoid MD5 and SHA-1 in security-sensitive code; review any non-security use.
+    pattern-either:
+      - pattern: hashlib.md5(...)
+      - pattern: hashlib.sha1(...)
