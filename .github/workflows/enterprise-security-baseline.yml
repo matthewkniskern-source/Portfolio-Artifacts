@@ -94,6 +94,9 @@ jobs:
           IAC: ${{ steps.iac.outcome }}
           EXPANDED: ${{ steps.expanded.outcome }}
         run: test "$IAC" = success && test "$EXPANDED" = success
+      - name: Evaluate proposed requirements profile
+        if: success()
+        run: python3 Enterprise-Security-Automation/governance/requirements_engine.py Enterprise-Security-Automation/governance/profiles/synthetic-project-a.json requirements-assessment.json --evidence unified-decision.json --scanned trivy-iac trivy-sca semgrep gitleaks
       - name: Retain evidence
         if: always()
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
@@ -109,4 +112,5 @@ jobs:
             expanded-gate.json
             unified-decision.json
             evidence-manifest.json
+            requirements-assessment.json
           retention-days: 90
