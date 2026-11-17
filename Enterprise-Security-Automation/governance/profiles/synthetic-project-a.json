@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "profile_id": "synthetic-project-a",
+  "revision": "1.0",
+  "baseline": [
+    {
+      "id": "ORG-001",
+      "title": "Block high and critical dependency findings",
+      "source": "Internal synthetic baseline",
+      "scanner": "trivy-sca",
+      "threshold": "HIGH",
+      "allow_exceptions": false,
+      "applicability": "applicable"
+    },
+    {
+      "id": "ORG-002",
+      "title": "Block exposed credentials",
+      "source": "Internal synthetic baseline",
+      "scanner": "gitleaks",
+      "threshold": "LOW",
+      "allow_exceptions": false,
+      "applicability": "applicable"
+    },
+    {
+      "id": "ORG-003",
+      "title": "Block prohibited source patterns",
+      "source": "Internal synthetic baseline",
+      "scanner": "semgrep",
+      "threshold": "LOW",
+      "allow_exceptions": false,
+      "applicability": "applicable"
+    },
+    {
+      "id": "ORG-004",
+      "title": "Infrastructure configuration assessment",
+      "source": "Internal synthetic baseline",
+      "scanner": "trivy-iac",
+      "threshold": "HIGH",
+      "allow_exceptions": true,
+      "applicability": "applicable"
+    }
+  ],
+  "overlays": [
+    {
+      "id": "CON-001",
+      "title": "Review medium dependency findings",
+      "source": "Synthetic contract A — demonstration only",
+      "scanner": "trivy-sca",
+      "threshold": "MEDIUM",
+      "allow_exceptions": false,
+      "applicability": "applicable"
+    }
+  ],
+  "manual": [
+    {
+      "id": "MAN-001",
+      "title": "Confirm contractual applicability and control mapping",
+      "source": "Synthetic contract A",
+      "applicability": "undetermined"
+    },
+    {
+      "id": "MAN-002",
+      "title": "Validate live logging delivery and retention",
+      "source": "Internal synthetic baseline",
+      "applicability": "applicable"
+    }
+  ]
+}

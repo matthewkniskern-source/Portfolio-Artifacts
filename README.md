@@ -8,6 +8,7 @@ The common thread is **turning operational requirements and risk into documented
 
 | Project | What to review first | Evidence and scope |
 | --- | --- | --- |
+| **Enterprise security governance and automation (active development)** | [Project status and evidence](Enterprise-Security-Automation/README.md) · [Validation register](https://github.com/matthewkniskern-source/Portfolio-Artifacts/issues/8) | Working static DevSecOps and sole-owner GRC prototype: four security disciplines, protected integration, scoped exceptions, verified negative tests and remediation. Hardening PR #9 pending integration; no live AWS deployment. |
 | **OT architecture and risk reduction** | [Architecture case study](OT%20Architecture%20Risk%20Reduction/README.md) · [Legacy findings](OT%20Architecture%20Risk%20Reduction/legacy%20risk%20findings.md) · [Target topology](OT%20Architecture%20Risk%20Reduction/target%20topo.mmd) | Fictionalized utility-plant case: BACnet/IP, legacy MS/TP dependencies, trust boundaries, vendor access, risk reduction, and operational continuity. **Conceptual design.** |
 | **SOC investigation and PowerShell** | [Incident overview](SOC%20Investigation%20Case%20Study/README.md) · [Evidence](SOC%20Investigation%20Case%20Study/02%20evidence/) · [Automation](SOC%20Investigation%20Case%20Study/04%20automation/README.md) | Synthetic event evidence, investigation chronology, containment reasoning, ATT&CK mapping, and defensive PowerShell utilities. **Case simulation and source code.** |
 | **Enterprise service-management transformation** | [Client solution brief](Enterprise%20Service%20Management%20Implementation%20%26%20Workflow%20Transformation%20Case%20Study/Client%20Solution%20Brief.md) · [Full case](Enterprise%20Service%20Management%20Implementation%20%26%20Workflow%20Transformation%20Case%20Study/README.md) | Vendor-neutral workflows, RBAC/approvals, traceability, migration, UAT, metrics and governance for a fictional organization. **Proposed operating model.** |
@@ -22,7 +23,9 @@ The common thread is **turning operational requirements and risk into documented
 
 **SOC / security analyst:** Synthetic evidence → investigation timeline → detection logic → PowerShell automation → containment and lessons learned.
 
-**GRC / systems analysis:** ESM solution brief → requirements traceability → governance controls → UAT; then SAP decision modeling.
+**DevSecOps / cybersecurity engineering:** Enterprise security automation → protected CI → security findings and risk acceptance → validation evidence.
+
+**GRC / systems analysis:** Enterprise security governance prototype → ESM solution brief → requirements traceability → governance controls → UAT; then SAP decision modeling.
 
 **Business systems / implementation:** DBMS relational model → digital commerce integration architecture → retail prototype.
 

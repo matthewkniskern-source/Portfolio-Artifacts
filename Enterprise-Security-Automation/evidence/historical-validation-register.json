@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "archived_on": "2026-11-17",
+  "repository": "matthewkniskern-source/Portfolio-Artifacts",
+  "scope": "Historical synthetic lab validation; archive bytes independently hashed, normalized decisions inspected; raw ZIPs exported separately, not committed.",
+  "records": [
+    {
+      "run": 44143766794,
+      "artifact": 14356375426,
+      "sha256": "786ac1ba30894c1a3fc0210e3aafa45458b5eb841d9c6dab4464e304058b95c6",
+      "observation": "IaC exception approved",
+      "url": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/actions/runs/44143766794"
+    },
+    {
+      "run": 44147329527,
+      "artifact": 14357456708,
+      "sha256": "0b4506935071712e5d9868144dde8a63341bbbd75c208da046c9f316b5bde4d8",
+      "observation": "Baseline pass; two exceptions approved",
+      "url": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/actions/runs/44147329527"
+    },
+    {
+      "run": 44149386781,
+      "artifact": 14358421462,
+      "sha256": "c4ed3c6d2e28e768f131737416c9551b8a74de4d6158fe9fdd5b7f8db950eba5",
+      "observation": "SAST BLOCK dynamic evaluation",
+      "url": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/actions/runs/44149386781"
+    },
+    {
+      "run": 44149394526,
+      "artifact": 14358945439,
+      "sha256": "46c83e2d6a833ad9c38d0cae48c125b7c34f71cb3ac03729e9e51528a5baeee4",
+      "observation": "SCA PASS three medium Jinja2 findings",
+      "url": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/actions/runs/44149394526"
+    },
+    {
+      "run": 44149401535,
+      "artifact": 14357678265,
+      "sha256": "37dec50337001eba7be8d148959c248bef5329633bfc55193941633acf1b4ffa",
+      "observation": "Secret example not detected; PASS",
+      "url": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/actions/runs/44149401535"
+    },
+    {
+      "run": 44149815002,
+      "artifact": 14357503720,
+      "sha256": "29e3af8f6554e83d981bdd44eb7d0e85cc8a1e091f8d927f34e187a524af648b",
+      "observation": "SCA BLOCK PyYAML CVE-2020-14343 critical",
+      "url": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/actions/runs/44149815002"
+    },
+    {
+      "run": 44149672087,
+      "artifact": 14358327054,
+      "sha256": "562635ce76cd9c295b2997404e5b6f851ee076463487bf597b406677899a67bf",
+      "observation": "Secrets BLOCK generic-api-key synthetic",
+      "url": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/actions/runs/44149672087"
+    },
+    {
+      "run": 44150215564,
+      "artifact": 14359420304,
+      "sha256": "cceb483188b5e87c6b7392921c17489def70e8be11cc20b6d985d3d7eeeccfd9",
+      "observation": "SAST remediation PASS",
+      "url": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/actions/runs/44150215564"
+    },
+    {
+      "run": 44150218557,
+      "artifact": 14359026023,
+      "sha256": "83d2b70901ffbef102a8425c0ea4541786f6957b7121725fc128a54577554a73",
+      "observation": "SCA remediation PASS",
+      "url": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/actions/runs/44150218557"
+    },
+    {
+      "run": 44150224063,
+      "artifact": 14358721468,
+      "sha256": "888e89f4cfadc2882feafbfdbd1897d9e39ebb0e9255c2abcea29bcfa27f65fb",
+      "observation": "Secrets remediation PASS",
+      "url": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/actions/runs/44150224063"
+    }
+  ]
+}
