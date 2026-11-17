@@ -40,11 +40,11 @@ def evaluate(report, policy, today=None):
                 finding = {"kind": kind, "target": result.get("Target"),
                            "check_id": item.get("ID") or item.get("VulnerabilityID") or item.get("RuleID"),
                            "resource": resource, "severity": severity}
-                is_blocking = severity in blocked or severity == "UNKNOWN"
+                is_blocking = severity in blocked or severity not in {"LOW", "MEDIUM", "HIGH", "CRITICAL"}
                 matches = [e for e in exceptions if all(finding.values()) and e.get("scope") == finding]
                 state = "blocking" if is_blocking else "advisory"
                 exception_id = None
-                if len(matches) == 1 and severity != "UNKNOWN":
+                if len(matches) == 1 and severity in {"LOW", "MEDIUM", "HIGH", "CRITICAL"}:
                     exception_id = matches[0]["id"]
                     status = exception_state(matches[0], today)
                     if status == "approved":
