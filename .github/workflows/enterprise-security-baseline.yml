@@ -3,15 +3,22 @@ on:
   push:
     branches: ['develop/enterprise-security-automation']
     paths: ['Enterprise-Security-Automation/**', '.github/workflows/enterprise-security-baseline.yml']
+  pull_request:
+    branches: ['develop/enterprise-security-automation']
+  pull_request_review:
+    types: [submitted, dismissed]
   workflow_dispatch:
 permissions:
   contents: read
+  pull-requests: read
 jobs:
   validate:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Unit tests
         run: python3 -m unittest discover -s Enterprise-Security-Automation/tests -v
       - uses: hashicorp/setup-terraform@v3
@@ -28,7 +35,25 @@ jobs:
           format: json
           output: trivy.json
           exit-code: '0'
+      - name: Checkout trusted review code
+        if: github.event.pull_request != null
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: trusted-review
+          persist-credentials: false
+      - name: Verify human approvals
+        env:
+          GH_TOKEN: ${{ github.token }}
+          IS_PR: ${{ github.event.pull_request != null }}
+        run: |
+          if [ "$IS_PR" = "true" ]; then
+            python3 trusted-review/Enterprise-Security-Automation/security/verify_reviews.py
+          else
+            python3 Enterprise-Security-Automation/security/verify_reviews.py
+          fi
       - name: Evaluate gate
+        if: success()
         run: python3 Enterprise-Security-Automation/security/gate.py trivy.json Enterprise-Security-Automation/governance/requirements.example.json gate.json
       - name: Retain evidence
         if: always()
@@ -38,4 +63,5 @@ jobs:
           path: |
             trivy.json
             gate.json
+            review-evidence.json
           retention-days: 14
