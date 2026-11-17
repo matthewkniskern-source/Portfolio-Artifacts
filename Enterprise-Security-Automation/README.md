@@ -42,3 +42,6 @@ Next: review stacked hardening and requirements changes, validate local workbenc
 
 ## Requirements workbench
 Run `python3 Enterprise-Security-Automation/governance/workbench.py` and open http://127.0.0.1:8765. See [workbench guide](documentation/requirements-workbench.md). Local synthetic prototype; proposals do not change CI policy.
+
+## SGMA local persistence (proposed)
+See [local MySQL setup and deployment boundaries](documentation/sgma-local.md). Flask/SQLAlchemy application, revision history and evidence-linked assessment storage. No public deployment or RBAC yet. Existing workbench stays available.

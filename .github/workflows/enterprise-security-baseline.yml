@@ -20,6 +20,8 @@ jobs:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           persist-credentials: false
+      - name: Install SGMA application dependencies
+        run: python3 -m pip install -r Enterprise-Security-Automation/sgma/requirements.txt
       - name: Unit tests
         run: python3 -m unittest discover -s Enterprise-Security-Automation/tests -v
       - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4
