@@ -102,6 +102,10 @@ The pinned [NIST OSCAL Content v1.5.0](https://github.com/usnistgov/oscal-conten
 
 See [revised architecture, schema provisioning and QA/QC checklist](documentation/sgma-roadmap-02-10.md).
 
+## OT Intelligence Center
+
+Open http://127.0.0.1:8765/ot for context-driven candidate discovery, searchable technology-tagged requirements, source references, proposed contract clauses, traceability and acceptance checklists. This is an original advisory implementation informed by commercial design patterns, not a benchmark of commercial performance. See [OT intelligence architecture and acceptance](documentation/sgma-ot-intelligence.md). Five new tests await verification. No authoritative applicability, licensed content or live assessment is implied.
+
 ## OT/ICS extension
 
 See [OT requirements scope and test plan](documentation/sgma-ot-requirements.md). The selectable OT candidate is not an official NIST overlay. It introduces no active OT scanning or authorization, and retains the existing baseline and scanner rules. New tests await CI and browser verification.

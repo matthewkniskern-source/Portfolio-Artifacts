@@ -230,6 +230,8 @@ def create_app(engine):
     from roadmap import register
     register(app)
     register_roadmap_store(app,engine,roadmap_tables)
+    from ot_intelligence import register as register_ot
+    register_ot(app)
     return app
 
 def main():
