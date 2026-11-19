@@ -232,6 +232,8 @@ def create_app(engine):
     register_roadmap_store(app,engine,roadmap_tables)
     from ot_intelligence import register as register_ot
     register_ot(app)
+    from control_intelligence import register as register_controls
+    register_controls(app)
     return app
 
 def main():
