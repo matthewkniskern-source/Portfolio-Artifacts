@@ -13,7 +13,7 @@ from unified_gate import combine
 
 
 def package(block=False, tamper=False, missing=False, extra=False, duplicate=False,
-            inconsistent=False, bad_source=False):
+            inconsistent=False, bad_source=False, assessment=None, assessment_tamper=False):
     sast = {"errors": [], "results": []}
     if block:
         sast["results"].append({"check_id": "synthetic-rule", "path": "fixture.py"})
@@ -35,6 +35,16 @@ def package(block=False, tamper=False, missing=False, extra=False, duplicate=Fal
                                  "bytes": len(raw)} for name, raw in data.items()}}
     if bad_source:
         manifest["commit"] = "unknown"
+    if assessment is not None:
+        data["requirements-assessment.json"] = b'{"approval":"NOT_APPROVED"}'
+        if assessment == "covered":
+            raw = data["requirements-assessment.json"]
+            manifest["files"]["requirements-assessment.json"] = {"sha256": hashlib.sha256(raw).hexdigest(), "bytes":len(raw)}
+            manifest["assessment_outcome"] = "success"
+        if assessment == "missing_coverage":
+            manifest["assessment_outcome"] = "success"
+        if assessment_tamper:
+            data["requirements-assessment.json"] += b" "
     data["evidence-manifest.json"] = json.dumps(manifest).encode()
     if tamper:
         data["semgrep.json"] += b" "
@@ -68,6 +78,15 @@ class EvidenceImportTests(unittest.TestCase):
         for options in ({"tamper": True}, {"missing": True}, {"extra": True},
                         {"duplicate": True}, {"inconsistent": True}, {"bad_source": True}):
             with self.subTest(options=options), self.assertRaises(ValueError):
+                verify_package(package(**options))
+
+    def test_legacy_optional_is_unverified(self):
+        self.assertEqual(verify_package(package(assessment="legacy"))["unverified_optional_reports"], ["requirements-assessment.json"])
+
+    def test_manifested_assessment_integrity(self):
+        self.assertEqual(verify_package(package(assessment="covered"))["unverified_optional_reports"], [])
+        for options in ({"assessment":"covered","assessment_tamper":True}, {"assessment":"missing_coverage"}):
+            with self.assertRaises(ValueError):
                 verify_package(package(**options))
 
     def test_invalid_zip(self):
