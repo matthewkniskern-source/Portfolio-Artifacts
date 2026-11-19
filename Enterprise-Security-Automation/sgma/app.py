@@ -18,6 +18,7 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "governance"))
 from requirements_engine import assess
+from requirements_library import registry, compose, verify_profile
 sys.path.insert(0, str(ROOT / "security"))
 from evidence_import import verify_package, LIMIT as ARCHIVE_LIMIT
 
@@ -82,10 +83,11 @@ def evaluate(payload):
     if not isinstance(payload, dict):
         raise ValueError("JSON object required")
     profile = payload["profile"]
-    if profile["baseline"] != example()["baseline"]:
+    library_state = verify_profile(profile)
+    if library_state["status"] == "LEGACY_PROPOSAL" and profile["baseline"] != example()["baseline"]:
         raise ValueError("Organizational baseline must match the repository-controlled baseline")
     required = next(r for r in example()["manual"] if r["id"] == "MAN-002")
-    if required not in profile["manual"]:
+    if library_state["status"] == "LEGACY_PROPOSAL" and required not in profile["manual"]:
         raise ValueError("Organizational manual requirement MAN-002 cannot be changed or removed")
     for key, limit in (("profile_id",100),("revision",40)):
         if not isinstance(profile.get(key),str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,"+str(limit-1)+"}",profile[key]):
@@ -95,6 +97,7 @@ def evaluate(payload):
     if not isinstance(scanned,list) or any(not isinstance(s,str) for s in scanned):
         raise ValueError("Invalid scanner completion declaration")
     result = assess(profile, evidence, scanned)
+    result["requirements_library"] = library_state
     result["evidence_trust"] = "USER_DECLARED_UNVERIFIED" if evidence is not None else "NOT_SUPPLIED"
     return result
 
@@ -136,6 +139,16 @@ def create_app(engine):
     @app.get("/profile")
     def profile():
         return jsonify(example())
+    @app.get("/library")
+    def get_library():
+        data, _ = registry()
+        return jsonify(data)
+    @app.post("/library/compose")
+    def compose_library():
+        payload = request.get_json()
+        proposal = compose(payload["profile_id"], payload["revision"], payload["overlays"])
+        evaluate({"profile": proposal})
+        return jsonify(proposal)
     @app.get("/health")
     def health():
         if engine is None:
