@@ -119,7 +119,7 @@ def create_app(engine):
                 request.max_content_length = ARCHIVE_LIMIT + 1_000_000
                 if request.mimetype != "multipart/form-data":
                     abort(415)
-            elif request.path in {"/roadmap/catalog", "/roadmap/profile", "/roadmap/compose", "/roadmap/lifecycle"}:
+            elif request.path in {"/roadmap/catalog", "/roadmap/profile", "/roadmap/compose", "/roadmap/lifecycle", "/roadmap/exchange"}:
                 request.max_content_length = 8_000_000
                 if not request.is_json:
                     abort(415)
@@ -135,6 +135,7 @@ def create_app(engine):
     @app.errorhandler(KeyError)
     @app.errorhandler(TypeError)
     @app.errorhandler(AttributeError)
+    @app.errorhandler(RecursionError)
     def invalid(_exc):
         return jsonify(error="Invalid proposal or evidence; verify schema, baseline, identifiers and required fields."), 400
     @app.errorhandler(IntegrityError)
