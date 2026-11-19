@@ -3,7 +3,7 @@
 
 **Active development — November 19, 2026.** A working local, advisory cybersecurity governance prototype connecting DevSecOps evidence, organizational security policy, selectable industry-standard requirements, configurable contractual obligations and human-controlled governance decisions. OSCAL exchange is implemented at the candidate artifact level; independent interoperability and production acceptance remain open.
 
-[Portfolio home](https://github.com/matthewkniskern-source/Portfolio-Artifacts) · [Development branch](https://github.com/matthewkniskern-source/Portfolio-Artifacts/tree/develop/enterprise-security-automation) · [Verified CI run #39](https://github.com/matthewkniskern-source/Portfolio-Artifacts/actions/runs/44583519480) · [Current QA/QC record #22](https://github.com/matthewkniskern-source/Portfolio-Artifacts/issues/22)
+[Portfolio home](https://github.com/matthewkniskern-source/Portfolio-Artifacts) · [Development branch](https://github.com/matthewkniskern-source/Portfolio-Artifacts/tree/develop/enterprise-security-automation) · [Verified post-merge CI](https://github.com/matthewkniskern-source/Portfolio-Artifacts/actions/runs/44600352288) · [Current QA/QC record #22](https://github.com/matthewkniskern-source/Portfolio-Artifacts/issues/22)
 
 ## Purpose and scope
 
@@ -59,9 +59,10 @@ The internal SGMA domain model remains separate from OSCAL exchange adapters. OS
 | [PR #17](https://github.com/matthewkniskern-source/Portfolio-Artifacts/pull/17), [Issue #18](https://github.com/matthewkniskern-source/Portfolio-Artifacts/issues/18) | Evidence workspace, 68 tests; UAT-005–009 |
 | [PR #19](https://github.com/matthewkniskern-source/Portfolio-Artifacts/pull/19), [Issue #20](https://github.com/matthewkniskern-source/Portfolio-Artifacts/issues/20) | Versioned requirements registry, 77 tests; UAT-010–016 |
 | [PR #21](https://github.com/matthewkniskern-source/Portfolio-Artifacts/pull/21), [CI #39](https://github.com/matthewkniskern-source/Portfolio-Artifacts/actions/runs/44583519480) | Integrated roadmap 02–10; 95/95 tests including 18 new tests; merged at `da120534` |
+| [PR #26](https://github.com/matthewkniskern-source/Portfolio-Artifacts/pull/26) | Authoritative control intelligence and SGMA-REM-001 SHA-256 remediation; 112/112 tests, zero blocking SAST findings; merged at `de848a1` |
 | [Issue #22](https://github.com/matthewkniskern-source/Portfolio-Artifacts/issues/22) | QA-02A–L: 12 functional objectives passed within tested scope; consolidated acceptance remains open |
 
-CI #39 verified two historical exceptions and returned EXCEPTION APPROVED / REVIEW REQUIRED, not an unconditional security or deployment approval. Local CLI regression output and post-merge CI have not been independently verified in the recorded campaign.
+CI #39 and PR #26 post-merge CI verified two historical exceptions and returned EXCEPTION APPROVED / REVIEW REQUIRED, not an unconditional security or deployment approval. Post-merge run 44600352288 passed 112 tests with zero blocking SAST findings. Full upstream offline CLI and browser acceptance remain open.
 
 ### Integrated demonstration results
 
@@ -104,15 +105,15 @@ See [revised architecture, schema provisioning and QA/QC checklist](documentatio
 
 ## Authoritative source library and common control intelligence
 
-Open http://127.0.0.1:8765/controls for source-scoped navigation and direct relationship review. The prototype indexes the existing 410 complete NIST catalog entries, a pinned exact 221-entry SP 800-53/53A Rev. 5.2.0 reference extract and 20 SGMA-authored OT candidates (651 projected entries, 37 unreviewed related relationships). The full 800-53 catalog is not onboarded as an OSCAL template; the read-only extract retains original control subtrees and source metadata, with an offline comparison utility. Official 800-82 overlays, licensed IEC content, authorized equivalence/evidence reuse and actual project impact are not yet implemented. New tests await verification. See [source provenance, graph design and acceptance](documentation/sgma-control-intelligence.md).
+Open http://127.0.0.1:8765/controls for source-scoped navigation and direct relationship review. The prototype indexes the existing 410 complete NIST catalog entries, a pinned exact 221-entry SP 800-53/53A Rev. 5.2.0 reference extract and 20 SGMA-authored OT candidates (651 projected entries, 37 unreviewed related relationships). The full 800-53 catalog is not onboarded as an OSCAL template; the read-only extract retains original control subtrees and source metadata, with an offline comparison utility. Official 800-82 overlays, licensed IEC content, authorized equivalence/evidence reuse and actual project impact are not yet implemented. 112 tests passed on the merged baseline; SHA-256 integrity enforcement verified by CI. See [source provenance, graph design and acceptance](documentation/sgma-control-intelligence.md).
 
 ## OT Intelligence Center
 
-Open http://127.0.0.1:8765/ot for context-driven candidate discovery, searchable technology-tagged requirements, source references, proposed contract clauses, traceability and acceptance checklists. This is an original advisory implementation informed by commercial design patterns, not a benchmark of commercial performance. See [OT intelligence architecture and acceptance](documentation/sgma-ot-intelligence.md). Five new tests await verification. No authoritative applicability, licensed content or live assessment is implied.
+Open http://127.0.0.1:8765/ot for context-driven candidate discovery, searchable technology-tagged requirements, source references, proposed contract clauses, traceability and acceptance checklists. This is an original advisory implementation informed by commercial design patterns, not a benchmark of commercial performance. See [OT intelligence architecture and acceptance](documentation/sgma-ot-intelligence.md). Integrated in PR #25 and covered by the merged automated baseline; browser acceptance remains open. No authoritative applicability, licensed content or live assessment is implied.
 
 ## OT/ICS extension
 
-See [OT requirements scope and test plan](documentation/sgma-ot-requirements.md). The selectable OT candidate is not an official NIST overlay. It introduces no active OT scanning or authorization, and retains the existing baseline and scanner rules. New tests await CI and browser verification.
+See [OT requirements scope and test plan](documentation/sgma-ot-requirements.md). The selectable OT candidate is not an official NIST overlay. It introduces no active OT scanning or authorization, and retains the existing baseline and scanner rules. Automated baseline passed; browser verification remains open.
 
 ## Remaining engineering and acceptance
 

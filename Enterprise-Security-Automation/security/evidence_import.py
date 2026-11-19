@@ -56,10 +56,18 @@ def verify_package(data):
             if not isinstance(manifest, dict) or manifest.get("schema_version") != 1:
                 raise ValueError("Unsupported manifest")
             files = manifest.get("files")
-            if not isinstance(files, dict) or set(files) != REQUIRED:
+            if not isinstance(files, dict) or set(files) not in (REQUIRED, REQUIRED | {OPTIONAL}):
                 raise ValueError("Incomplete or unexpected manifest entries")
+            outcome = manifest.get("assessment_outcome")
+            if "assessment_outcome" in manifest:
+                if outcome not in ("success", "skipped"):
+                    raise ValueError("Incomplete assessment execution")
+                if (OPTIONAL in names) != (outcome == "success") or (OPTIONAL in files) != (outcome == "success"):
+                    raise ValueError("Assessment manifest coverage mismatch")
+            if not set(files) <= names:
+                raise ValueError("Missing manifest-listed report")
             reports = {}
-            for name in sorted(REQUIRED):
+            for name in sorted(files):
                 raw = archive.read(name)
                 record = files[name]
                 if (not isinstance(record, dict) or type(record.get("bytes")) is not int or
@@ -94,7 +102,7 @@ def verify_package(data):
                     "archive_sha256": hashlib.sha256(data).hexdigest(),
                     "source": {k: manifest[k] for k in ("repository", "run_id", "attempt", "commit")},
                     "workflow": None, "scanned": list(SCANNERS), "evidence": decision,
-                    "unverified_optional_reports": [OPTIONAL] if OPTIONAL in names else [],
+                    "unverified_optional_reports": [OPTIONAL] if OPTIONAL in names and OPTIONAL not in files else [],
                     "deployment_authorized": False}
     except (zipfile.BadZipFile, RuntimeError, OSError, KeyError, TypeError,
             AttributeError, RecursionError, NotImplementedError) as exc:
