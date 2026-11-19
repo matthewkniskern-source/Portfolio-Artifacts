@@ -6,6 +6,14 @@ from roadmap import ROOT, TEMPLATES, bounded, fingerprint, FLAGS, load_template
 EXTRACT = "NIST_800-53_r5.2.0_OT_reference_extract.json"
 EXTRACT_BLOB = "0fe2c3cfc2717472f1c97bfadd603a223dbfbdd0"
 UPSTREAM_BLOB = "8ebe3c91181cc078d40e39bcf34ea233e652d025"
+# Git IDs above are provenance metadata only; these independent raw-byte pins enforce integrity.
+EXTRACT_SHA256 = "694aa7df1678905eae725e6c73087775a8b54d5a7ecc488e9572e865e7713483"
+UPSTREAM_SHA256 = "01f37cf90ea99d92242c936cbfbdebcc338eef1f71454e2acac36cc56e9bc062"
+CATALOG_SHA256 = {
+    "nist-800-171-r3": "21b6f3b118b6e5b305aaed3a0e4b70fa5d1d9aa388a0b92e7d6ddfed69e93ac3",
+    "nist-csf-2": "4836943f21d393f2821df85ada4e6f3c0617243b4ddf44263fe68205400210b4",
+    "nist-ssdf": "b01634a5fdb382e7a12660c379a4d0bc3a2b8e29abccf2861834880005137117",
+}
 NIST53 = "nist-800-53-r5.2.0-extract"
 OT = "sgma-ot-800-82-r3"
 CSF = "nist-csf-2"
@@ -38,21 +46,22 @@ REFERENCES = [
     {"id":"iec-62443","title":"ISA/IEC 62443 series","url":"https://www.isa.org/standards-and-publications/isa-standards/isa-iec-62443-series-of-standards","status":"LICENSED_REFERENCE_ONLY","scope":"Part, edition and licensing review required; no standard text bundled"},
 ]
 
-def git_blob(raw):
-    # Git object identity, not a signature or proof of author identity.
-    return hashlib.sha1(b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw).hexdigest()
+def verify_sha256(raw, expected):
+    actual=hashlib.sha256(raw).hexdigest()
+    if actual!=expected:
+        raise ValueError("Pinned SHA-256 content integrity mismatch")
+    return actual
 
 def reference_extract():
     path=CATALOG_PATH/EXTRACT
     if path.stat().st_size>4_000_000:
         raise ValueError("Reference extract exceeds limit")
     raw=path.read_bytes()
-    if git_blob(raw)!=EXTRACT_BLOB:
-        raise ValueError("Reference extract identity mismatch")
+    digest=verify_sha256(raw,EXTRACT_SHA256)
     data=json.loads(raw)
     if data["source"]["git_blob"]!=UPSTREAM_BLOB or len(data["controls"])!=20:
         raise ValueError("Unexpected reference extract")
-    return data,hashlib.sha256(raw).hexdigest()
+    return data,digest
 
 def node_id(source,cid):
     return source+":"+cid
@@ -82,8 +91,10 @@ def build_library():
             raise ValueError("Catalog exceeds size limit")
         raw=path.read_bytes()
         expected=entry.get("upstream_git_blob")
-        if expected and git_blob(raw)!=expected:
-            raise ValueError("Upstream catalog object mismatch")
+        if expected:
+            if key not in CATALOG_SHA256:
+                raise ValueError("Missing pinned upstream catalog SHA-256")
+            verify_sha256(raw,CATALOG_SHA256[key])
         template=load_template(key)
         metadata=template["original"]["catalog"]["metadata"]
         actual_sha256=hashlib.sha256(raw).hexdigest()
@@ -105,6 +116,7 @@ def build_library():
         "source_class":"UPSTREAM_CONTROL_EXTRACT","status":"PINNED_PARTIAL_EXTRACT",
         "raw_sha256":raw_hash,"content_sha256":fingerprint(extract),
         "git_blob":UPSTREAM_BLOB,"extract_git_blob":EXTRACT_BLOB,
+        "upstream_raw_sha256":UPSTREAM_SHA256,
         "source_path":extract["source"]["path"],"schema_status":"NOT_STANDALONE_OSCAL_CATALOG"}
     for entry in extract["controls"]:
         for control,parents in walk_controls(entry["control"],[entry["family"]]):

@@ -1,4 +1,7 @@
 import sys
+import hashlib
+import json
+import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -6,8 +9,10 @@ from unittest.mock import patch
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"sgma"))
 from app import create_app
-from control_intelligence import (library, reference_extract, control_detail, impact, git_blob,
-    NIST53, OT, CSF, CUI, EXTRACT_BLOB, CATALOG_PATH, EXTRACT)
+from control_intelligence import (library, reference_extract, control_detail, impact, build_library, verify_sha256,
+    NIST53, OT, CSF, CUI, EXTRACT_BLOB, EXTRACT_SHA256, UPSTREAM_BLOB, UPSTREAM_SHA256,
+    CATALOG_SHA256, CATALOG_PATH, EXTRACT)
+from verify_nist53_extract import verify
 
 class ControlIntelligenceTests(unittest.TestCase):
     @classmethod
@@ -22,13 +27,61 @@ class ControlIntelligenceTests(unittest.TestCase):
         self.assertEqual(sources[NIST53]["source_class"],"UPSTREAM_CONTROL_EXTRACT")
         self.assertEqual(sources[NIST53]["revision"],"5.2.0")
         self.assertEqual(sources[OT]["source_class"],"SGMA_DERIVED_UNREVIEWED")
-        self.assertEqual(git_blob((CATALOG_PATH/EXTRACT).read_bytes()),EXTRACT_BLOB)
+        self.assertEqual(hashlib.sha256((CATALOG_PATH/EXTRACT).read_bytes()).hexdigest(),EXTRACT_SHA256)
+        self.assertEqual(sources[NIST53]["extract_git_blob"],EXTRACT_BLOB)
+        self.assertEqual(sources[NIST53]["git_blob"],UPSTREAM_BLOB)
+        self.assertEqual(sources[NIST53]["upstream_raw_sha256"],UPSTREAM_SHA256)
+        for key,digest in CATALOG_SHA256.items():
+            self.assertEqual(sources[key]["raw_sha256"],digest)
         self.assertFalse(self.data["compliance_certified"])
 
     def test_extract_pin_rejects_mutation(self):
-        with patch("control_intelligence.EXTRACT_BLOB","0"*40):
-            with self.assertRaises(ValueError):
-                reference_extract()
+        raw=(CATALOG_PATH/EXTRACT).read_bytes()
+        # Whitespace-only mutation preserves JSON meaning but changes the exact bytes.
+        self.assertEqual(json.loads(raw),json.loads(raw+b" "))
+        with tempfile.TemporaryDirectory() as directory:
+            (Path(directory)/EXTRACT).write_bytes(raw+b" ")
+            with patch("control_intelligence.CATALOG_PATH",Path(directory)):
+                with self.assertRaisesRegex(ValueError,"SHA-256"):
+                    reference_extract()
+
+    def test_full_catalog_tamper_and_verifier_fixture(self):
+        extract,_=reference_extract()
+        groups={}
+        for entry in extract["controls"]:
+            groups.setdefault(entry["family"],[]).append(entry["control"])
+        fixture={"catalog":{"uuid":extract["source"]["catalog_uuid"],
+            "metadata":extract["source"]["metadata"],
+            "groups":[{"id":key,"controls":controls} for key,controls in groups.items()]}}
+        raw=json.dumps(fixture).encode("utf-8")
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/"fixture.json"
+            path.write_bytes(raw)
+            # Synthetic fixture tests verifier behavior; never claims to be the full official catalog.
+            with patch("verify_nist53_extract.UPSTREAM_SHA256",hashlib.sha256(raw).hexdigest()):
+                self.assertEqual(verify(path)["matched_subtrees"],20)
+                path.write_bytes(raw+b" ")
+                with self.assertRaisesRegex(ValueError,"SHA-256"):
+                    verify(path)
+            with self.assertRaisesRegex(ValueError,"SHA-256"):
+                verify(path)
+
+    def test_existing_catalog_mutation_rejected(self):
+        path=CATALOG_PATH/"NIST_SP800-171_rev3_catalog.json"
+        raw=path.read_bytes()
+        original=Path.read_bytes
+        def changed(candidate):
+            return raw+b" " if candidate==path else original(candidate)
+        with patch.object(Path,"read_bytes",changed):
+            with self.assertRaisesRegex(ValueError,"SHA-256"):
+                build_library()
+
+    def test_sha256_known_vector(self):
+        self.assertEqual(verify_sha256(b"abc",
+            "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"),
+            hashlib.sha256(b"abc").hexdigest())
+        with self.assertRaisesRegex(ValueError,"SHA-256"):
+            verify_sha256(b"abd",hashlib.sha256(b"abc").hexdigest())
 
     def test_every_edge_resolves_and_carries_source_hashes(self):
         self.assertEqual(len({e["edge_id"] for e in self.data["edges"]}),37)

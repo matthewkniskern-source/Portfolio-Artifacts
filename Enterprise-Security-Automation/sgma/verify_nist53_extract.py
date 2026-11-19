@@ -2,15 +2,14 @@
 import argparse
 import json
 from pathlib import Path
-from control_intelligence import git_blob, reference_extract, UPSTREAM_BLOB, walk_controls
+from control_intelligence import verify_sha256, reference_extract, UPSTREAM_BLOB, UPSTREAM_SHA256, walk_controls
 
 def verify(path):
     path=Path(path)
     if path.stat().st_size>16_000_000:
         raise ValueError("Full catalog exceeds offline verification limit")
     raw=path.read_bytes()
-    if git_blob(raw)!=UPSTREAM_BLOB:
-        raise ValueError("Full catalog does not match pinned upstream Git blob")
+    digest=verify_sha256(raw,UPSTREAM_SHA256)
     source=json.loads(raw)["catalog"]
     extract,_=reference_extract()
     if source["uuid"]!=extract["source"]["catalog_uuid"] or source["metadata"]!=extract["source"]["metadata"]:
@@ -21,7 +20,7 @@ def verify(path):
         raise ValueError("Extracted control differs from upstream")
     total=sum(1 for group in source["groups"] for control in group["controls"] for _ in walk_controls(control,[]))
     selected=sum(1 for row in extract["controls"] for _ in walk_controls(row["control"],[]))
-    return {"upstream_git_blob":UPSTREAM_BLOB,"full_controls":total,
+    return {"upstream_git_blob":UPSTREAM_BLOB,"upstream_raw_sha256":digest,"full_controls":total,
             "selected_controls_including_enhancements":selected,"matched_subtrees":len(extract["controls"]),
             "status":"EXACT_PARSED_CONTENT_MATCH","approval":"NOT_APPROVED"}
 
