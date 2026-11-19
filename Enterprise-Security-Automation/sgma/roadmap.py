@@ -153,10 +153,16 @@ def contract_draft(payload):
         rationale=item.get("rationale","")
         if applicability=="not_applicable":
             string(rationale)
+        rule=item.get("rule")
+        if rule is not None:
+            from requirements_engine import SCANNERS, RANK
+            if method=="manual" or not isinstance(rule,dict) or rule.get("scanner") not in SCANNERS or rule.get("threshold") not in RANK:
+                raise ValueError("Invalid proposed automated rule")
+            rule={"scanner":rule["scanner"],"threshold":rule["threshold"],"allow_exceptions":False}
         result["requirements"].append({"id":rid,"title":string(item["title"]),
             "clause":string(item["clause"]),"statement":string(item["statement"],10000),
             "method":method,"applicability":applicability,"rationale":rationale,
-            "evidence":string(item["evidence"],4000),"deadline":item.get("deadline","")})
+            "evidence":string(item["evidence"],4000),"deadline":item.get("deadline",""),"rule":rule})
     if not result["requirements"]:
         raise ValueError("At least one contractual requirement is required")
     result.update(FLAGS)
@@ -180,20 +186,69 @@ def mapping_draft(payload):
             "relationship":relation,"rationale":string(payload["rationale"],4000),
             "status":"PROPOSED_UNVERIFIED",**FLAGS}
 
+def attach_occurrences(assessment,evidence):
+    """Occurrence IDs are scoped to the exact normalized evidence document, never across runs."""
+    from requirements_engine import rank, RANK
+    if evidence is None:
+        return assessment
+    evidence_hash=fingerprint(evidence)
+    occurrences=[]
+    for index,finding in enumerate(evidence["findings"]):
+        occurrence_id=fingerprint({"evidence_sha256":evidence_hash,"index":index})
+        fields={k:finding[k] for k in ("scanner","id","target","resource","package","line","severity","disposition","exception_id") if k in finding}
+        occurrences.append({"occurrence_id":occurrence_id,"source_index":index,**fields})
+    for row in assessment["requirements"]:
+        if row["status"] in {"GAP","RESIDUAL RISK"} and "scanner" in row:
+            row["finding_occurrence_ids"]=[occ["occurrence_id"] for occ,finding in zip(occurrences,evidence["findings"])
+                if finding["scanner"]==row["scanner"] and rank(finding)>=RANK[row["threshold"]]]
+        else:
+            row["finding_occurrence_ids"]=[]
+    assessment["finding_occurrences"]=occurrences
+    assessment["normalized_evidence_sha256"]=evidence_hash
+    return assessment
+
 def decision_queue(assessment):
     bounded(assessment)
-    # Assessment exports do not contain occurrence identity. Do not conflate equal CVEs.
+    occurrences=assessment.get("finding_occurrences")
+    by_occurrence={}
+    if occurrences is not None:
+        if not isinstance(occurrences,list):
+            raise ValueError("Invalid occurrence inventory")
+        for item in occurrences:
+            key=item["occurrence_id"]
+            if not isinstance(key,str) or not re.fullmatch(r"[0-9a-f]{64}",key) or key in by_occurrence:
+                raise ValueError("Invalid occurrence identifier")
+            by_occurrence[key]=item
     rows=[]
+    groups={}
+    seen=set()
     for row in assessment["requirements"]:
-        if row["status"] not in {"GAP","RESIDUAL RISK","EVIDENCE MISSING","REVIEW REQUIRED","NO MATCHING FINDING"}:
+        rid=ident(row["id"])
+        status=row["status"]
+        if rid in seen:
+            raise ValueError("Duplicate requirement identifier")
+        seen.add(rid)
+        if status not in {"GAP","RESIDUAL RISK","EVIDENCE MISSING","REVIEW REQUIRED","NO MATCHING FINDING"}:
             raise ValueError("Invalid assessment status")
-        if row["status"]=="NO MATCHING FINDING":
+        if status=="NO MATCHING FINDING":
             continue
-        rows.append({"requirement_id":ident(row["id"]),"status":row["status"],
-                     "finding_ids":row.get("finding_ids",[]),"owner":None,
-                     "disposition":"PENDING_HUMAN_REVIEW"})
+        refs=row.get("finding_occurrence_ids",[])
+        if not isinstance(refs,list) or len(set(refs))!=len(refs) or any(key not in by_occurrence for key in refs):
+            raise ValueError("Unknown or duplicate occurrence references")
+        if refs and status in {"GAP","RESIDUAL RISK"}:
+            for key in refs:
+                groups.setdefault(key,[]).append({"requirement_id":rid,"status":status})
+        else:
+            rows.append({"record_id":"requirement:"+rid,"requirement_id":rid,"status":status,
+                         "finding_ids":row.get("finding_ids",[]),"owner":None,
+                         "disposition":"PENDING_HUMAN_REVIEW"})
+    for key,requirements in groups.items():
+        rows.append({"record_id":key,"occurrence":by_occurrence[key],"requirements":requirements,
+                     "status":"GAP" if any(x["status"]=="GAP" for x in requirements) else "RESIDUAL RISK",
+                     "owner":None,"disposition":"PENDING_HUMAN_REVIEW"})
     return {"assessment_sha256":fingerprint(assessment),"source_trust":"USER_DECLARED_UNVERIFIED",
-            "consolidation":"NOT_PERFORMED_WITHOUT_OCCURRENCE_IDENTITY","records":rows,**FLAGS}
+            "consolidation":"WITHIN_EVIDENCE_DOCUMENT" if occurrences is not None else "NOT_PERFORMED_WITHOUT_OCCURRENCE_IDENTITY",
+            "records":rows,**FLAGS}
 
 def dashboard(queue):
     records=queue["records"]
@@ -217,11 +272,11 @@ def compose_overlay(base, document, selected, draft, revision, selections=None):
     result=deepcopy(base)
     result["revision"]=revision
     existing={row["id"] for group in ("baseline","overlays","manual") for row in result[group]}
-    def add(row):
+    def add(row, group="manual"):
         if row["id"] in existing:
             raise ValueError("Duplicate proposed requirement")
         existing.add(row["id"])
-        result["manual"].append(row)
+        result[group].append(row)
     inputs=[] if selections is None else selections
     if not isinstance(inputs,list) or len(inputs)>10:
         raise ValueError("Invalid catalog selections")
@@ -260,11 +315,16 @@ def compose_overlay(base, document, selected, draft, revision, selections=None):
                   "requested_method":row["method"],"deadline":row["deadline"]}
             if row["rationale"]:
                 item["rationale"]=row["rationale"]
-            add(item)
+            if row["method"] in {"automated","hybrid"} and row["rule"] is not None:
+                add({**item,**row["rule"]},"overlays")
+                if row["method"]=="hybrid":
+                    add({**item,"id":item["id"]+"-manual","title":item["title"]+" (manual evidence review)"})
+            else:
+                add(item)
     validate(result)
     verify_profile(result)
     return {"proposal":result,"proposal_sha256":fingerprint(result),
-            "assessment_mapping":"MANUAL_REVIEW_ONLY",**FLAGS}
+            "assessment_mapping":"EXPLICIT_RULES_OR_MANUAL_REVIEW",**FLAGS}
 
 LIFECYCLE_MODELS={"component-definition","system-security-plan","assessment-plan",
                   "assessment-results","plan-of-action-and-milestones","mapping-collection"}
