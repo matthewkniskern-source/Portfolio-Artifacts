@@ -175,6 +175,77 @@ def dashboard(queue):
         counts[row["status"]]=counts.get(row["status"],0)+1
     return {"record_count":len(records),"counts":counts,"scope":"SINGLE_UNVERIFIED_ASSESSMENT",**FLAGS}
 
+def compose_overlay(base, document, selected, draft, revision):
+    """Create a new advisory project revision; imported obligations remain manual."""
+    from copy import deepcopy
+    from requirements_library import verify_profile
+    from requirements_engine import validate
+    bounded(base)
+    validate(base)
+    if verify_profile(base)["status"]!="REGISTRY_MATCH":
+        raise ValueError("A registry-bound proposal is required")
+    revision=ident(revision)
+    if revision==base["revision"]:
+        raise ValueError("Use a new project revision")
+    result=deepcopy(base)
+    result["revision"]=revision
+    existing={row["id"] for group in ("baseline","overlays","manual") for row in result[group]}
+    def add(row):
+        if row["id"] in existing:
+            raise ValueError("Duplicate proposed requirement")
+        existing.add(row["id"])
+        result["manual"].append(row)
+    if document is not None:
+        inspected=catalog(document)
+        if not isinstance(selected,list) or not selected or any(not isinstance(x,str) for x in selected):
+            raise ValueError("Select catalog controls")
+        indexed={x["id"]:x for x in inspected["controls"]}
+        if len(set(selected))!=len(selected) or not set(selected)<=indexed.keys():
+            raise ValueError("Invalid selected controls")
+        for cid in selected:
+            control=indexed[cid]
+            add({"id":"OSCAL-"+inspected["catalog_sha256"][:12]+"-"+cid,
+                 "title":control["title"],"source":inspected["title"]+" / "+cid,
+                 "applicability":"undetermined","source_sha256":inspected["catalog_sha256"],
+                 "source_control_id":cid,"source_schema_status":inspected["schema_status"]})
+    elif selected:
+        raise ValueError("Selected controls require a catalog")
+    if draft is not None:
+        contract=contract_draft(draft)
+        for row in contract["requirements"]:
+            item={"id":row["id"],"title":row["title"],
+                  "source":contract["contract_id"]+"@"+contract["revision"]+" / "+row["clause"],
+                  "applicability":row["applicability"],"contract_sha256":fingerprint(contract),
+                  "statement":row["statement"],"evidence":row["evidence"],
+                  "requested_method":row["method"],"deadline":row["deadline"]}
+            if row["rationale"]:
+                item["rationale"]=row["rationale"]
+            add(item)
+    validate(result)
+    verify_profile(result)
+    return {"proposal":result,"proposal_sha256":fingerprint(result),
+            "assessment_mapping":"MANUAL_REVIEW_ONLY",**FLAGS}
+
+LIFECYCLE_MODELS={"component-definition","system-security-plan","assessment-plan",
+                  "assessment-results","plan-of-action-and-milestones","control-mapping"}
+
+def inspect_lifecycle(document):
+    bounded(document)
+    if not isinstance(document,dict) or len(document)!=1:
+        raise ValueError("Expected one OSCAL document")
+    model=next(iter(document))
+    if model not in LIFECYCLE_MODELS:
+        raise ValueError("Unsupported lifecycle model")
+    body=document[model]
+    meta=body["metadata"]
+    version=string(meta["oscal-version"],40)
+    schema_model={"system-security-plan":"ssp","assessment-plan":"ap",
+                  "assessment-results":"ar","plan-of-action-and-milestones":"poam"}.get(model,model.replace("-","_"))
+    return {"model":model,"title":string(meta["title"],4000),"oscal_version":version,
+            "document_sha256":fingerprint(document),"schema_status":schema_status(document,schema_model) if version==VERSION else "VERSION_NOT_SUPPORTED_FOR_SCHEMA_VALIDATION",
+            "reference_resolution":"NOT_EXECUTED","semantic_validation":"NOT_EXECUTED",
+            "original":document,**FLAGS}
+
 def register(app):
     from flask import jsonify, request, send_file
     @app.get("/roadmap")
@@ -201,6 +272,13 @@ def register(app):
     @app.post("/roadmap/mapping")
     def roadmap_mapping():
         return jsonify(mapping_draft(request.get_json()))
+    @app.post("/roadmap/compose")
+    def roadmap_compose():
+        p=request.get_json()
+        return jsonify(compose_overlay(p["base"],p.get("catalog"),p.get("selected",[]),p.get("contract"),p["revision"]))
+    @app.post("/roadmap/lifecycle")
+    def roadmap_lifecycle():
+        return jsonify(inspect_lifecycle(request.get_json()))
     @app.post("/roadmap/decisions")
     def roadmap_decisions():
         queue=decision_queue(request.get_json())
