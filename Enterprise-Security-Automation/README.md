@@ -102,6 +102,10 @@ The pinned [NIST OSCAL Content v1.5.0](https://github.com/usnistgov/oscal-conten
 
 See [revised architecture, schema provisioning and QA/QC checklist](documentation/sgma-roadmap-02-10.md).
 
+## Authoritative source library and common control intelligence
+
+Open http://127.0.0.1:8765/controls for source-scoped navigation and direct relationship review. The prototype indexes the existing 410 complete NIST catalog entries, a pinned exact 221-entry SP 800-53/53A Rev. 5.2.0 reference extract and 20 SGMA-authored OT candidates (651 projected entries, 37 unreviewed related relationships). The full 800-53 catalog is not onboarded as an OSCAL template; the read-only extract retains original control subtrees and source metadata, with an offline comparison utility. Official 800-82 overlays, licensed IEC content, authorized equivalence/evidence reuse and actual project impact are not yet implemented. New tests await verification. See [source provenance, graph design and acceptance](documentation/sgma-control-intelligence.md).
+
 ## OT Intelligence Center
 
 Open http://127.0.0.1:8765/ot for context-driven candidate discovery, searchable technology-tagged requirements, source references, proposed contract clauses, traceability and acceptance checklists. This is an original advisory implementation informed by commercial design patterns, not a benchmark of commercial performance. See [OT intelligence architecture and acceptance](documentation/sgma-ot-intelligence.md). Five new tests await verification. No authoritative applicability, licensed content or live assessment is implied.
