@@ -187,3 +187,49 @@ class RoadmapTests(unittest.TestCase):
             self.assertFalse(response.json["compliance_certified"])
         else:
             self.assertEqual(response.status_code,400)
+
+    def test_ot_template_manual_scope_and_metadata(self):
+        from roadmap import load_template
+        template=load_template("sgma-ot-800-82-r3")
+        self.assertEqual(len(template["controls"]),20)
+        self.assertEqual(template["template"]["source_class"],"SGMA_DERIVED_UNREVIEWED")
+        self.assertEqual(template["template"]["content_release"],"0.1.0")
+        base=compose("project-a","1",["CON-A@1.1"])
+        inputs=[{"template":"sgma-ot-800-82-r3","selected":["OT-06","OT-10","OT-13"]}]
+        result=compose_overlay(base,None,[],None,"2",inputs)
+        proposal=result["proposal"]
+        self.assertEqual(base["baseline"],proposal["baseline"])
+        self.assertEqual(base["overlays"],proposal["overlays"])
+        self.assertEqual(base["library"],proposal["library"])
+        ot=[row for row in proposal["manual"] if row.get("domain")=="OT"]
+        self.assertEqual(len(ot),3)
+        self.assertTrue(all(row["applicability"]=="undetermined" and row["evidence"] and row["statement"] for row in ot))
+        self.assertEqual(next(row for row in ot if row["source_control_id"]=="OT-06")["candidate_control_reference"],"AC-17")
+        response=self.client.post("/assess",json={"profile":proposal})
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.json["effective_rules"]["trivy-sca"]["threshold"],"LOW")
+        self.assertTrue(all(next(r for r in response.json["requirements"] if r["id"]==row["id"])["status"]=="REVIEW REQUIRED" for row in ot))
+        self.assertFalse(response.json["deployment_authorized"])
+
+    def test_ot_exchange_retains_candidate_source_and_selection(self):
+        import io
+        import zipfile
+        base=compose("project-a","1",[])
+        response=self.client.post("/roadmap/exchange",json={"base":base,"revision":"2",
+            "selections":[{"template":"sgma-ot-800-82-r3","selected":["OT-06","OT-10"]}]})
+        self.assertEqual(response.status_code,200)
+        with zipfile.ZipFile(io.BytesIO(response.data)) as archive:
+            profile=json.loads(archive.read("profile.json"))["profile"]
+            ot_import=next(x for x in profile["imports"] if x["include-controls"][0]["with-ids"]==["OT-06","OT-10"])
+            catalog_doc=json.loads(archive.read(ot_import["href"]))["catalog"]
+            self.assertIn("derived candidate",catalog_doc["metadata"]["title"])
+            manifest=json.loads(archive.read("exchange-manifest.json"))
+            self.assertFalse(manifest["deployment_authorized"])
+            for name,entry in manifest["files"].items():
+                self.assertEqual(hashlib.sha256(archive.read(name)).hexdigest(),entry["sha256"])
+
+    def test_ot_unknown_id_rejected(self):
+        base=compose("project-a","1",[])
+        response=self.client.post("/roadmap/compose",json={"base":base,"revision":"2",
+            "selections":[{"template":"sgma-ot-800-82-r3","selected":["OT-99"]}]})
+        self.assertEqual(response.status_code,400)
