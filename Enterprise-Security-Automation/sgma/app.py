@@ -101,6 +101,8 @@ def evaluate(payload):
     if not isinstance(scanned,list) or any(not isinstance(s,str) for s in scanned):
         raise ValueError("Invalid scanner completion declaration")
     result = assess(profile, evidence, scanned)
+    from roadmap import attach_occurrences
+    attach_occurrences(result,evidence)
     result["requirements_library"] = library_state
     result["evidence_trust"] = "USER_DECLARED_UNVERIFIED" if evidence is not None else "NOT_SUPPLIED"
     return result
