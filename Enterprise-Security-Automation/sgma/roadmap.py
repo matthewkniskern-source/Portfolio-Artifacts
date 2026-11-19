@@ -5,6 +5,7 @@ import re
 from datetime import datetime, timezone
 from uuid import uuid4
 from pathlib import Path
+from provision_oscal import ASSET_SHA256
 
 VERSION = "1.2.3"
 MAX_BYTES = 8_000_000
@@ -46,9 +47,11 @@ def ident(value):
         raise ValueError("Invalid identifier")
     return value
 
-def schema_status(document, model):
-    # Only locally provisioned, pinned official schemas may be used. No network retrieval.
-    path=ROOT/"interoperability"/"oscal"/"schemas"/VERSION/("oscal_"+model+"_schema.json")
+def schema_status(document, model, version=VERSION):
+    version=version.removeprefix("v")
+    if version not in ASSET_SHA256 or model not in ASSET_SHA256[version]:
+        return "VERSION_NOT_SUPPORTED_FOR_SCHEMA_VALIDATION"
+    path=ROOT/"interoperability"/"oscal"/"schemas"/version/("oscal_"+model+"_schema.json")
     if not path.is_file():
         return "OFFICIAL_SCHEMA_NOT_PROVISIONED"
     try:
@@ -56,11 +59,10 @@ def schema_status(document, model):
         from referencing import Registry
     except ImportError:
         return "VALIDATOR_NOT_INSTALLED"
-    manifest=path.parent/"schema-manifest.json"
-    if not manifest.is_file():
-        return "SCHEMA_MANIFEST_MISSING"
+    if path.stat().st_size>4_000_000:
+        raise ValueError("Schema file exceeds limit")
     raw=path.read_bytes()
-    if hashlib.sha256(raw).hexdigest()!=json.loads(manifest.read_text(encoding="utf-8")).get(path.name):
+    if hashlib.sha256(raw).hexdigest()!=ASSET_SHA256[version][model]:
         raise ValueError("Local schema fingerprint mismatch")
     schema=json.loads(raw)
     validator=jsonschema.validators.validator_for(schema)
@@ -70,6 +72,23 @@ def schema_status(document, model):
     except Exception as exc:
         raise ValueError("Official schema validation failed or reference unresolved") from exc
     return "SCHEMA_VALID_LOCAL_UNATTESTED"
+
+TEMPLATES={
+    "nist-800-171-r3":{"title":"NIST SP 800-171 Rev. 3","file":"NIST_SP800-171_rev3_catalog.json","source_path":"nist.gov/SP800-171/rev3/json/NIST_SP800-171_rev3_catalog.json","upstream_git_blob":"1bc9d5ab5f57329c1ab5553b4d2b27ea54d9d13f"},
+    "nist-csf-2":{"title":"NIST Cybersecurity Framework 2.0","file":"NIST_CSF_v2.0_catalog.json","source_path":"nist.gov/CSF/v2.0/json/NIST_CSF_v2.0_catalog.json","upstream_git_blob":"7b8b2d8b45cbf6fca093fcc5ae9f17ca9938b425"},
+    "nist-ssdf":{"title":"NIST SP 800-218 SSDF","file":"NIST_SP800-218_ver1_catalog.json","source_path":"nist.gov/SP800-218/ver1/json/NIST_SP800-218_ver1_catalog.json","upstream_git_blob":"94f85f214557d4f52faddbf0b2e83de55d11db5d"},
+}
+
+def load_template(key):
+    entry=TEMPLATES[key]
+    path=ROOT/"interoperability"/"oscal"/"catalogs"/entry["file"]
+    raw=path.read_bytes()
+    if len(raw)>MAX_BYTES:
+        raise ValueError("Catalog exceeds limit")
+    result=catalog(json.loads(raw))
+    result["template"]={**entry,"key":key,"content_release":"v1.5.0","source_file_sha256":hashlib.sha256(raw).hexdigest(),
+                        "review_status":"PROPOSED_UNREVIEWED"}
+    return result
 
 def catalog(document):
     bounded(document)
@@ -98,7 +117,7 @@ def catalog(document):
         raise ValueError("No controls")
     return {"title":string(meta["title"],4000),"oscal_version":version,
             "catalog_sha256":fingerprint(document),"controls":rows,
-            "schema_status":schema_status(document,"catalog") if version==VERSION else "VERSION_NOT_SUPPORTED_FOR_SCHEMA_VALIDATION",
+            "schema_status":schema_status(document,"catalog",version),
             "projection":"PARTIAL_READ_ONLY_ORIGINAL_REQUIRED","original":document,**FLAGS}
 
 def profile_export(document, selected):
@@ -107,12 +126,12 @@ def profile_export(document, selected):
         raise ValueError("Select controls")
     if len(set(selected))!=len(selected) or not set(selected)<={x["id"] for x in inspected["controls"]}:
         raise ValueError("Unknown or duplicate selection")
-    if inspected["oscal_version"]!=VERSION:
-        raise ValueError("Profile generation requires matching OSCAL version")
+    if inspected["oscal_version"].removeprefix("v") not in ASSET_SHA256:
+        raise ValueError("Profile generation requires supported source OSCAL version")
     output={"profile":{"uuid":str(uuid4()),"metadata":{"title":"SGMA proposed selection",
         "last-modified":datetime.now(timezone.utc).isoformat(),"version":"1.0","oscal-version":VERSION},
         "imports":[{"href":"catalog.json","include-controls":[{"with-ids":selected}]}]}}
-    return {"document":output,"catalog_filename":"catalog.json","catalog_sha256":inspected["catalog_sha256"],
+    return {"document":output,"catalog_filename":"catalog.json","catalog_sha256":inspected["catalog_sha256"],"source_oscal_version":inspected["oscal_version"],
             "schema_status":schema_status(output,"profile"),"resolution":"NOT_EXECUTED",**FLAGS}
 
 def contract_draft(payload):
@@ -183,7 +202,7 @@ def dashboard(queue):
         counts[row["status"]]=counts.get(row["status"],0)+1
     return {"record_count":len(records),"counts":counts,"scope":"SINGLE_UNVERIFIED_ASSESSMENT",**FLAGS}
 
-def compose_overlay(base, document, selected, draft, revision):
+def compose_overlay(base, document, selected, draft, revision, selections=None):
     """Create a new advisory project revision; imported obligations remain manual."""
     from copy import deepcopy
     from requirements_library import verify_profile
@@ -203,8 +222,23 @@ def compose_overlay(base, document, selected, draft, revision):
             raise ValueError("Duplicate proposed requirement")
         existing.add(row["id"])
         result["manual"].append(row)
+    inputs=[] if selections is None else selections
+    if not isinstance(inputs,list) or len(inputs)>10:
+        raise ValueError("Invalid catalog selections")
+    inputs=list(inputs)
     if document is not None:
-        inspected=catalog(document)
+        inputs.append({"catalog":document,"selected":selected})
+    elif selected:
+        raise ValueError("Selected controls require a catalog")
+    source_hashes=set()
+    for item in inputs:
+        if not isinstance(item,dict):
+            raise ValueError("Invalid catalog selection")
+        inspected=load_template(item["template"]) if "template" in item else catalog(item["catalog"])
+        selected=item["selected"]
+        if inspected["catalog_sha256"] in source_hashes:
+            raise ValueError("Duplicate catalog selection")
+        source_hashes.add(inspected["catalog_sha256"])
         if not isinstance(selected,list) or not selected or any(not isinstance(x,str) for x in selected):
             raise ValueError("Select catalog controls")
         indexed={x["id"]:x for x in inspected["controls"]}
@@ -216,8 +250,6 @@ def compose_overlay(base, document, selected, draft, revision):
                  "title":control["title"],"source":inspected["title"]+" / "+cid,
                  "applicability":"undetermined","source_sha256":inspected["catalog_sha256"],
                  "source_control_id":cid,"source_schema_status":inspected["schema_status"]})
-    elif selected:
-        raise ValueError("Selected controls require a catalog")
     if draft is not None:
         contract=contract_draft(draft)
         for row in contract["requirements"]:
@@ -235,7 +267,7 @@ def compose_overlay(base, document, selected, draft, revision):
             "assessment_mapping":"MANUAL_REVIEW_ONLY",**FLAGS}
 
 LIFECYCLE_MODELS={"component-definition","system-security-plan","assessment-plan",
-                  "assessment-results","plan-of-action-and-milestones","control-mapping"}
+                  "assessment-results","plan-of-action-and-milestones","mapping-collection"}
 
 def inspect_lifecycle(document):
     bounded(document)
@@ -247,9 +279,10 @@ def inspect_lifecycle(document):
     body=document[model]
     meta=body["metadata"]
     version=string(meta["oscal-version"],40)
-    schema_model=model
+    schema_model={"component-definition":"component","system-security-plan":"ssp",
+                  "plan-of-action-and-milestones":"poam","mapping-collection":"mapping"}.get(model,model)
     return {"model":model,"title":string(meta["title"],4000),"oscal_version":version,
-            "document_sha256":fingerprint(document),"schema_status":schema_status(document,schema_model) if version==VERSION else "VERSION_NOT_SUPPORTED_FOR_SCHEMA_VALIDATION",
+            "document_sha256":fingerprint(document),"schema_status":schema_status(document,schema_model,version),
             "reference_resolution":"NOT_EXECUTED","semantic_validation":"NOT_EXECUTED",
             "original":document,**FLAGS}
 
@@ -262,6 +295,12 @@ def register(app):
     def roadmap_capabilities():
         return jsonify(mode="LOCAL_ADVISORY",authenticated=False,persistent=False,
                        lifecycle_exchange="NOT_IMPLEMENTED",**FLAGS)
+    @app.get("/roadmap/templates")
+    def roadmap_templates():
+        return jsonify(templates=[{"key":key,**entry} for key,entry in TEMPLATES.items()],**FLAGS)
+    @app.get("/roadmap/templates/<key>")
+    def roadmap_template(key):
+        return jsonify(load_template(key))
     @app.post("/roadmap/catalog")
     def roadmap_catalog():
         return jsonify(catalog(request.get_json()))
@@ -282,7 +321,7 @@ def register(app):
     @app.post("/roadmap/compose")
     def roadmap_compose():
         p=request.get_json()
-        return jsonify(compose_overlay(p["base"],p.get("catalog"),p.get("selected",[]),p.get("contract"),p["revision"]))
+        return jsonify(compose_overlay(p["base"],p.get("catalog"),p.get("selected",[]),p.get("contract"),p["revision"],p.get("selections")))
     @app.post("/roadmap/lifecycle")
     def roadmap_lifecycle():
         return jsonify(inspect_lifecycle(request.get_json()))
