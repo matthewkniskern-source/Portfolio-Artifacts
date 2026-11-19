@@ -1,5 +1,7 @@
 """Advisory roadmap workspace. No authenticated decisions or network resolution."""
 import hashlib
+import io
+import zipfile
 import json
 import re
 from datetime import datetime, timezone
@@ -326,6 +328,108 @@ def compose_overlay(base, document, selected, draft, revision, selections=None):
     return {"proposal":result,"proposal_sha256":fingerprint(result),
             "assessment_mapping":"EXPLICIT_RULES_OR_MANUAL_REVIEW",**FLAGS}
 
+def contract_catalog(draft):
+    """Represent the authored obligations; SGMA evaluation rules remain explicit extensions."""
+    item=contract_draft(draft)
+    return requirements_catalog(item["contract_id"]+" — proposed revision "+item["revision"],
+                                item["revision"],item["requirements"])
+
+def requirements_catalog(title, revision, rows):
+    namespace="https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma"
+    controls=[]
+    used=set()
+    for row in rows:
+        rid=ident(row["id"])
+        if rid in used:
+            raise ValueError("Duplicate catalog identifier")
+        used.add(rid)
+        props=[]
+        for k in ("source","clause","applicability","method","requested_method","evidence","deadline","rationale"):
+            if row.get(k):
+                props.append({"name":k.replace("_","-"),"ns":namespace,"value":str(row[k])})
+        rule=row.get("rule") or row
+        for k in ("scanner","threshold","allow_exceptions"):
+            if k in rule:
+                props.append({"name":k.replace("_","-"),"ns":namespace,"value":str(rule[k]).lower() if isinstance(rule[k],bool) else str(rule[k])})
+        control={"id":rid,"title":string(row["title"],4000),
+                 "parts":[{"name":"statement","prose":row.get("statement") or row["title"]}]}
+        if props:
+            control["props"]=props
+        controls.append(control)
+    if not controls:
+        raise ValueError("Empty catalog")
+    return {"catalog":{"uuid":str(uuid4()),"metadata":{"title":title,"version":revision,
+        "last-modified":datetime.now(timezone.utc).isoformat(),"oscal-version":VERSION},
+        "controls":controls}}
+
+def exchange_bundle(payload):
+    """Package local-reference OSCAL candidates and the matching native proposal."""
+    base=payload["base"]
+    inputs=payload.get("selections",[])
+    draft=payload.get("contract")
+    composed=compose_overlay(base,None,[],draft,payload["revision"],inputs)
+    native=composed["proposal"]
+    # Existing project requirements (including the mandatory baseline) are one SGMA catalog.
+    base_rows=[row for group in ("baseline","overlays","manual") for row in base[group]]
+    sources=[(requirements_catalog("SGMA project obligations (proposed)",base["revision"],base_rows),
+              [row["id"] for row in base_rows])]
+    for selection in inputs:
+        doc=load_template(selection["template"])["original"] if "template" in selection else selection["catalog"]
+        sources.append((doc,selection["selected"]))
+    if draft is not None:
+        doc=contract_catalog(draft)
+        sources.append((doc,[row["id"] for row in contract_draft(draft)["requirements"]]))
+    files={}
+    seen=set()
+    imports=[]
+    statuses={}
+    for index,(doc,selected) in enumerate(sources):
+        inspected=catalog(doc)
+        if set(selected)&seen:
+            raise ValueError("Cross-catalog identifier conflict; reconcile before profile exchange")
+        seen.update(selected)
+        name="catalog-"+str(index+1)+".json"
+        files[name]=doc
+        statuses[name]=inspected["schema_status"]
+        imports.append({"href":name,"include-controls":[{"with-ids":selected}]})
+    profile={"profile":{"uuid":str(uuid4()),"metadata":{"title":"SGMA project profile — proposed",
+             "last-modified":datetime.now(timezone.utc).isoformat(),"version":native["revision"],"oscal-version":VERSION},
+             "imports":imports}}
+    files["profile.json"]=profile
+    statuses["profile.json"]=schema_status(profile,"profile")
+    files["sgma-proposal.json"]=native
+    output=io.BytesIO()
+    encoded={name:(json.dumps(doc,ensure_ascii=False,sort_keys=True,indent=2,allow_nan=False)+"\n").encode("utf-8")
+             for name,doc in files.items()}
+    manifest={"schema_version":1,"files":{name:{"sha256":hashlib.sha256(raw).hexdigest(),"bytes":len(raw)}
+                  for name,raw in encoded.items()},"schema_status":statuses,"resolution":"NOT_EXECUTED",
+              "source_preservation":"JSON_CONTENT_NOT_ORIGINAL_BYTE_STREAM","native_proposal_sha256":composed["proposal_sha256"],**FLAGS}
+    encoded["exchange-manifest.json"]=(json.dumps(manifest,indent=2,sort_keys=True)+"\n").encode("utf-8")
+    if sum(len(raw) for raw in encoded.values())>MAX_BYTES:
+        raise ValueError("Exchange package exceeds limit")
+    with zipfile.ZipFile(output,"w",compression=zipfile.ZIP_DEFLATED) as archive:
+        for name,raw in encoded.items():
+            archive.writestr(name,raw)
+    output.seek(0)
+    return output
+
+def decision_draft(payload):
+    bounded(payload)
+    queue_sha=string(payload["assessment_sha256"],64)
+    if not re.fullmatch(r"[0-9a-f]{64}",queue_sha):
+        raise ValueError("Invalid assessment fingerprint")
+    action=payload["proposed_action"]
+    if action not in {"investigate","remediate","collect_evidence","review_exception","review_applicability"}:
+        raise ValueError("Invalid proposed action")
+    due=payload.get("due_date","")
+    if due:
+        from datetime import date
+        date.fromisoformat(due)
+    return {"assessment_sha256":queue_sha,"record_id":string(payload["record_id"],200),
+            "proposed_owner":ident(payload["proposed_owner"]),"proposed_action":action,
+            "due_date":due,"rationale":string(payload["rationale"],4000),
+            "decision_state":"PENDING_HUMAN_REVIEW",**FLAGS}
+
 LIFECYCLE_MODELS={"component-definition","system-security-plan","assessment-plan",
                   "assessment-results","plan-of-action-and-milestones","mapping-collection"}
 
@@ -385,6 +489,16 @@ def register(app):
     @app.post("/roadmap/lifecycle")
     def roadmap_lifecycle():
         return jsonify(inspect_lifecycle(request.get_json()))
+    @app.post("/roadmap/contract-catalog")
+    def roadmap_contract_catalog():
+        document=contract_catalog(request.get_json())
+        return jsonify(document=document,schema_status=schema_status(document,"catalog"),**FLAGS)
+    @app.post("/roadmap/exchange")
+    def roadmap_exchange():
+        return send_file(exchange_bundle(request.get_json()),mimetype="application/zip",as_attachment=True,download_name="sgma-oscal-exchange.zip")
+    @app.post("/roadmap/decision-draft")
+    def roadmap_decision_draft():
+        return jsonify(decision_draft(request.get_json()))
     @app.post("/roadmap/decisions")
     def roadmap_decisions():
         queue=decision_queue(request.get_json())
