@@ -114,3 +114,76 @@ class RoadmapTests(unittest.TestCase):
                 self.assertEqual(len(client.get("/roadmap/projects/project-a/drafts",headers=headers).json["records"]),1)
         finally:
             engine.dispose()
+
+    def test_bundled_authoritative_templates(self):
+        from roadmap import load_template
+        for key,expected in (("nist-800-171-r3",130),("nist-csf-2",219),("nist-ssdf",61)):
+            entry=load_template(key)
+            self.assertEqual(len(entry["controls"]),expected)
+            self.assertEqual(entry["template"]["review_status"],"PROPOSED_UNREVIEWED")
+            self.assertEqual(entry["oscal_version"],"v1.2.2")
+
+    def test_multiple_templates_and_contract_rule(self):
+        from roadmap import load_template
+        base=compose("project-a","1",["CON-A@1.1"])
+        contract=draft()
+        contract["requirements"][0].update(method="hybrid",applicability="applicable",
+                                          rule={"scanner":"semgrep","threshold":"HIGH"})
+        inputs=[{"template":key,"selected":[load_template(key)["controls"][0]["id"]]}
+                for key in ("nist-800-171-r3","nist-csf-2")]
+        result=compose_overlay(base,None,[],contract,"2",inputs)["proposal"]
+        self.assertEqual(result["baseline"],base["baseline"])
+        self.assertEqual(len([item for item in result["manual"] if item["id"].startswith("OSCAL-")]),2)
+        self.assertTrue(any(x["id"]=="DRAFT-01-manual" for x in result["manual"]))
+        self.assertFalse(next(x for x in result["overlays"] if x["id"]=="DRAFT-01")["allow_exceptions"])
+
+    def test_occurrence_consolidation_with_duplicate_cve(self):
+        base=compose("project-a","1",["CON-A@1.1"])
+        evidence={"schema_version":1,"decision":"BLOCK","findings":[
+           {"scanner":"trivy-sca","id":"CVE-X","target":"a","severity":"HIGH","disposition":"blocking"},
+           {"scanner":"trivy-sca","id":"CVE-X","target":"b","severity":"HIGH","disposition":"blocking"}]}
+        response=self.client.post("/assess",json={"profile":base,"evidence":evidence,"scanned":["trivy-sca"]})
+        self.assertEqual(response.status_code,200)
+        records=[r for r in decision_queue(response.json)["records"] if "occurrence" in r]
+        self.assertEqual(len(records),2)
+        self.assertEqual(len({r["record_id"] for r in records}),2)
+        for row in records:
+            self.assertEqual({x["requirement_id"] for x in row["requirements"]},{"ORG-001","CON-001"})
+
+    def test_exchange_manifest_and_local_references(self):
+        import io
+        import zipfile
+        base=compose("project-a","1",[])
+        response=self.client.post("/roadmap/exchange",json={
+            "base":base,"revision":"2","contract":draft(),
+            "selections":[{"catalog":example_catalog(),"selected":["ac-1"]}]})
+        self.assertEqual(response.status_code,200)
+        with zipfile.ZipFile(io.BytesIO(response.data)) as archive:
+            manifest=json.loads(archive.read("exchange-manifest.json"))
+            self.assertEqual(manifest["resolution"],"NOT_EXECUTED")
+            self.assertFalse(manifest["deployment_authorized"])
+            for name,entry in manifest["files"].items():
+                self.assertEqual(hashlib.sha256(archive.read(name)).hexdigest(),entry["sha256"])
+            profile=json.loads(archive.read("profile.json"))["profile"]
+            self.assertEqual(len(profile["imports"]),3)
+            self.assertTrue(all(row["href"] in archive.namelist() for row in profile["imports"]))
+
+    def test_decision_action_has_no_authority(self):
+        response=self.client.post("/roadmap/decision-draft",json={"assessment_sha256":"0"*64,
+            "record_id":"requirement:ORG-001","proposed_owner":"analyst-a","proposed_action":"investigate",
+            "due_date":"2026-11-30","rationale":"Collect evidence"})
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.json["decision_state"],"PENDING_HUMAN_REVIEW")
+        self.assertFalse(response.json["deployment_authorized"])
+
+    def test_lifecycle_inspection_does_not_grant_compliance(self):
+        response=self.client.post("/roadmap/lifecycle",json={"mapping-collection":{
+            "uuid":"98a5cb12-7012-4f8f-a393-2ab42e10ab45","metadata":{
+            "title":"Synthetic mapping","last-modified":"2026-11-19T00:00:00Z",
+            "version":"1","oscal-version":"1.2.3"}}})
+        # If the official schema is provisioned this incomplete fixture may be rejected.
+        if response.status_code==200:
+            self.assertEqual(response.json["semantic_validation"],"NOT_EXECUTED")
+            self.assertFalse(response.json["compliance_certified"])
+        else:
+            self.assertEqual(response.status_code,400)
