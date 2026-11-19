@@ -18,6 +18,8 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "governance"))
 from requirements_engine import assess
+sys.path.insert(0, str(ROOT / "security"))
+from evidence_import import verify_package, LIMIT as ARCHIVE_LIMIT
 
 metadata = MetaData()
 projects = Table("projects", metadata, Column("id", String(100), primary_key=True),
@@ -104,7 +106,11 @@ def create_app(engine):
         if request.method == "POST":
             if request.headers.get("Origin") not in (None, request.host_url.rstrip("/")):
                 abort(403)
-            if not request.is_json:
+            if request.path == "/assess-package":
+                request.max_content_length = ARCHIVE_LIMIT + 1_000_000
+                if request.mimetype != "multipart/form-data":
+                    abort(415)
+            elif not request.is_json:
                 abort(415)
     @app.after_request
     def headers(response):
@@ -132,6 +138,8 @@ def create_app(engine):
         return jsonify(example())
     @app.get("/health")
     def health():
+        if engine is None:
+            return jsonify(status="ready", mode="preview", authenticated=False, persistent=False)
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
             conn.execute(select(projects.c.id).limit(1))
@@ -139,8 +147,19 @@ def create_app(engine):
     @app.post("/assess")
     def assessment():
         return jsonify(evaluate(request.get_json()))
+    @app.post("/assess-package")
+    def assess_package():
+        profile = json.loads(request.form["profile"])
+        package = verify_package(request.files["archive"].stream.read(ARCHIVE_LIMIT + 1))
+        result = evaluate({"profile": profile, "evidence": package["evidence"], "scanned": package["scanned"]})
+        result["evidence_trust"] = "MANIFEST_MATCH_UNAUTHENTICATED"
+        result["evidence_package"] = {key: value for key, value in package.items() if key != "evidence"}
+        result["project_association"] = "PROPOSED_UNVERIFIED"
+        return jsonify(result)
     @app.post("/save")
     def save():
+        if engine is None:
+            return jsonify(error="Persistent storage is disabled in preview mode."), 503
         payload = request.get_json()
         result = evaluate(payload)
         profile = payload["profile"]
@@ -164,11 +183,15 @@ def create_app(engine):
         return jsonify(assessment_id=assessment_id, revision_id=revision_id, assessment_sha256=digest(result), result=result), 201
     @app.get("/history")
     def history():
+        if engine is None:
+            return jsonify(error="Persistent storage is disabled in preview mode."), 503
         with engine.connect() as conn:
             rows=conn.execute(select(assessments.c.id, revisions.c.project_id, revisions.c.revision, assessments.c.created_at, assessments.c.assessment_sha256).join_from(assessments,revisions).order_by(assessments.c.id.desc()).limit(100)).mappings()
             return jsonify([dict(row) for row in rows])
     @app.get("/history/<int:assessment_id>")
     def load(assessment_id):
+        if engine is None:
+            return jsonify(error="Persistent storage is disabled in preview mode."), 503
         with engine.connect() as conn:
             row=conn.execute(select(assessments, revisions.c.proposal_json, revisions.c.proposal_sha256).join_from(assessments,revisions).where(assessments.c.id==assessment_id)).mappings().first()
         if row is None:
@@ -183,8 +206,13 @@ def create_app(engine):
 
 def main():
     parser=argparse.ArgumentParser()
-    parser.add_argument("command", choices=["init-db","serve"])
+    parser.add_argument("command", choices=["init-db","serve","preview"])
     args=parser.parse_args()
+    if args.command == "preview":
+        from waitress import serve
+        print("SGMA nonpersistent preview: http://127.0.0.1:8765")
+        serve(create_app(None), host="127.0.0.1", port=8765)
+        return
     engine=config_engine(prompt=True)
     if args.command=="init-db":
         metadata.create_all(engine)
