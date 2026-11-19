@@ -1,0 +1,699 @@
+{
+  "catalog": {
+    "uuid": "97fc75bb-6636-46f2-b08d-061785cb865b",
+    "metadata": {
+      "title": "SGMA OT security requirements — NIST SP 800-82 Rev. 3 informed (derived candidate)",
+      "version": "0.1.0",
+      "last-modified": "2026-11-19T00:00:00Z",
+      "oscal-version": "1.2.3",
+      "links": [
+        {
+          "href": "https://doi.org/10.6028/NIST.SP.800-82r3",
+          "rel": "reference"
+        },
+        {
+          "href": "https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final",
+          "rel": "reference"
+        }
+      ],
+      "props": [
+        {
+          "name": "source-class",
+          "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+          "value": "SGMA_DERIVED_UNREVIEWED"
+        },
+        {
+          "name": "domain",
+          "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+          "value": "OT"
+        }
+      ]
+    },
+    "groups": [
+      {
+        "id": "asset",
+        "title": "Asset and configuration context",
+        "controls": [
+          {
+            "id": "OT-01",
+            "title": "Industrial asset inventory",
+            "props": [
+              {
+                "name": "domain",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "OT"
+              },
+              {
+                "name": "candidate-control-reference",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "CM-8"
+              },
+              {
+                "name": "evidence",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "Asset register; inventory reconciliation"
+              },
+              {
+                "name": "source-class",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SGMA_DERIVED_UNREVIEWED"
+              }
+            ],
+            "parts": [
+              {
+                "name": "statement",
+                "prose": "Maintain a reviewed inventory of controllers, HMIs, engineering workstations, network devices and supporting services with owners, firmware and criticality."
+              }
+            ]
+          },
+          {
+            "id": "OT-02",
+            "title": "Operational dependency and criticality",
+            "props": [
+              {
+                "name": "domain",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "OT"
+              },
+              {
+                "name": "candidate-control-reference",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "RA-3"
+              },
+              {
+                "name": "evidence",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "Process diagrams; approved criticality analysis"
+              },
+              {
+                "name": "source-class",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SGMA_DERIVED_UNREVIEWED"
+              }
+            ],
+            "parts": [
+              {
+                "name": "statement",
+                "prose": "Document physical processes, dependencies, safety consequences, availability constraints and recovery priorities before assessing cybersecurity risk."
+              }
+            ]
+          },
+          {
+            "id": "OT-03",
+            "title": "Configuration and logic baselines",
+            "props": [
+              {
+                "name": "domain",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "OT"
+              },
+              {
+                "name": "candidate-control-reference",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "CM-2"
+              },
+              {
+                "name": "evidence",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "Approved baseline; logic export hashes"
+              },
+              {
+                "name": "source-class",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SGMA_DERIVED_UNREVIEWED"
+              }
+            ],
+            "parts": [
+              {
+                "name": "statement",
+                "prose": "Maintain authorized configuration and controller logic baselines with version and integrity records."
+              }
+            ]
+          },
+          {
+            "id": "OT-04",
+            "title": "Controlled engineering changes",
+            "props": [
+              {
+                "name": "domain",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "OT"
+              },
+              {
+                "name": "candidate-control-reference",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "CM-3"
+              },
+              {
+                "name": "evidence",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "Change request; rollback test; authorization"
+              },
+              {
+                "name": "source-class",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SGMA_DERIVED_UNREVIEWED"
+              }
+            ],
+            "parts": [
+              {
+                "name": "statement",
+                "prose": "Require engineering and operations review, tested rollback and approved maintenance windows before control system changes."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "access",
+        "title": "Access and segmentation",
+        "controls": [
+          {
+            "id": "OT-05",
+            "title": "Zones and trust boundaries",
+            "props": [
+              {
+                "name": "domain",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "OT"
+              },
+              {
+                "name": "candidate-control-reference",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SC-7"
+              },
+              {
+                "name": "evidence",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "Network diagrams; firewall exports; approved passive observations"
+              },
+              {
+                "name": "source-class",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SGMA_DERIVED_UNREVIEWED"
+              }
+            ],
+            "parts": [
+              {
+                "name": "statement",
+                "prose": "Document and enforce permitted communications between enterprise, industrial DMZ, control and safety networks; validate paths without interrupting operations."
+              }
+            ]
+          },
+          {
+            "id": "OT-06",
+            "title": "Vendor remote access",
+            "props": [
+              {
+                "name": "domain",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "OT"
+              },
+              {
+                "name": "candidate-control-reference",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "AC-17"
+              },
+              {
+                "name": "evidence",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "Access request; VPN logs; session review"
+              },
+              {
+                "name": "source-class",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SGMA_DERIVED_UNREVIEWED"
+              }
+            ],
+            "parts": [
+              {
+                "name": "statement",
+                "prose": "Authorize time-bounded vendor access through monitored controlled paths; confirm target, scope, session termination and local operational coordination."
+              }
+            ]
+          },
+          {
+            "id": "OT-07",
+            "title": "Least privilege and engineering access",
+            "props": [
+              {
+                "name": "domain",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "OT"
+              },
+              {
+                "name": "candidate-control-reference",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "AC-6"
+              },
+              {
+                "name": "evidence",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "Role matrix; account review; exception records"
+              },
+              {
+                "name": "source-class",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SGMA_DERIVED_UNREVIEWED"
+              }
+            ],
+            "parts": [
+              {
+                "name": "statement",
+                "prose": "Restrict logic modification, administrative and operator functions to authorized roles; review service and shared-account exceptions."
+              }
+            ]
+          },
+          {
+            "id": "OT-08",
+            "title": "Physical protection",
+            "props": [
+              {
+                "name": "domain",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "OT"
+              },
+              {
+                "name": "candidate-control-reference",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "PE-3"
+              },
+              {
+                "name": "evidence",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "Access records; inspection checklist"
+              },
+              {
+                "name": "source-class",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SGMA_DERIVED_UNREVIEWED"
+              }
+            ],
+            "parts": [
+              {
+                "name": "statement",
+                "prose": "Restrict and review access to controller cabinets, plant rooms, engineering ports and critical control equipment."
+              }
+            ]
+          },
+          {
+            "id": "OT-09",
+            "title": "Portable media and maintenance devices",
+            "props": [
+              {
+                "name": "domain",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "OT"
+              },
+              {
+                "name": "candidate-control-reference",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "MP-7"
+              },
+              {
+                "name": "evidence",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "Media register; maintenance device authorization"
+              },
+              {
+                "name": "source-class",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SGMA_DERIVED_UNREVIEWED"
+              }
+            ],
+            "parts": [
+              {
+                "name": "statement",
+                "prose": "Control removable media and externally connected maintenance devices using an approved transfer and inspection procedure."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "resilience",
+        "title": "Operational resilience and safety",
+        "controls": [
+          {
+            "id": "OT-10",
+            "title": "Safe vulnerability assessment",
+            "props": [
+              {
+                "name": "domain",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "OT"
+              },
+              {
+                "name": "candidate-control-reference",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "RA-5"
+              },
+              {
+                "name": "evidence",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "Passive assessment; vendor advisories; approved test plan"
+              },
+              {
+                "name": "source-class",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SGMA_DERIVED_UNREVIEWED"
+              }
+            ],
+            "parts": [
+              {
+                "name": "statement",
+                "prose": "Prefer passive discovery and vendor advisories; prohibit unapproved active testing of operational assets; assess impact and obtain explicit engineering authorization for exceptions."
+              }
+            ]
+          },
+          {
+            "id": "OT-11",
+            "title": "Patch feasibility and compensating controls",
+            "props": [
+              {
+                "name": "domain",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "OT"
+              },
+              {
+                "name": "candidate-control-reference",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SI-2"
+              },
+              {
+                "name": "evidence",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "Vendor confirmation; patch plan; compensating control evidence"
+              },
+              {
+                "name": "source-class",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SGMA_DERIVED_UNREVIEWED"
+              }
+            ],
+            "parts": [
+              {
+                "name": "statement",
+                "prose": "Evaluate vendor compatibility, process impact, outage constraints and compensating controls before proposing a patch; document validation and rollback."
+              }
+            ]
+          },
+          {
+            "id": "OT-12",
+            "title": "Controller and HMI backups",
+            "props": [
+              {
+                "name": "domain",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "OT"
+              },
+              {
+                "name": "candidate-control-reference",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "CP-9"
+              },
+              {
+                "name": "evidence",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "Backup inventory; restore-point records"
+              },
+              {
+                "name": "source-class",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SGMA_DERIVED_UNREVIEWED"
+              }
+            ],
+            "parts": [
+              {
+                "name": "statement",
+                "prose": "Maintain protected, versioned backups of controller logic, HMI configuration and critical supporting systems; verify integrity."
+              }
+            ]
+          },
+          {
+            "id": "OT-13",
+            "title": "Recovery and local operation",
+            "props": [
+              {
+                "name": "domain",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "OT"
+              },
+              {
+                "name": "candidate-control-reference",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "CP-10"
+              },
+              {
+                "name": "evidence",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "Recovery exercise; operator sign-off"
+              },
+              {
+                "name": "source-class",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SGMA_DERIVED_UNREVIEWED"
+              }
+            ],
+            "parts": [
+              {
+                "name": "statement",
+                "prose": "Exercise restoration and local operational continuity under approved conditions; verify recovery priorities and safe return to service."
+              }
+            ]
+          },
+          {
+            "id": "OT-14",
+            "title": "Safety and protective functions",
+            "props": [
+              {
+                "name": "domain",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "OT"
+              },
+              {
+                "name": "candidate-control-reference",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SA-8"
+              },
+              {
+                "name": "evidence",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "Hazard review; engineering authorization"
+              },
+              {
+                "name": "source-class",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SGMA_DERIVED_UNREVIEWED"
+              }
+            ],
+            "parts": [
+              {
+                "name": "statement",
+                "prose": "Review cybersecurity changes for impact on safety functions and process protection; require independent safety and engineering review where applicable."
+              }
+            ]
+          },
+          {
+            "id": "OT-15",
+            "title": "Incident response and escalation",
+            "props": [
+              {
+                "name": "domain",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "OT"
+              },
+              {
+                "name": "candidate-control-reference",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "IR-4"
+              },
+              {
+                "name": "evidence",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "Response exercise; escalation matrix; containment plan"
+              },
+              {
+                "name": "source-class",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SGMA_DERIVED_UNREVIEWED"
+              }
+            ],
+            "parts": [
+              {
+                "name": "statement",
+                "prose": "Coordinate cyber incident response with operations and safety personnel; select containment that preserves safe process states."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "monitoring",
+        "title": "Monitoring and supply chain",
+        "controls": [
+          {
+            "id": "OT-16",
+            "title": "Operational monitoring",
+            "props": [
+              {
+                "name": "domain",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "OT"
+              },
+              {
+                "name": "candidate-control-reference",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SI-4"
+              },
+              {
+                "name": "evidence",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "Monitoring coverage; alarm and continuity procedures"
+              },
+              {
+                "name": "source-class",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SGMA_DERIVED_UNREVIEWED"
+              }
+            ],
+            "parts": [
+              {
+                "name": "statement",
+                "prose": "Collect approved passive network and system monitoring evidence; establish loss-of-visibility escalation and onsite verification procedures."
+              }
+            ]
+          },
+          {
+            "id": "OT-17",
+            "title": "Time and log integrity",
+            "props": [
+              {
+                "name": "domain",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "OT"
+              },
+              {
+                "name": "candidate-control-reference",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "AU-8"
+              },
+              {
+                "name": "evidence",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "Time configuration; log review"
+              },
+              {
+                "name": "source-class",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SGMA_DERIVED_UNREVIEWED"
+              }
+            ],
+            "parts": [
+              {
+                "name": "statement",
+                "prose": "Verify authorized time sources and event timestamp consistency for critical OT evidence without changing operational timing assumptions."
+              }
+            ]
+          },
+          {
+            "id": "OT-18",
+            "title": "Supplier and component risk",
+            "props": [
+              {
+                "name": "domain",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "OT"
+              },
+              {
+                "name": "candidate-control-reference",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SR-3"
+              },
+              {
+                "name": "evidence",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "Supplier assessment; firmware records"
+              },
+              {
+                "name": "source-class",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SGMA_DERIVED_UNREVIEWED"
+              }
+            ],
+            "parts": [
+              {
+                "name": "statement",
+                "prose": "Review supplier support, firmware provenance, replacement availability and third-party access risks for industrial assets."
+              }
+            ]
+          },
+          {
+            "id": "OT-19",
+            "title": "End-of-support equipment",
+            "props": [
+              {
+                "name": "domain",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "OT"
+              },
+              {
+                "name": "candidate-control-reference",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SA-22"
+              },
+              {
+                "name": "evidence",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "Lifecycle inventory; replacement plan"
+              },
+              {
+                "name": "source-class",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SGMA_DERIVED_UNREVIEWED"
+              }
+            ],
+            "parts": [
+              {
+                "name": "statement",
+                "prose": "Identify unsupported components and plan replacement or documented compensating controls subject to engineering and risk review."
+              }
+            ]
+          },
+          {
+            "id": "OT-20",
+            "title": "Operational acceptance of changes",
+            "props": [
+              {
+                "name": "domain",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "OT"
+              },
+              {
+                "name": "candidate-control-reference",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "CA-2"
+              },
+              {
+                "name": "evidence",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "Functional test; operator acceptance; change record"
+              },
+              {
+                "name": "source-class",
+                "ns": "https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma",
+                "value": "SGMA_DERIVED_UNREVIEWED"
+              }
+            ],
+            "parts": [
+              {
+                "name": "statement",
+                "prose": "Document post-change functional verification and operator acceptance; verify safe state, visibility and operational availability before closure."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
