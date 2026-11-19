@@ -22,7 +22,11 @@ from requirements_library import registry, compose, verify_profile
 sys.path.insert(0, str(ROOT / "security"))
 from evidence_import import verify_package, LIMIT as ARCHIVE_LIMIT
 
+sys.path.insert(0, str(ROOT / "sgma"))
+from roadmap_store import define as define_roadmap, register as register_roadmap_store
+
 metadata = MetaData()
+roadmap_tables = define_roadmap(metadata)
 projects = Table("projects", metadata, Column("id", String(100), primary_key=True),
                  Column("created_at", String(40), nullable=False))
 revisions = Table("profile_revisions", metadata, Column("id", Integer, primary_key=True),
@@ -97,6 +101,8 @@ def evaluate(payload):
     if not isinstance(scanned,list) or any(not isinstance(s,str) for s in scanned):
         raise ValueError("Invalid scanner completion declaration")
     result = assess(profile, evidence, scanned)
+    from roadmap import attach_occurrences
+    attach_occurrences(result,evidence)
     result["requirements_library"] = library_state
     result["evidence_trust"] = "USER_DECLARED_UNVERIFIED" if evidence is not None else "NOT_SUPPLIED"
     return result
@@ -113,6 +119,10 @@ def create_app(engine):
                 request.max_content_length = ARCHIVE_LIMIT + 1_000_000
                 if request.mimetype != "multipart/form-data":
                     abort(415)
+            elif request.path in {"/roadmap/catalog", "/roadmap/profile", "/roadmap/compose", "/roadmap/lifecycle", "/roadmap/exchange"}:
+                request.max_content_length = 8_000_000
+                if not request.is_json:
+                    abort(415)
             elif not request.is_json:
                 abort(415)
     @app.after_request
@@ -125,6 +135,7 @@ def create_app(engine):
     @app.errorhandler(KeyError)
     @app.errorhandler(TypeError)
     @app.errorhandler(AttributeError)
+    @app.errorhandler(RecursionError)
     def invalid(_exc):
         return jsonify(error="Invalid proposal or evidence; verify schema, baseline, identifiers and required fields."), 400
     @app.errorhandler(IntegrityError)
@@ -215,6 +226,10 @@ def create_app(engine):
         if digest(proposal)!=row["proposal_sha256"] or digest(outcome)!=row["assessment_sha256"] or (evidence is not None and digest(evidence)!=row["evidence_sha256"]):
             return jsonify(error="Stored record integrity check failed"), 409
         return jsonify(profile=proposal, result=outcome, evidence=evidence, scanned=json.loads(row["scanned_json"]), created_at=row["created_at"])
+    sys.path.insert(0, str(ROOT / "sgma"))
+    from roadmap import register
+    register(app)
+    register_roadmap_store(app,engine,roadmap_tables)
     return app
 
 def main():

@@ -5,6 +5,7 @@ RUN pip install --no-cache-dir -r /tmp/requirements.txt && useradd --create-home
 COPY governance/ governance/
 COPY security/ security/
 COPY sgma/ sgma/
+COPY interoperability/ interoperability/
 USER 10001
 ENV SGMA_MODE=local SGMA_CONTAINER_LOCAL=1 PYTHONDONTWRITEBYTECODE=1
 EXPOSE 8765
