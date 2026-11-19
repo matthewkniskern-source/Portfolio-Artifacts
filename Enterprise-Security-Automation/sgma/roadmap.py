@@ -76,6 +76,7 @@ def schema_status(document, model, version=VERSION):
     return "SCHEMA_VALID_LOCAL_UNATTESTED"
 
 TEMPLATES={
+    "sgma-ot-800-82-r3":{"title":"OT / ICS — NIST SP 800-82 Rev. 3 informed (SGMA candidate)","file":"SGMA_OT_800-82r3_candidate.json","source_path":"https://doi.org/10.6028/NIST.SP.800-82r3","source_class":"SGMA_DERIVED_UNREVIEWED","content_release":"0.1.0"},
     "nist-800-171-r3":{"title":"NIST SP 800-171 Rev. 3","file":"NIST_SP800-171_rev3_catalog.json","source_path":"nist.gov/SP800-171/rev3/json/NIST_SP800-171_rev3_catalog.json","upstream_git_blob":"1bc9d5ab5f57329c1ab5553b4d2b27ea54d9d13f"},
     "nist-csf-2":{"title":"NIST Cybersecurity Framework 2.0","file":"NIST_CSF_v2.0_catalog.json","source_path":"nist.gov/CSF/v2.0/json/NIST_CSF_v2.0_catalog.json","upstream_git_blob":"7b8b2d8b45cbf6fca093fcc5ae9f17ca9938b425"},
     "nist-ssdf":{"title":"NIST SP 800-218 SSDF","file":"NIST_SP800-218_ver1_catalog.json","source_path":"nist.gov/SP800-218/ver1/json/NIST_SP800-218_ver1_catalog.json","upstream_git_blob":"94f85f214557d4f52faddbf0b2e83de55d11db5d"},
@@ -88,7 +89,7 @@ def load_template(key):
     if len(raw)>MAX_BYTES:
         raise ValueError("Catalog exceeds limit")
     result=catalog(json.loads(raw))
-    result["template"]={**entry,"key":key,"content_release":"v1.5.0","source_file_sha256":hashlib.sha256(raw).hexdigest(),
+    result["template"]={**entry,"key":key,"content_release":entry.get("content_release","v1.5.0"),"source_file_sha256":hashlib.sha256(raw).hexdigest(),
                         "review_status":"PROPOSED_UNREVIEWED"}
     return result
 
@@ -109,7 +110,7 @@ def catalog(document):
                 raise ValueError("Duplicate control identifier")
             seen.add(cid)
             rows.append({"id":cid,"title":string(control["title"],4000),
-                         "parents":parents,"parts":control.get("parts",[]),
+                         "parents":parents,"props":control.get("props",[]),"parts":control.get("parts",[]),
                          "params":control.get("params",[])})
             walk(control,parents+[cid])
         for group in node.get("groups",[]):
@@ -303,7 +304,13 @@ def compose_overlay(base, document, selected, draft, revision, selections=None):
             raise ValueError("Invalid selected controls")
         for cid in selected:
             control=indexed[cid]
-            add({"id":"OSCAL-"+inspected["catalog_sha256"][:12]+"-"+cid,
+            ot_props={p["name"]:p["value"] for p in control.get("props",[]) if isinstance(p,dict) and p.get("ns")=="https://github.com/matthewkniskern-source/Portfolio-Artifacts/sgma" and isinstance(p.get("name"),str) and isinstance(p.get("value"),str)}
+            extra={}
+            if inspected.get("template",{}).get("source_class")=="SGMA_DERIVED_UNREVIEWED":
+                extra={"domain":"OT","source_class":"SGMA_DERIVED_UNREVIEWED",
+                       "candidate_control_reference":ot_props["candidate-control-reference"],
+                       "statement":control["parts"][0]["prose"],"evidence":ot_props["evidence"]}
+            add({**extra,"id":"OSCAL-"+inspected["catalog_sha256"][:12]+"-"+cid,
                  "title":control["title"],"source":inspected["title"]+" / "+cid,
                  "applicability":"undetermined","source_sha256":inspected["catalog_sha256"],
                  "source_control_id":cid,"source_schema_status":inspected["schema_status"]})
