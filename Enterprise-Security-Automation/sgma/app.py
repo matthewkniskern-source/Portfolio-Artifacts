@@ -113,6 +113,10 @@ def create_app(engine):
                 request.max_content_length = ARCHIVE_LIMIT + 1_000_000
                 if request.mimetype != "multipart/form-data":
                     abort(415)
+            elif request.path in {"/roadmap/catalog", "/roadmap/profile"}:
+                request.max_content_length = 8_000_000
+                if not request.is_json:
+                    abort(415)
             elif not request.is_json:
                 abort(415)
     @app.after_request
@@ -215,6 +219,9 @@ def create_app(engine):
         if digest(proposal)!=row["proposal_sha256"] or digest(outcome)!=row["assessment_sha256"] or (evidence is not None and digest(evidence)!=row["evidence_sha256"]):
             return jsonify(error="Stored record integrity check failed"), 409
         return jsonify(profile=proposal, result=outcome, evidence=evidence, scanned=json.loads(row["scanned_json"]), created_at=row["created_at"])
+    sys.path.insert(0, str(ROOT / "sgma"))
+    from roadmap import register
+    register(app)
     return app
 
 def main():
