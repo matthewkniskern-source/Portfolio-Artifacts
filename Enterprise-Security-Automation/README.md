@@ -18,6 +18,7 @@ SGMA is designed as a contract-centric, framework-agnostic and vendor-neutral op
 | Evidence ingestion | Complete CI ZIP import, manifest checks, scanner coverage derivation and declared source references; unauthenticated provenance |
 | Versioned requirements | Mandatory synthetic organizational baseline, selectable registry revisions, protected selected rows, advisory ad hoc requirements |
 | Standard templates | Three bundled NIST catalogs: SP 800-171 Rev. 3 (130 entries), CSF 2.0 (219), SSDF (61); source OSCAL v1.2.2 |
+| OT/ICS requirements | 20 selectable SGMA-authored, NIST SP 800-82 Rev. 3-informed candidate objectives; manual review, advisory references and evidence expectations; official overlay and asset-context implementation pending |
 | Contract authoring | Browser-based draft requirements, source clauses, applicability, evidence, descriptive deadlines, manual/automated/hybrid methods and explicit scanner rules |
 | Change and control mapping | Revision comparison and advisory mapping proposals implemented; integrated browser acceptance and approved mapping graph pending |
 | OSCAL exchange | Catalog inspection, candidate catalogs/profiles, multi-source ZIP with manifest, version-specific schema adapter and offline provisioning utility; official schemas and independent resolution pending |
@@ -100,6 +101,10 @@ The original stateless workbench remains available via `python Enterprise-Securi
 The pinned [NIST OSCAL Content v1.5.0](https://github.com/usnistgov/oscal-content/releases/tag/v1.5.0) catalogs are retained in `interoperability/oscal/catalogs/`, with upstream licensing notice. Generated profiles target OSCAL 1.2.3. Source versions remain distinct; no automatic remote reference resolution occurs. Official schema assets must be separately provisioned and checked against pinned hashes; missing assets are explicitly reported. Schema conformance, semantic validation, independent profile resolution and cross-tool exchange have not yet been established. Additional lifecycle models currently have inspection adapters, not complete generation or operational exchange. SGMA-specific properties may not be interpreted by other applications.
 
 See [revised architecture, schema provisioning and QA/QC checklist](documentation/sgma-roadmap-02-10.md).
+
+## OT/ICS extension
+
+See [OT requirements scope and test plan](documentation/sgma-ot-requirements.md). The selectable OT candidate is not an official NIST overlay. It introduces no active OT scanning or authorization, and retains the existing baseline and scanner rules. New tests await CI and browser verification.
 
 ## Remaining engineering and acceptance
 
