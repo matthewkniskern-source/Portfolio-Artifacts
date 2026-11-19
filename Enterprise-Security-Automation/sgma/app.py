@@ -22,7 +22,11 @@ from requirements_library import registry, compose, verify_profile
 sys.path.insert(0, str(ROOT / "security"))
 from evidence_import import verify_package, LIMIT as ARCHIVE_LIMIT
 
+sys.path.insert(0, str(ROOT / "sgma"))
+from roadmap_store import define as define_roadmap, register as register_roadmap_store
+
 metadata = MetaData()
+roadmap_tables = define_roadmap(metadata)
 projects = Table("projects", metadata, Column("id", String(100), primary_key=True),
                  Column("created_at", String(40), nullable=False))
 revisions = Table("profile_revisions", metadata, Column("id", Integer, primary_key=True),
@@ -113,7 +117,7 @@ def create_app(engine):
                 request.max_content_length = ARCHIVE_LIMIT + 1_000_000
                 if request.mimetype != "multipart/form-data":
                     abort(415)
-            elif request.path in {"/roadmap/catalog", "/roadmap/profile"}:
+            elif request.path in {"/roadmap/catalog", "/roadmap/profile", "/roadmap/compose", "/roadmap/lifecycle"}:
                 request.max_content_length = 8_000_000
                 if not request.is_json:
                     abort(415)
@@ -222,6 +226,7 @@ def create_app(engine):
     sys.path.insert(0, str(ROOT / "sgma"))
     from roadmap import register
     register(app)
+    register_roadmap_store(app,engine,roadmap_tables)
     return app
 
 def main():
