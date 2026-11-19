@@ -56,11 +56,17 @@ def schema_status(document, model):
         from referencing import Registry
     except ImportError:
         return "VALIDATOR_NOT_INSTALLED"
-    schema=json.loads(path.read_text(encoding="utf-8"))
+    manifest=path.parent/"schema-manifest.json"
+    if not manifest.is_file():
+        return "SCHEMA_MANIFEST_MISSING"
+    raw=path.read_bytes()
+    if hashlib.sha256(raw).hexdigest()!=json.loads(manifest.read_text(encoding="utf-8")).get(path.name):
+        raise ValueError("Local schema fingerprint mismatch")
+    schema=json.loads(raw)
     validator=jsonschema.validators.validator_for(schema)
     validator.check_schema(schema)
     try:
-        validator(schema,registry=Registry()).validate(document)
+        validator(schema,registry=Registry(),format_checker=jsonschema.FormatChecker()).validate(document)
     except Exception as exc:
         raise ValueError("Official schema validation failed or reference unresolved") from exc
     return "SCHEMA_VALID_LOCAL_UNATTESTED"
@@ -132,6 +138,8 @@ def contract_draft(payload):
             "clause":string(item["clause"]),"statement":string(item["statement"],10000),
             "method":method,"applicability":applicability,"rationale":rationale,
             "evidence":string(item["evidence"],4000),"deadline":item.get("deadline","")})
+    if not result["requirements"]:
+        raise ValueError("At least one contractual requirement is required")
     result.update(FLAGS)
     return result
 
@@ -239,8 +247,7 @@ def inspect_lifecycle(document):
     body=document[model]
     meta=body["metadata"]
     version=string(meta["oscal-version"],40)
-    schema_model={"system-security-plan":"ssp","assessment-plan":"ap",
-                  "assessment-results":"ar","plan-of-action-and-milestones":"poam"}.get(model,model.replace("-","_"))
+    schema_model=model
     return {"model":model,"title":string(meta["title"],4000),"oscal_version":version,
             "document_sha256":fingerprint(document),"schema_status":schema_status(document,schema_model) if version==VERSION else "VERSION_NOT_SUPPORTED_FOR_SCHEMA_VALIDATION",
             "reference_resolution":"NOT_EXECUTED","semantic_validation":"NOT_EXECUTED",
